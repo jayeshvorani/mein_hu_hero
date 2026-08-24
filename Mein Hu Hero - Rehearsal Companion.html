@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mein hu Hero — Rehearsal Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FBFCFD;
+    --surface: #FFFFFF;
+    --ink: #232830;
+    --muted: #667085;
+    --accent: #2F5C7C;
+    --accent-strong: #1F4A66;
+    --accent-contrast: #FFFFFF;
+    --tint: #EEF2F5;
+    --border: #DCE2E7;
+    --gold-bg: #FBF0D3;
+    --gold-border: #E4C878;
+    --terracotta: #9C5B3F;
+    --music: #4E7599;
+    --header-h: 64px;
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(20, 30, 40, 0.06), 0 8px 24px rgba(20, 30, 40, 0.04);
+  }
+  html[data-theme="dark"] {
+    --paper: #14181D;
+    --surface: #1B2027;
+    --ink: #E7EAEE;
+    --muted: #93A0AC;
+    --accent: #7FB0D2;
+    --accent-strong: #9AC4E2;
+    --accent-contrast: #0F1417;
+    --tint: #202730;
+    --border: #2C343C;
+    --gold-bg: #3B331E;
+    --gold-border: #6B5A2C;
+    --terracotta: #D08A6A;
+    --music: #8FB3D6;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Source Sans 3', -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: 'Space Grotesk', 'Source Sans 3', sans-serif; margin: 0; }
+  a { color: var(--accent); }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+
+  /* ---------- header ---------- */
+  header.topbar {
+    position: sticky; top: 0; z-index: 20;
+    height: var(--header-h);
+    display: flex; align-items: center; gap: .9rem;
+    padding: 0 1.1rem;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .brand {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: .01em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .search-wrap { flex: 1; max-width: 360px; position: relative; }
+  .search-wrap input {
+    width: 100%;
+    font-family: inherit; font-size: .92rem;
+    padding: .5rem .7rem .5rem 2.1rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .search-wrap input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .search-wrap svg { position: absolute; left: .7rem; top: 50%; transform: translateY(-50%); opacity: .55; pointer-events: none; }
+  .topbar-controls { margin-left: auto; display: flex; align-items: center; gap: .5rem; }
+  .toggle-pill {
+    display: flex; align-items: center; gap: .4rem;
+    font-family: 'IBM Plex Mono', monospace; font-size: .72rem; letter-spacing: .03em;
+    padding: .4rem .65rem;
+    border-radius: 999px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--muted);
+    cursor: pointer; user-select: none;
+  }
+  .toggle-pill[aria-pressed="true"] { color: var(--accent-strong); border-color: var(--accent); }
+  .icon-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 34px; height: 34px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--surface);
+    cursor: pointer; color: var(--ink);
+  }
+  .icon-btn:hover { border-color: var(--accent); }
+  .icon-btn svg { width: 17px; height: 17px; }
+  .theme-moon { display: none; }
+  html[data-theme="dark"] .theme-sun { display: none; }
+  html[data-theme="dark"] .theme-moon { display: block; }
+
+  /* ---------- hero ---------- */
+  .hero {
+    max-width: 1100px; margin: 0 auto; padding: 2.6rem 1.25rem 1.6rem;
+    display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 1.2rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .hero h1 { font-size: clamp(2rem, 4.6vw, 3rem); letter-spacing: -.01em; }
+  .hero .tagline { color: var(--muted); font-style: italic; margin-top: .5rem; max-width: 46ch; }
+  .hero .kicker { font-family: 'IBM Plex Mono', monospace; font-size: .72rem; letter-spacing: .08em; color: var(--accent-strong); text-transform: uppercase; }
+  .gag-badge {
+    font-family: 'IBM Plex Mono', monospace; font-size: .74rem; color: var(--muted);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: .7rem .9rem; background: var(--surface); box-shadow: var(--shadow);
+    max-width: 240px;
+  }
+  .gag-badge strong { display: block; color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; margin-bottom: .15rem; }
+
+  /* ---------- layout ---------- */
+  .app { max-width: 1100px; margin: 0 auto; padding: 1.6rem 1.25rem 5rem; display: grid; grid-template-columns: 210px 1fr; gap: 2.2rem; align-items: start; }
+  nav.scene-nav { position: sticky; top: calc(var(--header-h) + 1.2rem); display: flex; flex-direction: column; gap: .15rem; }
+  .nav-link {
+    display: flex; align-items: baseline; gap: .5rem;
+    padding: .4rem .55rem; border-radius: 7px; text-decoration: none;
+    color: var(--muted); font-size: .88rem;
+  }
+  .nav-link:hover { background: var(--tint); color: var(--ink); }
+  .nav-link.is-active { background: var(--tint); color: var(--accent-strong); font-weight: 600; }
+  .nav-num { font-family: 'IBM Plex Mono', monospace; font-size: .72rem; opacity: .7; }
+  .nav-section-label { font-family: 'IBM Plex Mono', monospace; font-size: .68rem; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; margin: .2rem 0 .3rem .55rem; }
+
+  main { min-width: 0; }
+  section.front { margin-bottom: 2.4rem; }
+  section.front h2 {
+    font-size: 1.05rem; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: .8rem; font-family: 'IBM Plex Mono', monospace; font-weight: 600;
+  }
+
+  /* cast table */
+  table.cast-table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); box-shadow: var(--shadow); }
+  table.cast-table th, table.cast-table td { text-align: left; padding: .55rem .75rem; border-bottom: 1px solid var(--border); font-size: .9rem; }
+  table.cast-table th { background: var(--accent-strong); color: var(--accent-contrast); font-family: 'IBM Plex Mono', monospace; font-size: .72rem; letter-spacing: .04em; text-transform: uppercase; }
+  table.cast-table tr:last-child td { border-bottom: none; }
+  table.cast-table td.c-char { font-weight: 600; color: var(--accent-strong); }
+  table.cast-table tr:nth-child(even) td { background: var(--tint); }
+
+  /* legend */
+  .legend-row { display: grid; grid-template-columns: 150px 1fr; gap: 1rem; align-items: center; padding: .55rem 0; border-bottom: 1px solid var(--border); }
+  .legend-row:last-child { border-bottom: none; }
+  .legend-meaning { font-size: .9rem; color: var(--ink); }
+  .legend-swatch { font-size: .85rem; display: inline-block; }
+  .legend-gold { background: var(--gold-bg); border: 1px solid var(--gold-border); padding: .2rem .5rem; border-radius: 5px; }
+
+  /* scene */
+  section.scene { margin-bottom: 3rem; scroll-margin-top: calc(var(--header-h) + 12px); }
+  .scene-head { display: flex; align-items: baseline; gap: .7rem; margin-bottom: .8rem; }
+  .scene-num { font-family: 'IBM Plex Mono', monospace; font-size: .74rem; letter-spacing: .06em; color: var(--accent-strong); border: 1px solid var(--border); padding: .15rem .5rem; border-radius: 999px; }
+  .scene-head h2 { font-size: 1.4rem; }
+
+  .meta-box { background: var(--tint); border: 1px solid var(--border); border-radius: var(--radius); padding: .8rem 1rem; margin-bottom: 1rem; display: flex; flex-direction: column; gap: .35rem; }
+  .meta-item { display: flex; gap: .5rem; font-size: .87rem; }
+  .meta-label { font-family: 'IBM Plex Mono', monospace; font-size: .68rem; letter-spacing: .06em; color: var(--muted); min-width: 68px; padding-top: .1rem; }
+  .meta-value { color: var(--ink); }
+  .meta-note { margin: 0; font-size: .85rem; font-style: italic; color: var(--muted); }
+
+  .dialogue { display: flex; flex-direction: column; }
+  .line {
+    display: grid; grid-template-columns: 150px 1fr; gap: 1rem;
+    padding: .65rem .7rem; border-radius: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .line:last-child { border-bottom: none; }
+  .line:nth-child(even) { background: var(--tint); }
+  .line.is-cut { background: var(--gold-bg); border-color: var(--gold-border); }
+  .line.is-cut + .line.is-cut { border-top: none; }
+  .speaker { font-family: 'IBM Plex Mono', monospace; font-size: .75rem; font-weight: 600; letter-spacing: .01em; color: var(--accent-strong); padding-top: .15rem; }
+  .content p { margin: 0 0 .5rem; }
+  .content p:last-child { margin-bottom: 0; }
+  .c-added { color: var(--terracotta); }
+  .c-music { color: var(--music); }
+  .is-italic { font-style: italic; }
+  .is-strike { text-decoration: line-through; opacity: .7; }
+  .is-bold { font-weight: 700; }
+  .gag-tag {
+    display: inline-block; margin-left: .4rem; font-family: 'IBM Plex Mono', monospace;
+    font-size: .66rem; letter-spacing: .04em; text-transform: uppercase;
+    color: var(--accent-strong); border: 1px dashed var(--border); border-radius: 999px;
+    padding: .05rem .5rem; vertical-align: middle;
+  }
+  .gag-tag.gag-twist { color: var(--terracotta); border-color: var(--terracotta); }
+
+  body.hide-cuts .line.is-cut { display: none; }
+  .line.search-hidden { display: none; }
+  section.scene.search-hidden { display: none; }
+
+  footer.page-footer { max-width: 1100px; margin: 0 auto; padding: 2rem 1.25rem 3rem; color: var(--muted); font-size: .82rem; border-top: 1px solid var(--border); }
+
+  @media (max-width: 560px) {
+    header.topbar { flex-wrap: wrap; height: auto; padding: .6rem .9rem; row-gap: .5rem; }
+    .search-wrap { order: 3; max-width: none; flex-basis: 100%; }
+    :root { --header-h: 96px; }
+  }
+
+  @media (max-width: 820px) {
+    .app { grid-template-columns: 1fr; padding-top: .8rem; }
+    nav.scene-nav {
+      position: sticky; top: var(--header-h); z-index: 15;
+      flex-direction: row; overflow-x: auto; gap: .3rem;
+      background: var(--paper); padding: .6rem .2rem; margin: 0 -1.25rem 1rem; padding-left: 1.25rem; padding-right: 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-section-label { display: none; }
+    .nav-link { flex-direction: column; align-items: center; gap: .1rem; white-space: nowrap; text-align: center; }
+    .hero { padding-top: 1.6rem; }
+    .line { grid-template-columns: 1fr; gap: .2rem; }
+    .speaker { padding-top: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { scroll-behavior: auto !important; transition: none !important; }
+  }
+
+  @media print {
+    header.topbar, nav.scene-nav, .gag-badge, .gag-tag, footer.page-footer { display: none !important; }
+    html[data-theme] { --paper: #fff; --surface: #fff; --ink: #111; --muted: #444; --border: #ccc; --tint: #f4f4f4; }
+    .app { display: block; padding: 0; }
+    section.scene { break-inside: avoid-page; }
+    .line { break-inside: avoid; }
+    body { font-size: 12pt; }
+  }
+
+  html { scroll-behavior: smooth; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <span class="brand">Mein hu Hero</span>
+  <div class="search-wrap">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="search" id="searchInput" placeholder="Search a line or character…" aria-label="Search dialogue">
+  </div>
+  <div class="topbar-controls">
+    <button class="toggle-pill" id="hideCutsToggle" type="button" aria-pressed="false">HIDE OPTIONAL CUTS</button>
+    <button class="icon-btn" id="themeToggle" type="button" aria-label="Toggle dark mode">
+      <svg class="theme-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="theme-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="hero">
+  <div>
+    <div class="kicker">Rehearsal Companion · 8 scenes</div>
+    <h1>Mein hu Hero</h1>
+    <p class="tagline">This fun skit is inspired by classic Bollywood traditions and iconic scenes.</p>
+  </div>
+  <div class="gag-badge">
+    <strong>7 of 8 scenes</strong>
+    end with Raj's hand on his forehead. Scene 8 finally breaks the habit — look for the badges as you read.
+  </div>
+</div>
+
+<div class="app">
+  <nav class="scene-nav" aria-label="Scene navigation">
+    <span class="nav-section-label">Scenes</span>
+    <a class="nav-link" href="#scene-1" data-scene="1"><span class="nav-num">01</span><span class="nav-title">Homecoming</span></a><a class="nav-link" href="#scene-2" data-scene="2"><span class="nav-num">02</span><span class="nav-title">The Job Interview</span></a><a class="nav-link" href="#scene-3" data-scene="3"><span class="nav-num">03</span><span class="nav-title">The Park</span></a><a class="nav-link" href="#scene-4" data-scene="4"><span class="nav-num">04</span><span class="nav-title">Fixing the Match</span></a><a class="nav-link" href="#scene-5" data-scene="5"><span class="nav-num">05</span><span class="nav-title">The Wedding</span></a><a class="nav-link" href="#scene-6" data-scene="6"><span class="nav-num">06</span><span class="nav-title">The Naagin Scare</span></a><a class="nav-link" href="#scene-7" data-scene="7"><span class="nav-num">07</span><span class="nav-title">Rocky's Report Card</span></a><a class="nav-link" href="#scene-8" data-scene="8"><span class="nav-num">08</span><span class="nav-title">The Finale</span></a>
+  </nav>
+
+  <main>
+    <section class="front" id="cast">
+      <h2>Cast &amp; Crew</h2>
+      
+<table class="cast-table">
+  <thead><tr><th>Character</th><th>Role</th><th>Actor</th></tr></thead>
+  <tbody><tr><td class="c-char">Sutradhar</td><td>Narrator</td><td>Aparna</td></tr><tr><td class="c-char">Raj Malhotra</td><td>Main protagonist</td><td>Sarvesh</td></tr><tr><td class="c-char">Dharamchand</td><td>Father</td><td>Rajesh</td></tr><tr><td class="c-char">Sumitradevi</td><td>Mother</td><td>Harsh</td></tr><tr><td class="c-char">Simran</td><td>Girlfriend/Wife</td><td>Kavita</td></tr><tr><td class="c-char">Deendayal</td><td>Father-In-Law</td><td>Shailendra</td></tr><tr><td class="c-char">Sharda Devi</td><td>Mother-In-Law</td><td>Vaishali</td></tr><tr><td class="c-char">Ramu Kaka</td><td>Nauker</td><td>Maneesh</td></tr><tr><td class="c-char">Rocky</td><td>Son</td><td>Jayant</td></tr><tr><td class="c-char">No Name</td><td>Daughter-In-Law</td><td>Madhuri</td></tr><tr><td class="c-char">No name</td><td>Office Receptionist</td><td>Aneeta</td></tr><tr><td class="c-char">No name</td><td>Man in office</td><td>Apurva</td></tr><tr><td class="c-char">Bhairav Baba</td><td>Snake Charmer</td><td>Apurva (Double role)</td></tr><tr><td class="c-char">All others</td><td>In wedding scene and last scene</td><td>All</td></tr></tbody>
+</table>
+
+    </section>
+
+    <section class="front" id="legend">
+      <h2>How This Script Is Marked Up</h2>
+      <div class="legend-row"><div class="legend-sample"><span class="legend-swatch legend-gold">Optional line</span></div><div class="legend-meaning">Highlighted sections in yellow can be deleted – if the play becomes very lengthy.</div></div><div class="legend-row"><div class="legend-sample"><span class="legend-swatch c-added">Added text</span></div><div class="legend-meaning">Additions made by Madhuri – Team feel free to delete/edit. (Sorry for not doing it using tracking function in word).</div></div><div class="legend-row"><div class="legend-sample"><span class="legend-swatch c-music">Music cue</span></div><div class="legend-meaning">Music piece</div></div><div class="legend-row"><div class="legend-sample"><span class="legend-swatch is-italic">(stage action)</span></div><div class="legend-meaning">Scene/action descriptions</div></div><div class="legend-row"><div class="legend-sample"><span class="legend-swatch is-strike">Cut this</span></div><div class="legend-meaning">Struck-through text marks a suggested cut or an edit already made in this draft.</div></div>
+    </section>
+
+    
+<section class="scene" id="scene-1" data-scene="1">
+  <div class="scene-head">
+    <span class="scene-num">SCENE 01</span>
+    <h2>Homecoming</h2>
+  </div>
+  <div class="meta-box"><div class="meta-item"><span class="meta-label">CAST</span><span class="meta-value">Dharamchand, Sumitradevi, Ramu kaka, Raj</span></div><div class="meta-item"><span class="meta-label">LOCATION</span><span class="meta-value">Drawing room at home</span></div><div class="meta-item"><span class="meta-label">PROPERTY</span><span class="meta-value">Five chairs, Light colored (neutral sheet to cover three chairs), Dadaji’s photo, degree (Rolled paper can be tied with a ribbon), napkin for Ramu kaka, aarati thali, food plate (tbd) with a bowl for gajar halwaa.</span></div></div>
+  <div class="dialogue"><div class="line" data-search="narrator namaste. aaj hum milane jaa rahe hain ek aajebo garib naujavan raj se. naam to suna he hoga! raj hindi filmo se tang aa chuka hai. nahi nahi; use filmo se koi shikaayat nahee, vah to kabhi kabhi ek do picture bhee dekh letaa hai. use problem hain filmi fans se jo uske jeevan mein bohut hein. hamaare is natak ka naam hai  ‘mein hu hero’.  aao dekhen raj malhotra ke ghar mein kya scene hain. milate hain unke pitaa dharamchand aur mataji sumitradevi se."><div class="speaker">Narrator</div><div class="content"><p>Namaste. Aaj hum milane jaa rahe hain ek aajebo garib naujavan Raj se. Naam to suna he hoga! Raj Hindi filmo se tang aa chuka hai. Nahi nahi; use filmo se koi shikaayat nahee, vah to kabhi kabhi ek do picture bhee dekh letaa hai. Use problem hain filmi fans se jo uske Jeevan mein bohut hein. Hamaare is natak ka naam hai</p><p> ‘Mein Hu Hero’. </p><p>Aao dekhen Raj Malhotra ke ghar mein kya scene hain.</p><p>Milate hain unke pitaa Dharamchand aur mataji Sumitradevi se.</p></div></div><div class="line" data-search="opening scene father (dharamchand) sitting and reading newspaper with his glasses on while mum is in the kitchen."><div class="speaker">Opening scene</div><div class="content"><p><span class="is-italic">Father</span><span class="is-italic"> (Dharamchand)</span><span class="is-italic"> sitting and reading newspaper with his glasses on while Mum is in the kitchen.</span></p></div></div><div class="line" data-search="father (dharamchand) (keeps newspaper aside)  arre bhagwaan, suntee ho! (loud voice)"><div class="speaker">Father (Dharamchand)</div><div class="content"><p><span class="is-italic">(Keeps newspaper aside) </span></p><p>Arre Bhagwaan, suntee ho! (Loud voice)</p></div></div><div class="line" data-search="mother (sumitradevi) (comes from the kitchen wiping her hands on the sari)  kya hai raj ke papa."><div class="speaker">Mother (Sumitradevi)</div><div class="content"><p><span class="is-italic">(Comes from the kitchen wiping her hands on the sari) </span></p><p>Kya hai Raj ke papa.</p></div></div><div class="line" data-search="father (dharamchand) subahase rasoi mein kya kar rahee ho"><div class="speaker">Father (Dharamchand)</div><div class="content"><p>Subahase rasoi mein kya kar rahee ho </p></div></div><div class="line" data-search="mother (sumitradevi) aaj hamara beta raj aa raha hain na (vilaayat se). uski taiyari kar rahi thee."><div class="speaker">Mother (Sumitradevi)</div><div class="content"><p>Aaj hamara beta Raj aa raha hain na <span class="c-added">(vilaayat se</span><span class="c-added">)</span><span class="c-added">.</span> Uski taiyari kar rahi thee.</p></div></div><div class="line" data-search="father (dharamchand) han. aaj 3 saal baad apna beta vilayat se degree lekar aa rahaa hain. woh bhi first class first number lekar. baap dadaonka  naam roshan kiya hain. aur first class first bhi mela hain. aakhir beta kiska hain."><div class="speaker">Father (Dharamchand)</div><div class="content"><p>Han. Aaj 3 saal baad apna beta vilayat se degree lekar aa rahaa hain. <span class="c-added">Wo</span><span class="c-added">h</span><span class="c-added"> bhi </span><span class="c-added">first class first number lekar.</span> Baap dada<span class="c-added">on</span>ka  naam roshan kiya hain. <span class="is-strike">Aur first class first bhi mela hain.</span> Aakhir beta kiska hain.</p></div></div><div class="line" data-search="mother (sumitradevi) haan, aap ka he hain. par aap use lene naahi gaye airport?"><div class="speaker">Mother (Sumitradevi)</div><div class="content"><p>Haan, aap ka he hain. Par aap use lene naahi gaye airport?</p></div></div><div class="line" data-search="father (dharamchand) usane bola tha ki driver ke saath gaadi bhijva do, vo khud aa jaye ga. aataa he hoga."><div class="speaker">Father (Dharamchand)</div><div class="content"><p>Usane bola tha ki driver ke saath gaadi bhijva do, vo khud aa jaye ga. Aataa he hoga.</p></div></div><div class="line" data-search="mother (sumitradevi) ramu, kaha mar gaya (loud voice). aarti ki thali taiyaar rakhna"><div class="speaker">Mother (Sumitradevi)</div><div class="content"><p>Ramu, kaha mar gaya (Loud voice). Aarti ki thali taiyaar rakhna</p></div></div><div class="line" data-search="ramu tayar hai maaji. ye lijeeye."><div class="speaker">Ramu</div><div class="content"><p>Tayar hai maaji. Ye lijeeye.</p></div></div><div class="line" data-search="background (kabhi khushi kabhi gam music).  (mother walks to the door and realises raj has not arrived. she turns back disheartened and then music changes and on a happy note raj enters. mother does aarti. he bends down to take ashirwad of mother and father)."><div class="speaker">Background</div><div class="content"><p><span class="c-music is-italic">(Kabhi k</span><span class="c-music is-italic">h</span><span class="c-music is-italic">ushi kabhi g</span><span class="c-music is-italic">a</span><span class="c-music is-italic">m music).</span><span class="c-music"> </span></p><p><span class="is-italic">(</span><span class="is-italic">Mother walks to the door and realises </span><span class="is-italic">Raj</span><span class="is-italic"> has not arrived. She turns back disheartened and then</span> <span class="c-music is-italic">music changes and </span><span class="c-music is-italic">on a happy note</span> <span class="is-italic">Raj</span><span class="is-italic"> enters. Mother does aarti. He bends down to take Ashirwad of mother and father</span><span class="is-italic">).</span></p></div></div><div class="line is-cut" data-search="father (dharamchand) jao aur pehle dada ji ka ashirwad le lo."><div class="speaker">Father (Dharamchand)</div><div class="content"><p>Jao aur pehle dada ji ka Ashirwad le lo.</p></div></div><div class="line is-cut" data-search="raj (raj walks to dadaji’s photo and keeps his degree near the photo)  dadaji aaj main vilayat se degree leke aayaa hun. aapka sapna maine puraa kiya hain. muze aashirwad deejiye."><div class="speaker">Raj</div><div class="content"><p><span class="is-italic">(</span><span class="is-italic">Raj walks to Dadaji’s photo and </span><span class="is-italic">keeps</span><span class="is-italic"> his degree near the photo)</span> </p><p>Dadaji aaj main vilayat se degree leke aayaa hun. Aapka sapna maine puraa kiya hain. Muze aashirwad deejiye.</p></div></div><div class="line" data-search="father (dharamchand) raj beta, tu ab kya karnaa chaahega?"><div class="speaker">Father (Dharamchand)</div><div class="content"><p>Raj beta, tu ab kya karnaa chaahega?</p></div></div><div class="line" data-search="raj maine ek company mein job ke liye apply kiya tha.  to aaj hi interview ke liye jaana hai. unga."><div class="speaker">Raj</div><div class="content"><p>Maine ek company mein job ke liye apply kiya tha.  <span class="is-strike">to</span> Aaj hi interview ke liye jaana hai. <span class="is-strike">unga.</span></p></div></div><div class="line" data-search="raj (turns to mum)  maa, mujhe bahut bhook lagee hai. kuch khane ko do na"><div class="speaker">Raj</div><div class="content"><p><span class="is-italic">(Turns to mum)</span> </p><p>Maa, mujhe bahut bhook lagee hai. Kuch khane ko do na</p></div></div><div class="line" data-search="mother (sumitradevi) ha latee hun. ramu, kahan mar gayaa (loud voice). khaanaa le aao."><div class="speaker">Mother (Sumitradevi)</div><div class="content"><p>Ha latee hun. Ramu, kahan mar gayaa (Loud voice). Khaanaa le aao.</p></div></div><div class="line no-speaker" data-search=" (food is served by ramu. mother walks to raj with a bowl of gajar ka halwa and tries to feed him.)"><div class="speaker" aria-hidden="true"></div><div class="content"><p><span class="is-italic">(</span><span class="is-italic">Food is served by Ramu. Mother walks to </span><span class="is-italic">Raj</span><span class="is-italic"> with a bowl of gajar ka halwa and tries to feed him.</span><span class="is-italic">)</span></p></div></div><div class="line" data-search="raj ye kya maa? gajar ka halwaa? aap bhool gayee kya mujhe gajar pasand nahee hain."><div class="speaker">Raj</div><div class="content"><p>Ye kya Maa? Gajar ka halwaa? Aap bhool gayee kya mujhe gajar pasand nahee hain.</p></div></div><div class="line" data-search="mother (sumitradevi) par beta har picture mein - jab beta bohut deeno ke baad ghar lautata hein, to maa gajar ka halwa he banate hain."><div class="speaker">Mother (Sumitradevi)</div><div class="content"><p>Par beta har picture mein - jab beta bohut deeno ke baad ghar lautata hein, to maa gajar ka halwa he banate hain.</p></div></div><div class="line" data-search="raj (one hand over his forehead.) scene 1 over."><div class="speaker">Raj</div><div class="content"><p><span class="is-italic">(</span><span class="is-italic">One hand over his</span><span class="is-italic"> forehead.</span><span class="is-italic">)</span> Scene 1 over.</p><span class="gag-tag" title="The running gag strikes again">facepalm #</span></div></div></div>
+</section>
+
+<section class="scene" id="scene-2" data-scene="2">
+  <div class="scene-head">
+    <span class="scene-num">SCENE 02</span>
+    <h2>The Job Interview</h2>
+  </div>
+  <div class="meta-box"><div class="meta-item"><span class="meta-label">CAST</span><span class="meta-value">Office receptionist, Raj, Man in office, Deendayaal (Simran’s father), Simran</span></div><div class="meta-item"><span class="meta-label">LOCATION</span><span class="meta-value">Office space (Place a table in front of the chair). This chair should be on one side of the three home chairs. Chair to be places from the beginning and table to be placed just before the scene. Receptionist chair on the other side of home chairs, opposite to office chair. This will also be placed from beginning.</span></div><div class="meta-item"><span class="meta-label">PROPERTY</span><span class="meta-value">office table, vase with flowers</span></div><p class="meta-note">(After scene 1 remove cover from home chairs. Place a table in front of office chair. Receptionist chair can have a vase next to it though not necessary. Raj and man in office sit on two of the three chairs that were home earlier.)</p></div>
+  <div class="dialogue"><div class="line" data-search="narrator raj apne interview ke liye deendayal shetji ke office pahoch gaya hai. chaliye dekhate hain dhekhe udhar kya hota hain."><div class="speaker">Narrator</div><div class="content"><p>Raj apne interview ke liye Deendayal shetji ke office pahoch gaya hai. Chaliye dekhate hain <span class="is-strike">Dhekhe</span> udhar kya hota hain.</p></div></div><div class="line no-speaker" data-search=" office scene"><div class="speaker" aria-hidden="true"></div><div class="content"><p><span class="is-italic">Office </span><span class="is-italic">scene</span></p></div></div><div class="line" data-search="office receptionist raj malhotra, aap ko shetji ne andar bulaayaa hai"><div class="speaker">Office Receptionist</div><div class="content"><p>Raj Malhotra, aap ko Shetji ne andar bulaayaa hai</p></div></div><div class="line no-speaker" data-search=" raj gets up to walk towards the shetji’s office door. a man who is sitting in the office for interview comes and stands in front of him."><div class="speaker" aria-hidden="true"></div><div class="content"><p><span class="is-italic">Raj</span><span class="is-italic"> gets up to walk towards the </span><span class="is-italic">Shetji’s office </span><span class="is-italic">door</span><span class="is-italic">.</span></p><p><span class="is-italic">A man who is sitting in the office for interview comes and stands in front of him.</span></p></div></div><div class="line" data-search="raj kya kar rahe ho. muzhe bulaayaa hai. aap mere baad jaanaa."><div class="speaker">Raj</div><div class="content"><p>Kya kar rahe ho. Muzhe bulaayaa hai. <span class="c-added is-italic">Aap mere baad jaanaa</span><span class="c-added is-italic">.</span></p></div></div><div class="line" data-search="man in office hum jahan khade hote hain vahee se line shuru hotee hain."><div class="speaker">Man in office</div><div class="content"><p>Hum jahan khade hote hain vahee se line shuru hotee hain.</p></div></div><div class="line" data-search="office receptionist (pushes the man aside) chal hat. kahan kahan se aa jaate hain amitabh.  raj with one hand over his forehead."><div class="speaker">Office Receptionist</div><div class="content"><p><span class="is-italic">(pushes the man aside)</span> Chal hat. Kahan kahan se aa jaate hain Amitabh. </p><p><span class="is-italic">Raj</span><span class="is-italic"> with </span><span class="is-italic">one </span><span class="is-italic">hand </span><span class="is-italic">over his fore</span><span class="is-italic">head.</span></p><span class="gag-tag" title="The running gag strikes again">facepalm #</span></div></div><div class="line no-speaker" data-search=" inside shetji’s office"><div class="speaker" aria-hidden="true"></div><div class="content"><p>Inside Shetji’s office</p></div></div><div class="line" data-search="deendayal (simran’s father) (raj enters the office. receptionist and man in office can walk out of the stage so focus will shift to office space) aao barkhudar. tum vilaayat se first class first leke aaye ho. ye manager ka job tumhara hain. bahar jaakar munimjee se apna appointment letter le lo. kab join karna chaho ge."><div class="speaker">Deendayal (Simran’s father)</div><div class="content"><p><span class="c-added">(Raj enters the office</span><span class="c-added">. Receptionist and man in office can walk out of the stage</span><span class="c-added"> so focus will shift to office space</span><span class="c-added">)</span><span class="c-added"> </span>Aao barkhudar. Tum vilaayat se first class first leke aaye ho. Ye manager ka job tumhara hain. Bahar jaakar munimjee se apna appointment letter le lo. Kab join karna chaho ge. </p></div></div><div class="line" data-search="raj shukriya shethji. kal se hee join karunga."><div class="speaker">Raj</div><div class="content"><p>Shukriya Shethji. Kal se hee join karunga.</p></div></div><div class="line no-speaker" data-search=" raj shakes hand with shetji and walks towards the door. he collides with simran. they look into each other’s eyes and go on staring at each other. (haunting music of dil to pagal hain). shetji coughs loudly. raj then hastily leaves the office. simran goes towards her dad."><div class="speaker" aria-hidden="true"></div><div class="content"><p><span class="is-italic">Raj</span><span class="is-italic"> shakes hand </span><span class="is-italic">with Shetji </span><span class="is-italic">and walks towards the door. </span><span class="is-italic">He collides with Simran. They look into each other’s eyes</span><span class="is-italic"> and go on staring at each other</span><span class="is-italic">.</span><span class="is-italic"> </span><span class="c-music is-italic">(</span><span class="c-music is-italic">Haunting m</span><span class="c-music is-italic">usic of </span><span class="c-music is-italic">Dil to Pagal Hain). </span><span class="is-italic">Shetji coughs loudly. </span><span class="is-italic">Raj</span><span class="is-italic"> then hastily leaves the office. Simran goes towards her dad.</span></p></div></div><div class="line" data-search="simran ye kaun tha papa."><div class="speaker">Simran</div><div class="content"><p>Ye kaun tha Papa.</p></div></div><div class="line" data-search="deendayal (simran’s father) voh raj hain. bahut honhaar naujawan hain, vilayat se first class first lekar aayaa hain, aur kal se office join karne vala hain. karega."><div class="speaker">Deendayal (Simran’s father)</div><div class="content"><p>Voh Raj hain. Bahut honhaar naujawan hain, vilayat se first class first lekar aayaa hain, <span class="is-strike">aur</span> Kal se office join <span class="is-strike">karne vala hain.</span> karega.</p></div></div><div class="line" data-search="simran papa main shaadi esee se karungi."><div class="speaker">Simran</div><div class="content"><p>Papa main shaadi esee se karungi.</p></div></div><div class="line" data-search="deendayal (simran’s father) ok beta. jo tumhe pasand hain usee se tumhari shaadi hogee."><div class="speaker">Deendayal (Simran’s father)</div><div class="content"><p>Ok beta. Jo tumhe pasand hain usee se tumhari shaadi hogee.</p></div></div></div>
+</section>
+
+<section class="scene" id="scene-3" data-scene="3">
+  <div class="scene-head">
+    <span class="scene-num">SCENE 03</span>
+    <h2>The Park</h2>
+  </div>
+  <div class="meta-box"><div class="meta-item"><span class="meta-label">CAST</span><span class="meta-value">Raj, Simran</span></div><div class="meta-item"><span class="meta-label">LOCATION</span><span class="meta-value">Park (Place vases or plant pots besides the chair). This chair is same a s receptionist chair.</span></div><div class="meta-item"><span class="meta-label">PROPERTY</span><span class="meta-value">vases with flowers/Plant pots. 2 roses.</span></div><p class="meta-note">(After scene 2 place vases/plant pots beside the chair)</p></div>
+  <div class="dialogue"><div class="line" data-search="narrator raj aur simran aksar ek doosare se milne lage hain.  (music tbd – background music dhun of “ek main aur ek tu, dono mile is tarah” while narrator speaks and raj &amp; simran take entry into the park.)"><div class="speaker">Narrator</div><div class="content"><p><span class="c-added">Raj aur Simran </span><span class="c-added">aksar ek doosare se milne lage hain</span><span class="c-added">.</span> </p><p><span class="c-music">(Music tbd – Background mus</span><span class="c-music">ic dhun of </span><span class="c-music">“</span><span class="c-music">Ek main aur ek tu</span><span class="c-music">,</span><span class="c-music"> dono mile is tarah</span><span class="c-music">”</span><span class="c-music"> </span>while narrator speaks and<span class="c-music"> </span>Raj &amp; Simran take entry into the park.)</p></div></div><div class="line no-speaker" data-search=" raj and simran are in the park. raj sits and simran is dancing on ‘tathya tathya ho’ raj puts his hand on his head. simran pulls him aside and scene is closed by showing two flowers cross over each other. (flower cross over upon exit of raj and simran instead of over their faces, so no queries by children. also as simran takes raj away person enters with flowers) ."><div class="speaker" aria-hidden="true"></div><div class="content"><p><span class="is-italic is-strike">Raj</span><span class="is-italic is-strike"> and Simran are i</span><span class="is-italic is-strike">n the </span><span class="is-italic is-strike">park.</span><span class="is-italic"> </span><span class="is-italic">Raj sits and </span><span class="is-italic">Simran is dancing on ‘</span><span class="c-music is-italic">Tathya tathya ho’ </span><span class="is-italic">Raj</span><span class="is-italic"> </span><span class="is-italic">puts his </span><span class="is-italic">hand on his head.</span><span class="is-italic"> </span><span class="is-italic">Simran pulls him aside</span><span class="is-italic"> and </span><span class="is-italic">scene </span><span class="is-italic">is </span><span class="is-italic">closed by showing </span><span class="is-italic">t</span><span class="is-italic">wo flowers cross over </span><span class="is-italic">each other</span><span class="c-added is-italic">. </span><span class="c-added is-italic">(flower cross over upon exit of Raj and Simran instead of over their faces</span><span class="c-added is-italic">, so no queries by children</span><span class="c-added is-italic">. Also as Simran takes Raj away </span><span class="c-added is-italic">person enters with flowers</span><span class="c-added is-italic">)</span><span class="c-added is-italic"> </span><span class="c-added is-italic">.</span><span class="c-added is-italic"> </span><span class="c-added is-italic"> </span></p><span class="gag-tag" title="The running gag strikes again">facepalm #</span></div></div></div>
+</section>
+
+<section class="scene" id="scene-4" data-scene="4">
+  <div class="scene-head">
+    <span class="scene-num">SCENE 04</span>
+    <h2>Fixing the Match</h2>
+  </div>
+  <div class="meta-box"><div class="meta-item"><span class="meta-label">CAST</span><span class="meta-value">Raj, Dharamchand, Sumitradevi, Deendayaal, Simran</span></div><div class="meta-item"><span class="meta-label">LOCATION</span><span class="meta-value">drawing room (</span></div><div class="meta-item"><span class="meta-label">PROPERTY</span><span class="meta-value">Nothing needed</span></div><p class="meta-note">(After scene 3 place back covers on central chairs. Office chair can move next to park space chair so Simran and dad can sit there and Raj and parents in central 3 chairs.)</p></div>
+  <div class="dialogue"><div class="line" data-search="narrator deendayal, sharda devi aur simran shaadi ki baat pakki karne raj ke ghar gaye."><div class="speaker">Narrator</div><div class="content"><p>Deendayal, Sharda Devi aur Simran shaadi ki baat pakki karne Raj ke ghar gaye.</p></div></div><div class="line" data-search="sumitradevi ramu kahan mar gaya. mehmaan aa gaye. chai nashta lana le aanaa"><div class="speaker">Sumitradevi</div><div class="content"><p>Ramu kahan mar gaya. Mehmaan aa gaye. Chai <span class="c-added">nashta</span> <span class="is-strike">lana</span><span class="is-strike"> </span><span class="c-added">le aanaa</span><span class="c-added"> </span></p></div></div><div class="line" data-search="ramu kaka ji maaji abhi laya."><div class="speaker">Ramu Kaka</div><div class="content"><p>Ji maaji abhi laya.</p></div></div><div class="line" data-search="dharamchand aaaiye aaiye. baithiye."><div class="speaker">Dharamchand</div><div class="content"><p>Aaaiye aaiye. Baithiye. </p></div></div><div class="line" data-search="simran (seeks blessing from sumitradevi)"><div class="speaker">Simran</div><div class="content"><p>(Seeks blessing from Sumitradevi)</p></div></div><div class="line" data-search="sumitradevi kitni sundar bahu dhundee hain hamaare raj ne. kitni sanskari bhi hain. main diya lekar dundne jaate tab bhi aise sundar bahu nahee milatee. (simran sharmatee hai aur raj ko aankh maaratee hai)."><div class="speaker">Sumitradevi</div><div class="content"><p>Kitni sundar bahu dhundee hain <span class="c-added">hamaare</span> Raj ne. Kitni sanskari bhi hain. Main diya lekar dundne jaate tab bhi aise sundar bahu nahee milatee.</p><p><span class="c-added">(Simran sharmatee hai aur Raj ko aankh maaratee hai).</span></p></div></div><div class="line" data-search="deendayal dono bachho ki shaadi dhum dham se karenge. hum ye shaadi dhoom dhaam se manaaenge."><div class="speaker">Deendayal</div><div class="content"><p><span class="is-strike">Dono bachho ki shaadi dhum dham se </span><span class="is-strike">karenge</span><span class="is-strike">.</span></p><p><span class="c-added">Hum ye shaadi dhoom dhaam se manaaenge.</span></p></div></div><div class="line" data-search="sharda devi (looking at dharamchand) ha bhai saab aap bolo vaise ham shaadi karenge."><div class="speaker">Sharda Devi</div><div class="content"><p><span class="is-strike">(looking at Dharamchand) Ha bhai saab aap bolo vaise ham shaadi karenge.</span></p></div></div><div class="line" data-search="dharmachand (sumitradevi nudges dharmachand) hain.  thehero. ek baat to main bolna bhool hi gaya.  (deendayal looks a bit worried/scared).  ghabrao naahi sambdhijee. hamaree koi paison ki maange nahi hain.  lekin (big pause) ham chahate hain ki baraateeyon ka swagat paan parag se kiya jaaye."><div class="speaker">Dharmachand</div><div class="content"><p><span class="is-italic">(Sumitradevi nudges Dharmachand)</span> <span class="is-strike">H</span><span class="is-strike">ain.</span> </p><p>Thehero. Ek baat to main bolna bhool hi gaya. </p><p><span class="is-italic">(Deendayal look</span><span class="is-italic">s</span><span class="is-italic"> a bit </span><span class="is-italic">worried/scared</span><span class="is-italic">). </span></p><p>Ghabrao naahi <span class="c-added">sambdhijee</span><span class="c-added">.</span> Hamaree koi <span class="c-added">paison</span> <span class="c-added">ki</span> maange nahi hain.  Lekin (big pause) ham chahate hain ki baraateeyon ka Swagat paan Parag se kiya jaaye.</p></div></div><div class="line no-speaker" data-search=" everyone starts laughing. raj puts his hand on his forehead."><div class="speaker" aria-hidden="true"></div><div class="content"><p>Everyone starts laughing. Raj puts his hand on his forehead.</p><span class="gag-tag" title="The running gag strikes again">facepalm #</span></div></div></div>
+</section>
+
+<section class="scene" id="scene-5" data-scene="5">
+  <div class="scene-head">
+    <span class="scene-num">SCENE 05</span>
+    <h2>The Wedding</h2>
+  </div>
+  <div class="meta-box"><div class="meta-item"><span class="meta-label">CAST</span><span class="meta-value">All</span></div><div class="meta-item"><span class="meta-label">LOCATION</span><span class="meta-value">all 5 chairs. Central chairs to have red cover, can possibly have petals.</span></div><div class="meta-item"><span class="meta-label">PROPERTY</span><span class="meta-value">Red cover for chairs, petals, scarves for Dulha Dulhan and possibly others as well</span></div><p class="meta-note">Raj and Simran can have some nice scarves on their dress. All can choose to have scarves not a must.</p></div>
+  <div class="dialogue"><div class="line no-speaker" data-search=" wedding scene. raj and simran on stage sitting on their chairs. all the previous characters are attending the wedding reception. here we can have people coming in continuously and having a small talk with each other (just 30 seconds or so) suddenly dharmchand and sumitradevi break into a dance on (le jayenge le jayenge – everyone attending the reception joins and dances in a circle). simran also gets up. raj tries to hold her back but she also joins in.  raj puts his hand on his forehead."><div class="speaker" aria-hidden="true"></div><div class="content"><p>Wedding Scene. Raj and Simran on stage sitting on their chairs. All the previous characters are attending the wedding reception. Here we can have people coming in continuously and having a small talk with each other (just 30 seconds or so) Suddenly Dharmchand and SumitraDevi break into a dance on <span class="c-music">(Le jayenge le jayenge</span><span class="c-music"> </span>– everyone attending the reception joins and dances in a circle). Simran also gets up. Raj tries to hold her back but she also joins in. </p><p>Raj puts his hand on his forehead.</p><span class="gag-tag" title="The running gag strikes again">facepalm #</span></div></div></div>
+</section>
+
+<section class="scene" id="scene-6" data-scene="6">
+  <div class="scene-head">
+    <span class="scene-num">SCENE 06</span>
+    <h2>The Naagin Scare</h2>
+  </div>
+  <div class="meta-box"><div class="meta-item"><span class="meta-label">CAST</span><span class="meta-value">Raj, Symitradevi, Bhairav baba</span></div><div class="meta-item"><span class="meta-label">PROPERTY</span><span class="meta-value">Briefcase, tie, pungi, saffron shawl for baba</span></div><p class="meta-note">Location Home same as scene 1 so should have same set up as scene 1.</p></div>
+  <div class="dialogue"><div class="line" data-search="narrator aise he haste khelte raj ki zindagi beet rahee hai. idhar ghar vaale aur bhi filmi ho jaa rahe the. is beech sreedevi ki naagin picture release ho gayee. iskaa raj ke ghar mein kya asar hua, yeh dekhte hain."><div class="speaker">Narrator</div><div class="content"><p>Aise he haste khelte Raj ki Zindagi beet rahee hai. Idhar ghar vaale aur bhi filmi ho jaa rahe the. Is beech Sreedevi ki naagin picture release ho gayee. Iskaa Raj ke ghar mein kya asar hua, yeh dekhte hain.</p></div></div><div class="line no-speaker" data-search=" raj comes home from office and loosens his tie."><div class="speaker" aria-hidden="true"></div><div class="content"><p><span class="is-italic">Raj</span><span class="is-italic"> comes home</span><span class="is-italic"> from office</span><span class="is-italic"> and loosens his tie</span><span class="is-italic">.</span></p></div></div><div class="line" data-search="sumitradevi aaj hamaare ghar ek bahot bade baba aa rahen hai. (bhairav baba arrives) bhairav baba ki jai. lagataa hai aaap ko pehle bhi kabhi dekha hain."><div class="speaker">Sumitradevi</div><div class="content"><p><span class="c-added">Aaj hamaare ghar ek bahot bade baba aa rahen hai.</span><span class="c-added"> </span><span class="c-added is-italic">(Bhairav baba arrives)</span><span class="c-added"> </span>Bhairav Baba ki Jai. Lagataa hai aaap ko pehle bhi kabhi dekha hain. </p></div></div><div class="line" data-search="bhairav baba han. mera ek judva bhai hain. use dekha hoga. mumkin hai kyun ki is skit me mera double role hai. shaayad aapko main amitabh ke jaisa lag rahaa hoon."><div class="speaker">Bhairav Baba</div><div class="content"><p><span class="is-strike">Han. </span><span class="is-strike">M</span><span class="is-strike">era </span><span class="is-strike">ek judva bhai hain. Use dekha hoga.</span></p><p><span class="c-added">Mumkin hai kyun ki </span><span class="c-added">is skit me mera double role hai.</span><span class="c-added"> Shaayad aapko main Amitabh ke jaisa lag rahaa hoon.</span></p></div></div><div class="line" data-search="sumitradevi baba muze lagataa hai meri bahu, simran, ek naagin hain."><div class="speaker">Sumitradevi</div><div class="content"><p>Baba muze lagataa hai meri bahu, Simran, ek naagin hain.</p></div></div><div class="line" data-search="bhairav baba aap ghabrao naahi maaji. es naagino ko nachana mujhe achee tarah aatta hai. (he starts playing his been). simran comes down from stairs and dances to the tune of ‘main nagin tu sapera’  with tongue out and hissing like a snake.  raj puts his hand on his forehead."><div class="speaker">Bhairav Baba</div><div class="content"><p><span class="is-italic">Aap</span><span class="is-italic"> ghabrao naahi maaji. Es </span><span class="is-italic">naagino</span><span class="is-italic"> ko </span><span class="is-italic">nachana mujhe achee tarah aatta hai. </span><span class="is-italic">(</span><span class="is-italic">He start</span><span class="is-italic">s</span><span class="is-italic"> playing his </span><span class="is-italic">been</span><span class="is-italic">)</span><span class="is-italic">.</span><span class="is-italic"> Simran comes down from stairs and dances to the tune of </span><span class="c-music is-italic">‘Main nagin tu sapera’  </span><span class="is-italic">with tongue out and hissing like a snake. </span></p><p><span class="is-italic">Raj </span><span class="is-italic">puts</span><span class="is-italic"> his hand on his </span><span class="is-italic">fore</span><span class="is-italic">head</span>.</p><span class="gag-tag" title="The running gag strikes again">facepalm #</span></div></div></div>
+</section>
+
+<section class="scene" id="scene-7" data-scene="7">
+  <div class="scene-head">
+    <span class="scene-num">SCENE 07</span>
+    <h2>Rocky's Report Card</h2>
+  </div>
+  <div class="meta-box"><div class="meta-item"><span class="meta-label">CAST</span><span class="meta-value">Raj, Rocky, Sumitradevi</span></div><div class="meta-item"><span class="meta-label">LOCATION</span><span class="meta-value">Home same scene 1 and 6.</span></div><div class="meta-item"><span class="meta-label">PROPS</span><span class="meta-value">Result sheet, Dadaji’s photo, cap/jacket - a prop to show young Rocky, since in later scene he needs to look old.</span></div></div>
+  <div class="dialogue"><div class="line" data-search="narrator ghabrao naahi. simran sach muchki naagin naahi the. picture cinema theatre se jaate he, raj ke ghar se bhi ye naagin ka bhoot utar gaya. aur sumitra devie bhi khush thi kyonki ek nanaha raj ghar mein aa gayaa tha. naam rakha rocky. yeh rocky bhi kuch kam filmi naahi tha. aao dekhte hain rocky ki ek jhalak."><div class="speaker">Narrator</div><div class="content"><p>Ghabrao naahi. Simran sach muchki naagin naahi the. Picture cinema theatre se jaate he, Raj ke ghar se bhi ye naagin ka bhoot utar gaya. Aur Sumitra devie bhi khush thi kyonki ek nanaha Raj ghar mein aa gayaa tha. Naam rakha Rocky. Yeh Rocky bhi kuch kam filmi naahi tha. Aao dekhte hain Rocky ki ek Jhalak.</p></div></div><div class="line" data-search="raj rocky, kaha se aa rahe ho. tumhaara result aaaya kya?"><div class="speaker">Raj</div><div class="content"><p>Rocky, kaha se aa rahe ho. Tumhaara result aaaya kya?</p></div></div><div class="line" data-search="rocky hey dad! chill. result lene hi gaya tha. ye dekhiye meri mark sheet (presenting it proudly)"><div class="speaker">Rocky</div><div class="content"><p>Hey Dad! Chill. Result lene hi gaya tha. Ye dekhiye meri mark sheet <span class="is-italic">(presenting it proudly)</span></p></div></div><div class="line" data-search="raj ye kya. sab mein fail. heart fail ho jaaye ga mera."><div class="speaker">Raj</div><div class="content"><p>Ye kya. Sab mein fail. Heart fail ho jaaye ga mera.</p></div></div><div class="line" data-search="rocky chill dad. just say ‘all is well’ ‘all is well’. (mimic aamir khan in three idiots)."><div class="speaker">Rocky</div><div class="content"><p>Chill Dad. Just say ‘All is Well’ ‘All is Well’. <span class="is-italic">(Mimic Aamir khan in Three idiots).</span></p></div></div><div class="line is-cut" data-search="rocky dad, kya main bade dadaji ki photo ke saamne ye marksheet rakhun?"><div class="speaker">Rocky</div><div class="content"><p>Dad, kya main Bade Dadaji ki photo ke saamne ye marksheet rakhun?</p></div></div><div class="line is-cut" data-search="raj ek khayega merese. (action like zapad khayega)"><div class="speaker">Raj</div><div class="content"><p>Ek khayega merese. <span class="is-italic">(Action like zapad khayega)</span></p></div></div><div class="line" data-search="sumitradevi (comes out from the kitchen – repeat kust like in scene 1) rocky beta - main tere liye gajar ka halwa lekar aate hun."><div class="speaker">SumitraDevi</div><div class="content"><p><span class="is-italic">(Comes out from the kitchen – repeat kust like in scene 1)</span> Rocky beta - main tere liye gajar ka halwa lekar aate hun.</p></div></div><div class="line" data-search="raj puts his hand on his forehead."><div class="speaker">Raj</div><div class="content"><p><span class="is-italic">Puts his h</span><span class="is-italic">and on his </span><span class="is-italic">fore</span><span class="is-italic">head.</span></p><span class="gag-tag" title="The running gag strikes again">facepalm #</span></div></div></div>
+</section>
+
+<section class="scene" id="scene-8" data-scene="8">
+  <div class="scene-head">
+    <span class="scene-num">SCENE 08</span>
+    <h2>The Finale</h2>
+  </div>
+  <div class="meta-box"><div class="meta-item"><span class="meta-label">CAST</span><span class="meta-value">Raj, Rocky, Simran, Rocky’s wife</span></div><div class="meta-item"><span class="meta-label">LOCATION</span><span class="meta-value">Home same as scene 1, 6, 7</span></div><div class="meta-item"><span class="meta-label">PROPS</span><span class="meta-value">small lamp, walking stick</span></div></div>
+  <div class="dialogue"><div class="line" data-search="raj (old) (sings the roshni deta bajaj song – jab main chota bacha tha badee sharat karta tha…) raj starts coughing."><div class="speaker">Raj (Old)</div><div class="content"><p><span class="c-music">(Sings the Roshni deta bajaj song – jab m</span><span class="c-music">a</span><span class="c-music">in chota bacha tha bade</span><span class="c-music">e</span><span class="c-music"> sharat karta tha…)</span><span class="c-music"> </span><span class="is-italic">Raj starts coughing</span>.</p></div></div><div class="line" data-search="rocky (now grown up) dad. aap ko letna chaliye."><div class="speaker">Rocky (now grown up)</div><div class="content"><p>Dad. Aap ko letna chaliye.</p></div></div><div class="line no-speaker" data-search=" simran, rocky, rocky’s wife all ask raj to lie on the bed. they light a small lamp."><div class="speaker" aria-hidden="true"></div><div class="content"><p><span class="is-italic">Simran</span><span class="is-italic">,</span><span class="is-italic"> Rocky</span><span class="is-italic">, </span><span class="is-italic">Rocky’s wife</span><span class="is-italic"> all ask </span><span class="is-italic">Raj</span><span class="is-italic"> to lie on the bed. </span><span class="is-italic">They light a small lamp.</span></p></div></div><div class="line" data-search="raj ye kis liye? electricity chalee gayi kya?"><div class="speaker">Raj</div><div class="content"><p>Ye kis liye? Electricity chalee gayi kya?</p></div></div><div class="line" data-search="rocky’s wife nahhi sassur ji. is samay par aisa hi karte hain."><div class="speaker">Rocky’s wife</div><div class="content"><p>Nahhi Sassur ji. Is samay par aisa hi karte hain.</p></div></div><div class="line" data-search="raj aisa samay? (confused)"><div class="speaker">Raj</div><div class="content"><p>Aisa samay? <span class="is-italic">(Confused)</span></p></div></div><div class="line no-speaker" data-search=" light on the lamp flickers and goes off"><div class="speaker" aria-hidden="true"></div><div class="content"><p><span class="is-italic">Light on the lamp flickers and goes off</span></p></div></div><div class="line" data-search="everyone naaaahhhi."><div class="speaker">Everyone</div><div class="content"><p>Naaaahhhi. </p></div></div><div class="line" data-search="simran (trying to break her bangles though fails) mujhe chod ke kyon chale gaye."><div class="speaker">Simran</div><div class="content"><p><span class="is-italic">(</span><span class="is-italic">T</span><span class="is-italic">rying to break her bangles</span><span class="is-italic"> though fails)</span> Mujhe chod ke kyon chale gaye.</p></div></div><div class="line" data-search="raj (gets up and starts beating everyone with his stick). chup bheto karo saab log. diya bujh gayaa. mein abhi bhee zinda hoon.  (raj’s hand starts to go to his forehead though suddenly he shrugs and breaks into a dance) can we have a song saying something like i am back or exhibiting some attitude saying don’t worry just live, have fun and raj invites family to dance)."><div class="speaker">Raj</div><div class="content"><p><span class="is-italic">(</span><span class="is-italic">Gets up and starts beating everyone with his stick</span><span class="is-italic">)</span><span class="is-italic">.</span> Chup <span class="is-strike">bheto</span> karo saab log. Diya bujh gayaa. Mein abhi bhee zinda hoon. </p><p><span class="is-italic">(</span><span class="is-italic">Raj’s hand starts to go to his forehead </span><span class="is-italic">though suddenly he shrugs and breaks into a dance)</span></p><p><span class="c-music is-italic">Can we have a song saying something like I am back or </span><span class="c-music is-italic">exhibiting some attitude saying don’t worry just live, have fun</span><span class="c-music is-italic"> and Raj invites family to dance).</span></p><span class="gag-tag gag-twist" title="The running gag finally breaks">the twist</span></div></div><div class="line" data-search="everyone dances on ek dusre se karte hain pyaar hum. surprise surprise raj too joins them.
+we ask the whole audience to join in this dance. the end."><div class="speaker">Everyone</div><div class="content"><p>Dances on <span class="c-music">Ek dusre se karte hain pyaar hum.</span></p><p><span class="is-strike">Surprise Surprise </span><span class="is-strike">Raj</span><span class="is-strike"> </span><span class="is-strike">too </span><span class="is-strike">joins them.</span><br>We ask the whole audience to join in this dance.</p><p>The End.</p></div></div></div>
+</section>
+
+  </main>
+</div>
+
+<footer class="page-footer">
+  Mein hu Hero — rehearsal companion, generated from the production script. The Google Doc is the editable master; regenerate this page from it whenever the script changes.
+</footer>
+
+<script>
+(function () {
+  // ---- theme ----
+  var root = document.documentElement;
+  var themeBtn = document.getElementById('themeToggle');
+  function applyTheme(t) { root.setAttribute('data-theme', t); }
+  function systemPref() { return 'dark'; }
+
+  function loadTheme() {
+    if (window.storage && window.storage.get) {
+      window.storage.get('mhh-theme', false).then(function (res) {
+        applyTheme(res && res.value ? res.value : systemPref());
+      }).catch(function () { applyTheme(systemPref()); });
+    } else {
+      applyTheme(systemPref());
+    }
+  }
+  loadTheme();
+
+  themeBtn.addEventListener('click', function () {
+    var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    if (window.storage && window.storage.set) {
+      window.storage.set('mhh-theme', next, false).catch(function () {});
+    }
+  });
+
+  // ---- hide optional cuts ----
+  var cutsBtn = document.getElementById('hideCutsToggle');
+  cutsBtn.addEventListener('click', function () {
+    var on = document.body.classList.toggle('hide-cuts');
+    cutsBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+
+  // ---- search ----
+  var input = document.getElementById('searchInput');
+  var lines = Array.prototype.slice.call(document.querySelectorAll('.line'));
+  var scenes = Array.prototype.slice.call(document.querySelectorAll('section.scene'));
+  input.addEventListener('input', function () {
+    var q = input.value.trim().toLowerCase();
+    lines.forEach(function (el) {
+      var match = !q || (el.getAttribute('data-search') || '').indexOf(q) !== -1;
+      el.classList.toggle('search-hidden', !match);
+    });
+    scenes.forEach(function (sec) {
+      var anyVisible = sec.querySelector('.line:not(.search-hidden)');
+      sec.classList.toggle('search-hidden', !!q && !anyVisible);
+    });
+  });
+
+  // ---- active scene highlighting in nav ----
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-link'));
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var link = document.querySelector('.nav-link[data-scene="' + entry.target.getAttribute('data-scene') + '"]');
+        if (!link) return;
+        if (entry.isIntersecting) {
+          navLinks.forEach(function (l) { l.classList.remove('is-active'); });
+          link.classList.add('is-active');
+        }
+      });
+    }, { rootMargin: '-30% 0px -60% 0px' });
+    scenes.forEach(function (s) { obs.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
