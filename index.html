@@ -265,6 +265,9 @@
     border-radius: 999px; padding: .25rem .6rem; cursor: pointer;
   }
   .mini-btn:hover { border-color: var(--accent); }
+  .mini-btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-contrast); border-color: var(--accent); }
+  .mini-btn[disabled] { opacity: .4; cursor: not-allowed; }
+  .mini-btn[disabled]:hover { border-color: var(--border); }
 
   .reveal-btn { display: none; }
   body.practice-mode .line.is-practicing:not(.peek) .content {
@@ -378,6 +381,7 @@
     <span id="practiceStatusText"></span>
     <button type="button" id="revealAllBtn" class="mini-btn">Reveal all</button>
     <button type="button" id="hideAllBtn" class="mini-btn">Hide all</button>
+    <button type="button" id="scopeToggle" class="mini-btn" aria-pressed="false" title="Only my lines skips scenes and lines that aren't yours — full context is needed for Cue Mode though, so it's locked while that's on">○ Only my lines</button>
   </div>
 </div>
 
@@ -575,10 +579,11 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
   }
   function refreshSceneVisibility() {
     var practicing = document.body.classList.contains('practice-mode');
+    var ownOnly = document.body.classList.contains('practice-own-only');
     var val = actorSelect.value;
     scenes.forEach(function (sec) {
       var any = Array.prototype.some.call(sec.querySelectorAll('.line'), isLineVisible);
-      var actorAbsent = (!practicing && val) ? !sec.querySelector('.line[data-actor="' + val + '"]') : false;
+      var actorAbsent = (val && (!practicing || ownOnly)) ? !sec.querySelector('.line[data-actor="' + val + '"]') : false;
       sec.classList.toggle('all-hidden', !any || actorAbsent);
     });
   }
@@ -669,6 +674,29 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
   var practiceStatusText = document.getElementById('practiceStatusText');
   var revealAllBtn = document.getElementById('revealAllBtn');
   var hideAllBtn = document.getElementById('hideAllBtn');
+  var scopeToggle = document.getElementById('scopeToggle');
+
+  function loadPracticeScope() {
+    if (window.storage && window.storage.get) {
+      window.storage.get('mhh-practicescope', false).then(function (res) {
+        if (res && res.value === 'own') { setScope(true, true); applyActorState(); }
+      }).catch(function () {});
+    }
+  }
+  function setScope(ownOnly, skipPersist) {
+    document.body.classList.toggle('practice-own-only', ownOnly);
+    scopeToggle.setAttribute('aria-pressed', ownOnly ? 'true' : 'false');
+    scopeToggle.textContent = ownOnly ? '\u25CF Only my lines' : '\u25CB Only my lines';
+    if (!skipPersist && window.storage && window.storage.set) {
+      window.storage.set('mhh-practicescope', ownOnly ? 'own' : 'full', false).catch(function () {});
+    }
+  }
+  loadPracticeScope();
+  scopeToggle.addEventListener('click', function () {
+    if (scopeToggle.disabled) return;
+    setScope(!document.body.classList.contains('practice-own-only'));
+    applyActorState();
+  });
 
   function escapeHtml(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -725,26 +753,30 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
 
   function applyActorState() {
     var practicing = document.body.classList.contains('practice-mode');
+    var ownOnly = practicing && document.body.classList.contains('practice-own-only');
     var val = actorSelect.value;
     var count = 0;
     lines.forEach(function (line) {
       var actor = line.getAttribute('data-actor') || '';
       line.classList.remove('is-practicing');
-      if (practicing) {
-        line.classList.remove('actor-hidden');
-        if (actor && val && actor === val) {
-          line.classList.add('is-practicing');
-          count++;
+      if (practicing && actor && val && actor === val) {
+        line.classList.add('is-practicing');
+        count++;
+      }
+      if (!practicing || ownOnly) {
+        if (actor && val && actor !== val) {
+          line.classList.add('actor-hidden');
+        } else {
+          line.classList.remove('actor-hidden');
         }
-      } else if (actor && val && actor !== val) {
-        line.classList.add('actor-hidden');
       } else {
         line.classList.remove('actor-hidden');
       }
     });
     if (practicing) {
       var label = actorSelect.options[actorSelect.selectedIndex] ? actorSelect.options[actorSelect.selectedIndex].text : val;
-      practiceStatusText.innerHTML = 'Practicing as <strong>' + label + '</strong> \u2014 ' + count + ' line' + (count === 1 ? '' : 's') + ' blurred';
+      var scopeNote = ownOnly ? ' (only your scenes)' : '';
+      practiceStatusText.innerHTML = 'Practicing as <strong>' + label + '</strong> \u2014 ' + count + ' line' + (count === 1 ? '' : 's') + ' blurred' + scopeNote;
       practiceStatus.hidden = false;
     } else {
       practiceStatus.hidden = true;
@@ -789,6 +821,7 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
         document.body.classList.remove('cue-mode');
         cueToggle.setAttribute('aria-pressed', 'false');
         cueToggle.textContent = '\u25CB CUE MODE';
+        scopeToggle.disabled = false;
       }
     }
     applyActorState();
@@ -797,7 +830,13 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
 
   cueToggle.addEventListener('click', function () {
     var turningOn = !document.body.classList.contains('cue-mode');
-    if (turningOn) ensurePracticeModeOn();
+    if (turningOn) {
+      ensurePracticeModeOn();
+      setScope(false);
+      scopeToggle.disabled = true;
+    } else {
+      scopeToggle.disabled = false;
+    }
     document.body.classList.toggle('cue-mode', turningOn);
     cueToggle.setAttribute('aria-pressed', turningOn ? 'true' : 'false');
     cueToggle.textContent = turningOn ? '\u25CF EXIT CUE MODE' : '\u25CB CUE MODE';
