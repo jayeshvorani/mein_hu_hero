@@ -104,6 +104,9 @@
   .toggle-pill[aria-pressed="true"] {
     background: var(--accent); border-color: var(--accent); color: var(--accent-contrast);
   }
+  .toggle-pill:disabled { opacity: .4; cursor: not-allowed; }
+  .toggle-pill:disabled:hover { border-color: var(--border); }
+  .jump-btn { color: var(--accent-strong); border-color: var(--accent); font-weight: 600; }
   .theme-pill svg { width: 13px; height: 13px; flex-shrink: 0; }
   .theme-moon { display: none; }
   html[data-theme="dark"] .theme-sun { display: none; }
@@ -376,6 +379,7 @@
     </select>
     <button class="toggle-pill" id="practiceToggle" type="button" aria-pressed="false" title="Blurs the selected actor's own lines so you can rehearse cues without reading ahead">○ PRACTICE MODE</button>
     <button class="toggle-pill" id="cueToggle" type="button" aria-pressed="false" title="Shows only the tail of the line before yours as a cue, then a blank for your line">○ CUE MODE</button>
+    <button class="toggle-pill jump-btn" id="jumpBtn" type="button" disabled>↓ Jump to their lines</button>
   </div>
   <div class="practice-status" id="practiceStatus" hidden>
     <span id="practiceStatusText"></span>
@@ -675,6 +679,16 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
   var revealAllBtn = document.getElementById('revealAllBtn');
   var hideAllBtn = document.getElementById('hideAllBtn');
   var scopeToggle = document.getElementById('scopeToggle');
+  var jumpBtn = document.getElementById('jumpBtn');
+
+  function updateJumpBtn() {
+    var val = actorSelect.value;
+    jumpBtn.disabled = !val;
+    jumpBtn.textContent = val ? ('\u2193 Jump to ' + val + '\u2019s lines') : '\u2193 Jump to their lines';
+  }
+  jumpBtn.addEventListener('click', function () {
+    scrollToFirstForActor(actorSelect.value);
+  });
 
   function loadPracticeScope() {
     if (window.storage && window.storage.get) {
@@ -694,7 +708,8 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
   loadPracticeScope();
   scopeToggle.addEventListener('click', function () {
     if (scopeToggle.disabled) return;
-    setScope(!document.body.classList.contains('practice-own-only'));
+    var turningOn = !document.body.classList.contains('practice-own-only');
+    setScope(turningOn);
     applyActorState();
   });
 
@@ -789,7 +804,7 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
   actorSelect.addEventListener('change', function () {
     lines.forEach(function (l) { l.classList.remove('peek'); });
     applyActorState();
-    if (!document.body.classList.contains('practice-mode')) scrollToFirstForActor(actorSelect.value);
+    updateJumpBtn();
   });
 
   function ensurePracticeModeOn() {
@@ -825,7 +840,7 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
       }
     }
     applyActorState();
-    if (turningOn) scrollToFirstForActor(actorSelect.value);
+    updateJumpBtn();
   });
 
   cueToggle.addEventListener('click', function () {
@@ -841,7 +856,7 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
     cueToggle.setAttribute('aria-pressed', turningOn ? 'true' : 'false');
     cueToggle.textContent = turningOn ? '\u25CF EXIT CUE MODE' : '\u25CB CUE MODE';
     applyActorState();
-    if (turningOn) scrollToFirstForActor(actorSelect.value);
+    updateJumpBtn();
   });
 
   document.addEventListener('click', function (e) {
@@ -865,6 +880,7 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
   });
 
   applyActorState();
+  updateJumpBtn();
 
   // ---- active scene highlighting in nav ----
   if ('IntersectionObserver' in window) {
