@@ -574,9 +574,12 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
     return true;
   }
   function refreshSceneVisibility() {
+    var practicing = document.body.classList.contains('practice-mode');
+    var val = actorSelect.value;
     scenes.forEach(function (sec) {
       var any = Array.prototype.some.call(sec.querySelectorAll('.line'), isLineVisible);
-      sec.classList.toggle('all-hidden', !any);
+      var actorAbsent = (!practicing && val) ? !sec.querySelector('.line[data-actor="' + val + '"]') : false;
+      sec.classList.toggle('all-hidden', !any || actorAbsent);
     });
   }
   function scrollToFirstForActor(val) {
@@ -780,6 +783,8 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
       document.body.classList.remove('practice-mode');
       practiceToggle.setAttribute('aria-pressed', 'false');
       practiceToggle.textContent = '\u25CB PRACTICE MODE';
+      var allOpt = actorSelect.querySelector('option[value=""]');
+      if (allOpt) allOpt.disabled = false;
       if (document.body.classList.contains('cue-mode')) {
         document.body.classList.remove('cue-mode');
         cueToggle.setAttribute('aria-pressed', 'false');
