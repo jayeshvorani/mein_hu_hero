@@ -22,6 +22,8 @@
     --gold-border: #E4C878;
     --terracotta: #9C5B3F;
     --music: #4E7599;
+    --mark-bg: #FFE58A;
+    --mark-fg: #3D2F05;
     --header-h: 64px;
     --radius: 10px;
     --shadow: 0 1px 2px rgba(20, 30, 40, 0.06), 0 8px 24px rgba(20, 30, 40, 0.04);
@@ -40,6 +42,8 @@
     --gold-border: #6B5A2C;
     --terracotta: #D08A6A;
     --music: #8FB3D6;
+    --mark-bg: #6B5A1F;
+    --mark-fg: #FFE9A8;
     --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.25);
   }
   * { box-sizing: border-box; }
@@ -197,6 +201,8 @@
     padding: .05rem .5rem; vertical-align: middle;
   }
   .gag-tag.gag-twist { color: var(--terracotta); border-color: var(--terracotta); }
+
+  mark.search-hit { background: var(--mark-bg); color: var(--mark-fg); border-radius: 3px; padding: 0 .05em; }
 
   body.hide-cuts .line.is-cut { display: none; }
   .line.search-hidden { display: none; }
@@ -411,8 +417,49 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
   var input = document.getElementById('searchInput');
   var lines = Array.prototype.slice.call(document.querySelectorAll('.line'));
   var scenes = Array.prototype.slice.call(document.querySelectorAll('section.scene'));
+
+  var markEls = [];
+  function clearHighlights() {
+    markEls.forEach(function (m) {
+      var parent = m.parentNode;
+      if (!parent) return;
+      while (m.firstChild) parent.insertBefore(m.firstChild, m);
+      parent.removeChild(m);
+      parent.normalize();
+    });
+    markEls = [];
+  }
+  function highlightIn(el, q) {
+    if (!el) return;
+    var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+    var textNodes = [];
+    var node;
+    while ((node = walker.nextNode())) textNodes.push(node);
+    textNodes.forEach(function (tn) {
+      var text = tn.nodeValue;
+      var lower = text.toLowerCase();
+      var idx = lower.indexOf(q);
+      if (idx === -1) return;
+      var frag = document.createDocumentFragment();
+      var lastIndex = 0;
+      while (idx !== -1) {
+        if (idx > lastIndex) frag.appendChild(document.createTextNode(text.slice(lastIndex, idx)));
+        var mark = document.createElement('mark');
+        mark.className = 'search-hit';
+        mark.textContent = text.slice(idx, idx + q.length);
+        frag.appendChild(mark);
+        markEls.push(mark);
+        lastIndex = idx + q.length;
+        idx = lower.indexOf(q, lastIndex);
+      }
+      if (lastIndex < text.length) frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+      tn.parentNode.replaceChild(frag, tn);
+    });
+  }
+
   input.addEventListener('input', function () {
     var q = input.value.trim().toLowerCase();
+    clearHighlights();
     lines.forEach(function (el) {
       var match = !q || (el.getAttribute('data-search') || '').indexOf(q) !== -1;
       el.classList.toggle('search-hidden', !match);
@@ -421,6 +468,15 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
       var anyVisible = sec.querySelector('.line:not(.search-hidden)');
       sec.classList.toggle('search-hidden', !!q && !anyVisible);
     });
+    if (!q) return;
+    var firstMatch = null;
+    lines.forEach(function (el) {
+      if (el.classList.contains('search-hidden')) return;
+      highlightIn(el.querySelector('.speaker'), q);
+      highlightIn(el.querySelector('.content'), q);
+      if (!firstMatch) firstMatch = el;
+    });
+    if (firstMatch) firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
   });
 
   // ---- active scene highlighting in nav ----
