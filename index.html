@@ -680,11 +680,19 @@ we ask the whole audience to join in this dance. the end."><div class="speaker">
   var hideAllBtn = document.getElementById('hideAllBtn');
   var scopeToggle = document.getElementById('scopeToggle');
   var jumpBtn = document.getElementById('jumpBtn');
+  var ACTOR_CHAR_MAP = {"Aparna": "Sutradhar", "Sarvesh": "Raj Malhotra", "Rajesh": "Dharamchand", "Harsh": "Sumitradevi", "Kavita": "Simran", "Shailendra": "Deendayal", "Vaishali": "Sharda Devi", "Maneesh": "Ramu Kaka", "Jayant": "Rocky", "Madhuri": "Daughter-In-Law", "Aneeta": "Office Receptionist", "Apurva": "Man in office, Bhairav Baba"};
 
+  function possessive(name) {
+    return name + (/s$/i.test(name) ? '\u2019' : '\u2019s');
+  }
   function updateJumpBtn() {
     var val = actorSelect.value;
     jumpBtn.disabled = !val;
-    jumpBtn.textContent = val ? ('\u2193 Jump to ' + val + '\u2019s lines') : '\u2193 Jump to their lines';
+    if (!val) { jumpBtn.textContent = '\u2193 Jump to their lines'; return; }
+    var chars = (ACTOR_CHAR_MAP[val] || val).split(', ');
+    jumpBtn.textContent = chars.length > 1
+      ? '\u2193 Jump to lines for ' + chars.join(', ')
+      : '\u2193 Jump to ' + possessive(chars[0]) + ' lines';
   }
   jumpBtn.addEventListener('click', function () {
     scrollToFirstForActor(actorSelect.value);
