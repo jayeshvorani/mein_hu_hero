@@ -3740,6 +3740,28 @@ we ask the whole audience to join in this dance. the end."
             jumpScene(e.key === "[" ? -1 : 1);
           }
         });
+
+        // ---- header height ----
+        // The topbar wraps on narrow screens (the search field drops onto its
+        // own row), so its rendered height varies with viewport, font loading
+        // and whether control labels are shown. --header-h drives both the
+        // sticky offset of the scene tab bar and scenes' scroll-margin, so a
+        // stale value lets the header paint over the top of the tabs. Measure
+        // the real height and write it back rather than hardcoding a guess.
+        var topbar = document.querySelector("header.topbar");
+        function syncHeaderHeight() {
+          if (!topbar) return;
+          var h = Math.round(topbar.getBoundingClientRect().height);
+          if (h > 0) root.style.setProperty("--header-h", h + "px");
+        }
+        syncHeaderHeight();
+        window.addEventListener("resize", syncHeaderHeight);
+        if (window.ResizeObserver && topbar) {
+          new ResizeObserver(syncHeaderHeight).observe(topbar);
+        }
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(syncHeaderHeight);
+        }
       })();
     </script>
   </body>
