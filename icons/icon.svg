@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Mein hu Hero">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b1613"/>
+      <stop offset="1" stop-color="#0d0907"/>
+    </linearGradient>
+    <linearGradient id="star" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd27a"/>
+      <stop offset="0.55" stop-color="#f9b73f"/>
+      <stop offset="1" stop-color="#f66e60"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <!-- ticket perforation, the show's own motif -->
+  <g fill="none" stroke="#f9b73f" stroke-opacity="0.28" stroke-width="10" stroke-linecap="round" stroke-dasharray="2 26">
+    <path d="M96 150h320"/>
+    <path d="M96 362h320"/>
+  </g>
+  <path
+    fill="url(#star)"
+    d="M256 152l30.4 71.3 77.1 6.9-58.3 51.2 17.4 75.6L256 316.5l-66.6 40.5 17.4-75.6-58.3-51.2 77.1-6.9z"/>
+</svg>
