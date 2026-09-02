@@ -2308,6 +2308,15 @@
         .search-open {
           display: inline-flex;
         }
+        /* .search-wrap covers the whole bar once open, including the spot
+           #searchOpen sits in, so its magnifying-glass icon would otherwise
+           show through behind the close button. Hidden two ways: the :has()
+           rule for browsers that support it, and the [hidden] attribute set
+           in JS as a fallback where they do not. */
+        body:has(.search-wrap.is-open) .search-open,
+        .search-open[hidden] {
+          display: none;
+        }
 
         /* search collapses to an icon and expands over the bar when tapped */
         .search-wrap {
@@ -2316,20 +2325,28 @@
           max-width: none;
           z-index: 3;
           opacity: 0;
-          visibility: hidden;
+          /* Not visibility: hidden. Toggling visibility on and off while it
+             sits in a `transition` list interacts badly with focus() called
+             in the same task as the class change: Chromium can return a
+             stale (pre-toggle) used value from getComputedStyle, and an
+             element read as still-hidden at that instant silently refuses
+             focus, even though the class and cascade are both already
+             correct by every other measure. pointer-events does the same
+             job (nothing behind the fade can be clicked or tabbed to) without
+             that hazard, since it never participates in a transition here. */
+          pointer-events: none;
           transform: scale(0.98);
           transition:
             opacity var(--motion-2) var(--ease),
-            transform var(--motion-2) var(--ease),
-            visibility var(--motion-2) var(--ease);
+            transform var(--motion-2) var(--ease);
         }
         .search-wrap.is-open {
           opacity: 1;
-          visibility: visible;
+          pointer-events: auto;
           transform: none;
         }
         .search-wrap input {
-          height: 44px;
+          height: 46px;
           background: var(--surface-2);
         }
         .search-close {
@@ -2338,8 +2355,8 @@
           justify-content: center;
           position: absolute;
           right: 0.25rem;
-          width: 40px;
-          height: 40px;
+          width: 44px;
+          height: 44px;
           border: none;
           background: transparent;
           color: var(--muted);
@@ -6332,22 +6349,47 @@ we ask the whole audience to join in this dance. the end."
         var searchOpenBtn = document.getElementById("searchOpen");
         var searchCloseBtn = document.getElementById("searchClose");
         var searchOpenState = false;
+        var searchCollapsesQuery = window.matchMedia("(max-width: 900px)");
+        // The wrap is hidden (when collapsed and closed) with opacity and
+        // pointer-events rather than visibility: see the CSS comment on
+        // .search-wrap for why visibility caused focus() to silently fail.
+        // Neither opacity nor pointer-events removes an element from the tab
+        // order or the accessibility tree on its own, so inert covers both.
+        // Only relevant when the collapse behaviour is actually active: on
+        // desktop the field is always present and must stay reachable.
+        function syncSearchInert() {
+          if (!searchWrap) return;
+          var shouldBeInert =
+            searchCollapsesQuery.matches &&
+            !searchWrap.classList.contains("is-open");
+          searchWrap.toggleAttribute("inert", shouldBeInert);
+        }
+        syncSearchInert();
+        searchCollapsesQuery.addEventListener("change", syncSearchInert);
         function setSearchOpen(open) {
           searchOpenState = open;
-          if (searchWrap) searchWrap.classList.toggle("is-open", open);
-          if (searchOpenBtn)
+          if (searchWrap) {
+            searchWrap.classList.toggle("is-open", open);
+            syncSearchInert();
+          }
+          if (searchOpenBtn) {
             searchOpenBtn.setAttribute(
               "aria-expanded",
               open ? "true" : "false",
             );
-          if (open) {
-            setBarHidden(false);
-            if (input) input.focus();
+            searchOpenBtn.hidden = open;
           }
+          if (open) setBarHidden(false);
         }
         if (searchOpenBtn) {
+          // Stops this icon button showing a visible focus ring for the
+          // instant between the click and input.focus() taking over below.
+          searchOpenBtn.addEventListener("mousedown", function (e) {
+            e.preventDefault();
+          });
           searchOpenBtn.addEventListener("click", function () {
             setSearchOpen(true);
+            if (input) input.focus();
           });
         }
         if (searchCloseBtn) {
