@@ -543,6 +543,11 @@
       .search-wrap input {
         width: 100%;
         min-height: 44px;
+        /* type="search" gets native chrome on iOS and Safari — an inset
+           shadow, a rounded overlay and a built-in clear button that fights
+           our own close button. Strip it so the field is ours. */
+        appearance: none;
+        -webkit-appearance: none;
         font-family: inherit;
         font-size: 0.9rem;
         color: var(--ink);
@@ -557,9 +562,22 @@
       .search-wrap input::placeholder {
         color: var(--muted);
       }
-      .search-wrap input:focus-visible {
-        outline: 2px solid var(--accent);
-        outline-offset: 1px;
+      /* WebKit's own clear "x" would sit under our close button */
+      .search-wrap input::-webkit-search-decoration,
+      .search-wrap input::-webkit-search-cancel-button,
+      .search-wrap input::-webkit-search-results-button,
+      .search-wrap input::-webkit-search-results-decoration {
+        -webkit-appearance: none;
+        appearance: none;
+      }
+      /* No outline ring here. The heavy 2px ring plus its offset read as a
+         hard red band around the field, which on a phone is most of the top
+         bar. Focus is still clearly indicated, just quietly: the border picks
+         up the accent and the fill lifts. Both are visible in either theme,
+         so keyboard users are not left guessing where focus is. */
+      .search-wrap input:focus-visible,
+      .search-wrap input:focus {
+        outline: none;
         border-color: var(--accent);
         background: var(--surface-2);
       }
@@ -615,10 +633,6 @@
       .icon-btn:active {
         transform: scale(0.94);
       }
-      .search-open {
-        display: none;
-      }
-
       /* pill controls (desktop) */
       .pill {
         display: inline-flex;
@@ -2305,51 +2319,36 @@
         .desk-only {
           display: none !important;
         }
-        .search-open {
-          display: inline-flex;
-        }
-        /* .search-wrap covers the whole bar once open, including the spot
-           #searchOpen sits in, so its magnifying-glass icon would otherwise
-           show through behind the close button. Hidden two ways: the :has()
-           rule for browsers that support it, and the [hidden] attribute set
-           in JS as a fallback where they do not. */
-        body:has(.search-wrap.is-open) .search-open,
-        .search-open[hidden] {
-          display: none;
-        }
-
-        /* search collapses to an icon and expands over the bar when tapped */
+        /* The field sits inline between the brand and the controls and takes
+           whatever width they leave. It is never collapsed behind an icon:
+           the placeholder is the affordance, so it has to be readable the
+           moment the page loads. */
         .search-wrap {
-          position: absolute;
-          inset: 0.4rem 0.5rem 0.4rem 0.5rem;
+          flex: 1;
+          min-width: 0;
           max-width: none;
-          z-index: 3;
-          opacity: 0;
-          /* Not visibility: hidden. Toggling visibility on and off while it
-             sits in a `transition` list interacts badly with focus() called
-             in the same task as the class change: Chromium can return a
-             stale (pre-toggle) used value from getComputedStyle, and an
-             element read as still-hidden at that instant silently refuses
-             focus, even though the class and cascade are both already
-             correct by every other measure. pointer-events does the same
-             job (nothing behind the fade can be clicked or tabbed to) without
-             that hazard, since it never participates in a transition here. */
-          pointer-events: none;
-          transform: scale(0.98);
-          transition:
-            opacity var(--motion-2) var(--ease),
-            transform var(--motion-2) var(--ease);
-        }
-        .search-wrap.is-open {
-          opacity: 1;
-          pointer-events: auto;
-          transform: none;
         }
         .search-wrap input {
           height: 46px;
           background: var(--surface-2);
+          /* iOS Safari auto-zooms any field whose computed size is under
+             16px, and with no maximum-scale in the viewport meta it never
+             zooms back out again: the page is left visibly scaled and has
+             to be pinched back by hand. 16px is the threshold, so the field
+             is pinned to it on phones rather than inheriting the 0.9rem
+             (14.4px) used on desktop. */
+          font-size: 16px;
+          /* the clear button is a 44px box sitting on top of the field's
+             right edge, so the text needs to stop clear of it */
+          padding-right: 2.9rem;
         }
-        .search-close {
+        /* The field can no longer be dismissed, so this is a clear-the-query
+           button now, not a close button. It would be a dead control on an
+           empty field, so it only appears once there is something to clear. */
+        .search-wrap:not(.has-query) .search-close {
+          display: none;
+        }
+        .search-wrap.has-query .search-close {
           display: inline-flex;
           align-items: center;
           justify-content: center;
@@ -3022,7 +3021,7 @@
             type="button"
             class="search-close"
             id="searchClose"
-            aria-label="Close search"
+            aria-label="Clear search"
           >
             <svg
               viewBox="0 0 24 24"
@@ -3037,27 +3036,6 @@
         </div>
 
         <div class="topbar-controls">
-          <!-- phone only: opens the search field, which is hidden at rest to
-               keep the bar slim -->
-          <button
-            class="icon-btn search-open"
-            id="searchOpen"
-            type="button"
-            aria-label="Search dialogue"
-            aria-expanded="false"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.7"
-              aria-hidden="true"
-            >
-              <circle cx="11" cy="11" r="7" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-          </button>
-
           <!-- desktop only: these live in the Filters sheet on phones -->
           <div
             class="text-size-group desk-only"
@@ -6344,54 +6322,33 @@ we ask the whole audience to join in this dance. the end."
           topbar.classList.toggle("is-hidden", hide);
         }
 
-        // ---- search: collapsed to an icon on phones ----
+        // ---- search ----
+        // The field is always visible, on every width: its placeholder is
+        // what tells you the page can be searched at all, so hiding it behind
+        // an icon cost more than the row of space it saved.
         var searchWrap = document.getElementById("searchWrap");
-        var searchOpenBtn = document.getElementById("searchOpen");
         var searchCloseBtn = document.getElementById("searchClose");
+        // Read by the scroll handler, which keeps the bar pinned while the
+        // field has focus so it cannot slide away mid-typing.
         var searchOpenState = false;
-        var searchCollapsesQuery = window.matchMedia("(max-width: 900px)");
-        // The wrap is hidden (when collapsed and closed) with opacity and
-        // pointer-events rather than visibility: see the CSS comment on
-        // .search-wrap for why visibility caused focus() to silently fail.
-        // Neither opacity nor pointer-events removes an element from the tab
-        // order or the accessibility tree on its own, so inert covers both.
-        // Only relevant when the collapse behaviour is actually active: on
-        // desktop the field is always present and must stay reachable.
-        function syncSearchInert() {
-          if (!searchWrap) return;
-          var shouldBeInert =
-            searchCollapsesQuery.matches &&
-            !searchWrap.classList.contains("is-open");
-          searchWrap.toggleAttribute("inert", shouldBeInert);
-        }
-        syncSearchInert();
-        searchCollapsesQuery.addEventListener("change", syncSearchInert);
-        function setSearchOpen(open) {
-          searchOpenState = open;
-          if (searchWrap) {
-            searchWrap.classList.toggle("is-open", open);
-            syncSearchInert();
-          }
-          if (searchOpenBtn) {
-            searchOpenBtn.setAttribute(
-              "aria-expanded",
-              open ? "true" : "false",
-            );
-            searchOpenBtn.hidden = open;
-          }
-          if (open) setBarHidden(false);
-        }
-        if (searchOpenBtn) {
-          // Stops this icon button showing a visible focus ring for the
-          // instant between the click and input.focus() taking over below.
-          searchOpenBtn.addEventListener("mousedown", function (e) {
-            e.preventDefault();
+        if (input) {
+          input.addEventListener("focus", function () {
+            searchOpenState = true;
+            setBarHidden(false);
           });
-          searchOpenBtn.addEventListener("click", function () {
-            setSearchOpen(true);
-            if (input) input.focus();
+          input.addEventListener("blur", function () {
+            searchOpenState = false;
           });
         }
+
+        // The clear button is only shown when there is a query to clear.
+        function syncSearchClear() {
+          if (!searchWrap || !input) return;
+          searchWrap.classList.toggle("has-query", input.value !== "");
+        }
+        if (input) input.addEventListener("input", syncSearchClear);
+        syncSearchClear();
+
         if (searchCloseBtn) {
           searchCloseBtn.addEventListener("click", function () {
             if (input && input.value) {
@@ -6399,8 +6356,8 @@ we ask the whole audience to join in this dance. the end."
               // reuse the existing search handler rather than duplicating it
               input.dispatchEvent(new Event("input", { bubbles: true }));
             }
-            setSearchOpen(false);
-            if (searchOpenBtn) searchOpenBtn.focus();
+            syncSearchClear();
+            if (input) input.focus();
           });
         }
 
