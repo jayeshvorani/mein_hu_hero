@@ -12,7 +12,7 @@
     />
     <style>
       /* ============================================================
-         Mein hu Hero · Rehearsal companion.
+         Mein hu Hero · rehearsal companion.
          Soft-skill "Ethereal Glass" treatment, tuned to the show.
          OLED near-black base; the ambient mesh takes the production's
          own poster colours (marigold gold, sindoor red, magenta,
@@ -1077,10 +1077,51 @@
         display: none;
       }
       .line.search-hidden,
-      .line.actor-hidden {
+      .line.actor-hidden,
+      .line.music-hidden {
         display: none;
       }
       section.scene.all-hidden {
+        display: none;
+      }
+
+      /* ---------- music cue marker ---------- */
+      /* A teal note badge pinned to any line that carries a music cue, so the
+         sound operator can scan the script and spot every cue at a glance.
+         Lines are flagged at runtime from the .c-music spans already in the
+         markup, so the marker can never drift out of sync with the cue text. */
+      .line.has-music {
+        border-left: 3px solid var(--c-music);
+      }
+      .music-flag {
+        position: absolute;
+        right: 0.9rem;
+        top: 0.7rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.6rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--c-music);
+        background: color-mix(in srgb, var(--teal) 14%, transparent);
+        border: 1px solid color-mix(in srgb, var(--teal) 40%, transparent);
+        border-radius: 999px;
+        padding: 0.2rem 0.55rem;
+        pointer-events: none;
+      }
+      .music-flag svg {
+        width: 12px;
+        height: 12px;
+      }
+      /* the practice reveal button and the music flag both sit top-right; when
+         both are present on one line, drop the flag below the reveal button */
+      body.practice-mode .line.is-practicing:not(.peek).has-music .music-flag {
+        top: 2.5rem;
+      }
+      /* music-cues-only view: hide every line that has no music */
+      body.music-only .line:not(.has-music) {
         display: none;
       }
 
@@ -1183,6 +1224,177 @@
         opacity: 1;
         transform: none;
         filter: none;
+      }
+
+      /* per-line cascade: each line drifts up + de-blurs as its scene enters,
+         staggered by its index within the scene so a scene reads in as a wave
+         rather than popping as one block. The delay is set inline per line. */
+      .line-reveal {
+        opacity: 0;
+        transform: translateY(1rem);
+        filter: blur(4px);
+        transition:
+          opacity 0.55s var(--ease-out),
+          transform 0.55s var(--ease-out),
+          filter 0.55s var(--ease-out);
+        will-change: transform, opacity;
+      }
+      .line-reveal.in-view {
+        opacity: 1;
+        transform: none;
+        filter: none;
+      }
+
+      /* landing pulse: a one-shot ring on whatever line a programmatic jump
+         lands on, so every jump ends with a clear "you're here". */
+      @keyframes land-pulse {
+        0% {
+          box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent);
+        }
+        100% {
+          box-shadow: 0 0 0 14px transparent;
+        }
+      }
+      .line.just-landed {
+        animation: land-pulse 1.1s var(--ease-out);
+      }
+
+      /* ---------- reading-progress bar ---------- */
+      .read-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        width: 100%;
+        transform: scaleX(0);
+        transform-origin: 0 50%;
+        background: linear-gradient(90deg, var(--accent), var(--marigold-soft));
+        z-index: 70;
+        pointer-events: none;
+      }
+
+      /* ---------- cue stepper: floating bottom-centre pill ---------- */
+      .cue-stepper {
+        position: fixed;
+        left: 50%;
+        bottom: calc(1.1rem + env(safe-area-inset-bottom, 0px));
+        transform: translateX(-50%) translateY(1.5rem);
+        z-index: 65;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.4rem 0.5rem;
+        border: 1px solid var(--hairline);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--bg-2) 70%, transparent);
+        backdrop-filter: blur(22px) saturate(150%);
+        -webkit-backdrop-filter: blur(22px) saturate(150%);
+        box-shadow:
+          var(--inner-hi),
+          0 18px 50px rgba(0, 0, 0, 0.45);
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.4s var(--ease),
+          transform 0.5s var(--ease),
+          visibility 0.4s var(--ease);
+      }
+      .cue-stepper.is-shown {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+      }
+      .cue-step-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.4rem;
+        height: 2.4rem;
+        border-radius: 999px;
+        border: 1px solid var(--hairline);
+        background: var(--surface);
+        color: var(--accent-strong);
+        cursor: pointer;
+        transition:
+          transform 0.4s var(--ease),
+          background 0.4s var(--ease),
+          border-color 0.4s var(--ease);
+      }
+      .cue-step-btn svg {
+        width: 18px;
+        height: 18px;
+      }
+      .cue-step-btn:hover {
+        border-color: var(--accent);
+        background: var(--surface-2);
+      }
+      .cue-step-btn:active {
+        transform: scale(0.92);
+      }
+      .cue-step-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+      .cue-step-count {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.74rem;
+        letter-spacing: 0.03em;
+        color: var(--ink-dim);
+        min-width: 4.2rem;
+        text-align: center;
+        line-height: 1.15;
+        padding: 0 0.2rem;
+      }
+      .cue-step-count .csc-who {
+        display: block;
+        font-size: 0.56rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      /* ---------- back-to-top ---------- */
+      .to-top {
+        position: fixed;
+        right: calc(1.1rem + env(safe-area-inset-right, 0px));
+        bottom: calc(1.1rem + env(safe-area-inset-bottom, 0px));
+        z-index: 64;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.7rem;
+        height: 2.7rem;
+        border-radius: 999px;
+        border: 1px solid var(--hairline);
+        background: color-mix(in srgb, var(--bg-2) 70%, transparent);
+        backdrop-filter: blur(22px) saturate(150%);
+        -webkit-backdrop-filter: blur(22px) saturate(150%);
+        box-shadow:
+          var(--inner-hi),
+          0 12px 30px rgba(0, 0, 0, 0.4);
+        color: var(--ink-dim);
+        cursor: pointer;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(1rem);
+        transition:
+          opacity 0.4s var(--ease),
+          transform 0.5s var(--ease),
+          visibility 0.4s var(--ease),
+          border-color 0.4s var(--ease);
+      }
+      .to-top.is-shown {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+      }
+      .to-top:hover {
+        border-color: var(--accent);
+        color: var(--accent-strong);
+      }
+      .to-top svg {
+        width: 18px;
+        height: 18px;
       }
 
       /* ---------- responsive ---------- */
@@ -1291,6 +1503,11 @@
           max-width: none;
           flex-basis: 100%;
         }
+        /* On phones, lift the back-to-top above the centred stepper so the two
+           floating controls can never overlap however wide the stepper grows. */
+        .to-top {
+          bottom: calc(5rem + env(safe-area-inset-bottom, 0px));
+        }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -1299,10 +1516,16 @@
           transition: none !important;
           animation: none !important;
         }
-        .reveal-on-scroll {
+        .reveal-on-scroll,
+        .line-reveal {
           opacity: 1;
           transform: none;
           filter: none;
+        }
+        /* the progress bar tracks scroll via transform; the plan calls for it
+           static under reduced-motion, so drop it entirely here. */
+        .read-progress {
+          display: none;
         }
       }
 
@@ -1316,7 +1539,10 @@
         footer.page-footer,
         .cast-bar,
         .reveal-btn,
-        .scene-footer-nav {
+        .scene-footer-nav,
+        .read-progress,
+        .cue-stepper,
+        .to-top {
           display: none !important;
         }
         html[data-theme] {
@@ -1344,6 +1570,11 @@
           transform: none !important;
           filter: none !important;
         }
+        .line-reveal {
+          opacity: 1 !important;
+          transform: none !important;
+          filter: none !important;
+        }
         section.scene {
           break-inside: avoid-page;
         }
@@ -1362,12 +1593,80 @@
           filter: none !important;
           user-select: text !important;
         }
+        /* keep the music badge legible on the print palette; music-only view is
+           intentionally left filtered so printing in that mode yields a clean
+           sound cue sheet */
+        .music-flag {
+          color: #0f6d6a !important;
+          border-color: #0f6d6a !important;
+          background: #fff !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .line.has-music {
+          border-left: 3px solid #0f6d6a !important;
+        }
       }
     </style>
   </head>
   <body>
     <div class="ambient" aria-hidden="true"></div>
     <div class="grain" aria-hidden="true"></div>
+    <div class="read-progress" id="readProgress" aria-hidden="true"></div>
+
+    <div
+      class="cue-stepper"
+      id="cueStepper"
+      role="group"
+      aria-label="Step through your lines"
+    >
+      <button
+        type="button"
+        class="cue-step-btn"
+        id="cuePrev"
+        aria-label="Previous line for this character"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="15 18 9 12 15 6" />
+        </svg>
+      </button>
+      <span class="cue-step-count" id="cueCount" aria-hidden="true">
+        <span class="csc-who" id="cueWho">line</span>
+        <span id="cueCountText">- / -</span>
+      </span>
+      <span class="sr-only" id="cueLive" aria-live="polite"></span>
+      <button
+        type="button"
+        class="cue-step-btn"
+        id="cueNext"
+        aria-label="Next line for this character"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </button>
+    </div>
+
+    <button type="button" class="to-top" id="toTop" aria-label="Back to top">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <polyline points="18 15 12 9 6 15" />
+      </svg>
+    </button>
 
     <div class="page">
       <header class="topbar">
@@ -1417,6 +1716,15 @@
             aria-pressed="false"
           >
             ○ HIDE OPTIONAL CUTS
+          </button>
+          <button
+            class="pill"
+            id="musicOnlyToggle"
+            type="button"
+            aria-pressed="false"
+            title="Show only the lines with a music cue, for the sound operator"
+          >
+            ♪ MUSIC CUES ONLY
           </button>
           <button
             class="pill icon-pill theme-pill"
@@ -1675,6 +1983,29 @@
                 <span class="legend-swatch c-music">Music cue</span>
               </div>
               <div class="legend-meaning">Music piece</div>
+            </div>
+            <div class="legend-row">
+              <div class="legend-sample">
+                <span class="legend-swatch music-flag" style="position: static">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    aria-hidden="true"
+                  >
+                    <path d="M9 18V5l12-2v13" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="16" r="3" />
+                  </svg>
+                  <span>Music</span>
+                </span>
+              </div>
+              <div class="legend-meaning">
+                A note badge marks every line with a music cue, for the sound
+                operator. Use <strong>Music cues only</strong> in the top bar to
+                see just these lines.
+              </div>
             </div>
             <div class="legend-row">
               <div class="legend-sample">
@@ -3304,7 +3635,8 @@ we ask the whole audience to join in this dance. the end."
         it whenever the script changes.
         <div class="shortcut-hint">
           Keyboard: <strong>/</strong> search · <strong>Esc</strong> clear ·
-          <strong>[</strong> / <strong>]</strong> previous/next scene
+          <strong>[</strong> / <strong>]</strong> previous/next scene ·
+          <strong>,</strong> / <strong>.</strong> previous/next of your lines
         </div>
       </footer>
     </div>
@@ -3413,9 +3745,33 @@ we ask the whole audience to join in this dance. the end."
           document.querySelectorAll(".nav-link"),
         );
 
+        // ---- music cue marker ----
+        // Flag every dialogue line that carries a music cue (a .c-music span)
+        // and pin a teal note badge to it, so the sound operator can scan the
+        // script for cues. Detected from the markup at load so the marker can
+        // never drift from the cue text; a "Music cues only" toggle then
+        // filters the script down to just these lines.
+        var MUSIC_NOTE_SVG =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
+        var musicLines = lines.filter(function (line) {
+          return !!line.querySelector(".c-music");
+        });
+        musicLines.forEach(function (line) {
+          line.classList.add("has-music");
+          var flag = document.createElement("span");
+          flag.className = "music-flag";
+          flag.innerHTML = MUSIC_NOTE_SVG + "<span>Music</span>";
+          line.appendChild(flag);
+        });
+
         function isLineVisible(line) {
           if (line.classList.contains("search-hidden")) return false;
           if (line.classList.contains("actor-hidden")) return false;
+          if (
+            document.body.classList.contains("music-only") &&
+            !line.classList.contains("has-music")
+          )
+            return false;
           if (
             document.body.classList.contains("hide-cuts") &&
             line.classList.contains("is-cut")
@@ -3439,8 +3795,28 @@ we ask the whole audience to join in this dance. the end."
             sec.classList.toggle("all-hidden", !any || actorAbsent);
           });
         }
+        // Scroll a line to centre and give it a one-shot landing pulse, so
+        // every programmatic jump (stepper, actor jump, search, scene jump)
+        // ends with a clear "you're here". The pulse self-clears on animation
+        // end and is suppressed under reduced-motion by the CSS.
+        function landOn(el, block) {
+          if (!el) return;
+          el.scrollIntoView({
+            behavior: "smooth",
+            block: block || "center",
+          });
+          el.classList.remove("just-landed");
+          // reflow so re-adding the class restarts the animation
+          void el.offsetWidth;
+          el.classList.add("just-landed");
+          el.addEventListener("animationend", function handler() {
+            el.classList.remove("just-landed");
+            el.removeEventListener("animationend", handler);
+          });
+        }
+
         function scrollToFirstForActor(val) {
-          if (!val) return;
+          if (!val) return null;
           var target = null;
           for (var i = 0; i < lines.length; i++) {
             if (
@@ -3451,8 +3827,8 @@ we ask the whole audience to join in this dance. the end."
               break;
             }
           }
-          if (target)
-            target.scrollIntoView({ behavior: "smooth", block: "center" });
+          if (target) landOn(target, "center");
+          return target;
         }
 
         // ---- hide optional cuts ----
@@ -3464,6 +3840,32 @@ we ask the whole audience to join in this dance. the end."
             ? "● SHOW OPTIONAL CUTS"
             : "○ HIDE OPTIONAL CUTS";
           refreshSceneVisibility();
+          refreshCueStepper();
+        });
+
+        // ---- music cues only (sound operator view) ----
+        var musicBtn = document.getElementById("musicOnlyToggle");
+        musicBtn.addEventListener("click", function () {
+          var on = document.body.classList.toggle("music-only");
+          musicBtn.setAttribute("aria-pressed", on ? "true" : "false");
+          musicBtn.textContent = on ? "♫ SHOW ALL LINES" : "♪ MUSIC CUES ONLY";
+          refreshSceneVisibility();
+          refreshCueStepper();
+          if (on) {
+            // land on the first music line that is actually on screen under the
+            // current filters: visible itself, and not inside a scene that the
+            // actor filter has collapsed. Avoids a no-op scroll to a hidden line.
+            for (var i = 0; i < musicLines.length; i++) {
+              var ml = musicLines[i];
+              if (
+                isLineVisible(ml) &&
+                !ml.closest("section.scene.all-hidden")
+              ) {
+                landOn(ml, "center");
+                break;
+              }
+            }
+          }
         });
 
         // ---- search ----
@@ -3525,6 +3927,7 @@ we ask the whole audience to join in this dance. the end."
             el.classList.toggle("search-hidden", !match);
           });
           refreshSceneVisibility();
+          refreshCueStepper();
           if (!q) return;
           var firstMatch = null;
           lines.forEach(function (el) {
@@ -3533,8 +3936,7 @@ we ask the whole audience to join in this dance. the end."
             highlightIn(el.querySelector(".content"), q);
             if (!firstMatch) firstMatch = el;
           });
-          if (firstMatch)
-            firstMatch.scrollIntoView({ behavior: "smooth", block: "center" });
+          if (firstMatch) landOn(firstMatch, "center");
         });
 
         // ---- actor filter + practice mode + cue mode ----
@@ -3584,6 +3986,91 @@ we ask the whole audience to join in this dance. the end."
         }
         jumpBtn.addEventListener("click", function () {
           scrollToFirstForActor(actorSelect.value);
+        });
+
+        // ---- cue stepper: hop between the selected actor's own lines ----
+        // A floating pill (◀ · n / total · ▶). Steps through the actor's
+        // currently-visible lines in document order, wrapping across scenes,
+        // and lands each with a pulse. Hidden entirely when no actor is chosen.
+        var cueStepper = document.getElementById("cueStepper");
+        var cuePrev = document.getElementById("cuePrev");
+        var cueNext = document.getElementById("cueNext");
+        var cueCountText = document.getElementById("cueCountText");
+        var cueWho = document.getElementById("cueWho");
+        var cueLive = document.getElementById("cueLive");
+        // Last announced position, so the aria-live region only speaks when the
+        // reader actually moves to a different line (avoids repeat chatter as
+        // the scroll handler recomputes the same value every frame).
+        var lastCuePos = 0;
+
+        function actorLines() {
+          var val = actorSelect.value;
+          if (!val) return [];
+          return lines.filter(function (l) {
+            return l.getAttribute("data-actor") === val && isLineVisible(l);
+          });
+        }
+        // Which of the actor's lines is "current": the last one at or above the
+        // viewport centre, so next/prev feel anchored to where you're reading.
+        function currentCueIndex(list) {
+          if (!list.length) return -1;
+          var mid = window.innerHeight / 2;
+          var idx = 0;
+          for (var i = 0; i < list.length; i++) {
+            if (list[i].getBoundingClientRect().top <= mid) idx = i;
+            else break;
+          }
+          return idx;
+        }
+        function stepCue(delta) {
+          var list = actorLines();
+          if (!list.length) return;
+          var cur = currentCueIndex(list);
+          var next = cur + delta;
+          if (next < 0) next = list.length - 1;
+          if (next > list.length - 1) next = 0;
+          landOn(list[next], "center");
+          setCueCount(next + 1, list.length);
+        }
+        function setCueCount(pos, total) {
+          cueCountText.textContent = total ? pos + " / " + total : "- / -";
+          // Announce natural-language position, but only on a real change, and
+          // only when there's more than one line to move between.
+          if (total > 1 && pos !== lastCuePos) {
+            cueLive.textContent = "Line " + pos + " of " + total;
+            lastCuePos = pos;
+          }
+        }
+        function refreshCueStepper() {
+          // Context is about to change (actor, cuts, search, practice/cue/scope),
+          // so forget the last announced position: the next setCueCount should
+          // always speak, even if the new position number matches the old.
+          lastCuePos = -1;
+          var val = actorSelect.value;
+          if (!val) {
+            cueStepper.classList.remove("is-shown");
+            return;
+          }
+          var list = actorLines();
+          var chars = (ACTOR_CHAR_MAP[val] || val).split(", ");
+          cueWho.textContent =
+            chars.length > 1 ? "your lines" : chars[0] + "’s lines";
+          var disabled = list.length < 2;
+          cuePrev.disabled = disabled;
+          cueNext.disabled = disabled;
+          if (list.length) {
+            var cur = currentCueIndex(list);
+            setCueCount(cur + 1, list.length);
+          } else {
+            setCueCount(0, 0);
+          }
+          cueStepper.classList.add("is-shown");
+        }
+        cuePrev.addEventListener("click", function () {
+          stepCue(-1);
+        });
+        cueNext.addEventListener("click", function () {
+          stepCue(1);
         });
 
         function loadPracticeScope() {
@@ -3736,6 +4223,7 @@ we ask the whole audience to join in this dance. the end."
           refreshSceneVisibility();
           applyCueState();
           updateNavActorHighlight(val);
+          refreshCueStepper();
         }
 
         actorSelect.addEventListener("change", function () {
@@ -4023,6 +4511,54 @@ we ask the whole audience to join in this dance. the end."
           });
         })();
 
+        // ---- per-line cascade reveal ----
+        // Each dialogue line drifts up + de-blurs as it enters, staggered by
+        // its position within its scene so a scene reads in as a wave. Delay is
+        // capped so late lines in a long scene don't lag noticeably. Degrades
+        // to instant-visible without IntersectionObserver, and the CSS reset in
+        // the reduced-motion / print blocks keeps every line visible there.
+        (function lineReveal() {
+          var reduce =
+            window.matchMedia &&
+            window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          scenes.forEach(function (sec) {
+            var sceneLines = Array.prototype.slice.call(
+              sec.querySelectorAll(".line"),
+            );
+            sceneLines.forEach(function (line, i) {
+              line.classList.add("line-reveal");
+              if (!reduce) {
+                var delay = Math.min(i * 40, 320);
+                line.style.transitionDelay = delay + "ms";
+              }
+            });
+          });
+          var lineEls = Array.prototype.slice.call(
+            document.querySelectorAll(".line-reveal"),
+          );
+          if (!lineEls.length) return;
+          if (reduce || !("IntersectionObserver" in window)) {
+            lineEls.forEach(function (el) {
+              el.classList.add("in-view");
+            });
+            return;
+          }
+          var lineObs = new IntersectionObserver(
+            function (entries, o) {
+              entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add("in-view");
+                  o.unobserve(entry.target);
+                }
+              });
+            },
+            { rootMargin: "0px 0px -6% 0px", threshold: 0.04 },
+          );
+          lineEls.forEach(function (el) {
+            lineObs.observe(el);
+          });
+        })();
+
         // ---- keyboard shortcuts ----
         function jumpScene(delta) {
           var activeLink = document.querySelector(".nav-link.is-active");
@@ -4060,7 +4596,50 @@ we ask the whole audience to join in this dance. the end."
           } else if ((e.key === "[" || e.key === "]") && !inField) {
             e.preventDefault();
             jumpScene(e.key === "[" ? -1 : 1);
+          } else if ((e.key === "," || e.key === ".") && !inField) {
+            if (!actorSelect.value) return;
+            e.preventDefault();
+            stepCue(e.key === "," ? -1 : 1);
           }
+        });
+
+        // ---- scroll-driven chrome: progress bar, back-to-top, cue counter ----
+        // One rAF-throttled scroll listener updates all three so we never run
+        // layout work more than once per frame.
+        var readProgress = document.getElementById("readProgress");
+        var toTop = document.getElementById("toTop");
+        var scrollTicking = false;
+        function onScrollFrame() {
+          scrollTicking = false;
+          var doc = document.documentElement;
+          var max = doc.scrollHeight - window.innerHeight;
+          var y = window.pageYOffset || doc.scrollTop || 0;
+          var pct = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
+          readProgress.style.transform = "scaleX(" + pct + ")";
+          // back-to-top appears once we're a screenful down
+          toTop.classList.toggle("is-shown", y > window.innerHeight * 0.8);
+          // keep the cue counter honest as the reader scrolls by hand
+          if (actorSelect.value) {
+            var list = actorLines();
+            if (list.length > 1) {
+              var cur = currentCueIndex(list);
+              setCueCount(cur + 1, list.length);
+            }
+          }
+        }
+        window.addEventListener(
+          "scroll",
+          function () {
+            if (!scrollTicking) {
+              scrollTicking = true;
+              window.requestAnimationFrame(onScrollFrame);
+            }
+          },
+          { passive: true },
+        );
+        onScrollFrame();
+        toTop.addEventListener("click", function () {
+          window.scrollTo({ top: 0, behavior: "smooth" });
         });
 
         // ---- header height ----
