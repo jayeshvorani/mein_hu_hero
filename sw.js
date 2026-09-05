@@ -12,7 +12,7 @@
  * deleted on activate, so a stale font subset can never linger.
  */
 
-var CACHE_VERSION = "mhh-v3";
+var CACHE_VERSION = "mhh-v5";
 var PRECACHE = [
   "./",
   "./index.html",
