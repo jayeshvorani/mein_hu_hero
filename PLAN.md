@@ -1936,3 +1936,57 @@ introduced by my own navigation rewrite in that pass, both fixed.
 | Offline navigation | 200, real page: 75 lines, script alive |
 | Offline audio after prefetch | playing |
 | Console errors | none |
+
+---
+
+## Round 8 — the scene rail's prev/next were being missed (2026-09-06)
+
+Raised by the user: the tick column works, but the two buttons at the bottom
+of it are too subtle to notice, especially in day mode.
+
+### Why
+
+When the rail was slimmed in round 6 I stripped the buttons to bare 14px
+chevrons on a transparent background, in `--ink-dim`, inside a rail that fades
+to 82% when idle. The result reads as two more marks at the bottom of a column
+of marks: a cast member scrolling past sees a tick column and never registers
+that the last two items are controls. Worse in the light theme, where a thin
+grey chevron on warm paper is nearly nothing.
+
+### Fix: make them look like buttons
+
+- **Filled discs in the accent colour**, 30x30, with a border and a heavier
+  2.6 stroke on a 15px arrow. Accent is used nowhere else in the rail, so the
+  two controls are immediately distinct from the eight ticks.
+- **Rail widened 24px to 36px** to hold them. `overflow-y: auto` makes the
+  rail a clipping box, so anything wider than the rail is simply cut off.
+- **More separation**: the gap under the divider went 0.1rem to 0.3rem, and
+  the buttons are spaced 0.3rem apart rather than 0.1rem.
+- **Disabled is now not drawn at all** rather than drawn faintly. Every dimmed
+  treatment measured under the 3:1 non-text floor once the rail's idle fade
+  multiplied it, and a faint disc beside a bold one muddies the bold one too.
+  With one arrow gone the live one is unmistakable, and its direction is
+  itself the information. `visibility: hidden`, not `display`, so the rail's
+  height does not change at the ends of the running order.
+
+### The overlap trade
+
+36px in a 24px gutter means the rail now overhangs the reading column by 12px.
+Measured with Range rects at every size: **zero glyphs** underneath it. The
+overhang falls on the line card's own padding, which is wider than 12px. That
+is the right trade for buttons that can actually be found.
+
+### Verification
+
+| Check | Result |
+|---|---|
+| Rail 36px, buttons 30x30, not clipped | all 7 sizes |
+| Glyph overlap | 0 at 360, 390, 430, 768, 820, landscape |
+| Clears the bottom bar, stays in viewport | yes, all sizes |
+| Rail height when a button hides | 362px both ways, no jump |
+| At scene 1 / scene 8 | correct arrow hidden, other live |
+| Tap a tick, next, prev | all still work |
+| Regression: cue buttons, music cues, A2, A3, A4, search, sheets | 7, 9, 0, 0, 4, 18, 8 |
+| Print | rail and cue buttons hidden, 75 lines |
+| 4 widths x 2 themes | no overflow |
+| Console errors | none |

@@ -2526,13 +2526,19 @@
            something behind them to stay legible over both the page and the
            dark line cards, but a full tier-3 panel is what made the rail wide
            enough to squeeze the script in the first place. */
-        /* 18px of controls plus 3px either side, 24px total, which is exactly
-           the gutter .app leaves at 1.5rem. The 3px matters: the rail is a
-           clipping box (overflow-y: auto forces overflow-x to auto too) and
-           the controls are width:100% of the content box, so without an inset
-           every focus ring was cut off down both sides, since outline-offset
-           draws from -2px and the clip box starts at 0. */
-        width: 24px;
+        /* Sized to the widest thing inside it: the 30px prev/next discs plus
+           3px either side. The rail is a clipping box (overflow-y: auto forces
+           overflow-x to auto too), so anything wider than this is cut off, and
+           the 3px inset is also what stops a focus ring being clipped, since
+           outline-offset draws from -2px and the clip box starts at 0.
+
+           36px is wider than the 1.5rem gutter .app leaves, so the rail now
+           overhangs the reading column by 12px. That is deliberate and safe:
+           the dialogue is inside a card whose own padding is wider than that,
+           so the overhang falls on the card's margin, not on any glyph. It is
+           the price of the step buttons being findable at all, which they were
+           not as bare chevrons. */
+        width: 36px;
         padding: 0.3rem 3px;
         border-radius: 999px;
         background: color-mix(in srgb, var(--bg) 62%, transparent);
@@ -2655,59 +2661,65 @@
       .sr-steps {
         display: flex;
         flex-direction: column;
-        gap: 0.1rem;
-        padding-top: 0.35rem;
-        margin-top: 0.2rem;
+        gap: 0.3rem;
+        padding-top: 0.45rem;
+        margin-top: 0.3rem;
         border-top: 1px solid var(--hairline-strong);
         width: 100%;
         align-items: center;
       }
-      /* Full rail width by 40px tall. Narrower than the 44px square the rest
-         of the app holds to, and knowingly: the rail lives inside the 24px
-         gutter the layout already leaves, and a 44px-wide button would set the
-         rail's whole width and push it back over the dialogue. It clears the
-         WCAG 2.5.8 minimum of 24x24 with room to spare, the vertical run is
-         what a thumb actually needs on a stacked control, and the Scenes sheet
-         remains the full-size route to every jump these buttons make. */
+      /* These have to read as BUTTONS, not as two more marks at the bottom of
+         a column of marks. Bare chevrons on no background were invisible in
+         daylight and easy to ignore at night: a cast member scrolling past saw
+         a tick column and never registered that the last two items were
+         controls. So they are filled discs in the accent colour, which nothing
+         else in the rail uses, with the arrow knocked out in the contrast
+         token. Same treatment as the bottom bar's own controls, so they read
+         as the same kind of thing.
+         Deliberately wider than the 24px rail: the disc overhangs the rail's
+         3px padding on both sides, which costs nothing (the rail sits in the
+         gutter, and the overhang is still clear of the text column) and buys
+         a target a thumb can actually find. */
       .sr-step {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        width: 100%;
-        height: 40px;
-        border-radius: 6px;
-        border: 0;
-        background: none;
-        color: var(--ink-dim);
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+        background: color-mix(in srgb, var(--accent) 22%, transparent);
+        color: var(--accent-strong);
         cursor: pointer;
         transition:
           color var(--motion-1) var(--ease),
-          background var(--motion-1) var(--ease);
+          background var(--motion-1) var(--ease),
+          border-color var(--motion-1) var(--ease);
       }
       .sr-step svg {
-        width: 14px;
-        height: 14px;
+        width: 15px;
+        height: 15px;
+        stroke-width: 2.6;
       }
       @media (hover: hover) {
-        /* a tint of the accent, not --surface-2: that token is a near-opaque
-           white built to sit inside a glass panel, and this control has none */
         .sr-step:hover:not(:disabled) {
-          color: var(--accent-strong);
-          background: color-mix(in srgb, var(--accent) 18%, transparent);
+          background: var(--accent);
+          border-color: var(--accent);
+          color: var(--accent-contrast);
         }
       }
-      /* A disabled step is at the first or last reachable scene, and is simply
-         not drawn: at 14px a chevron is a pair of thin diagonals, and every
-         way of showing a weakened version of it landed under the 3:1 non-text
-         floor once the rail's idle fade multiplied it (--muted-2 2.38:1,
-         --muted 2.30:1, --ink-dim at 0.75 opacity 2.48:1, a smaller glyph
-         2.69:1 through anti-aliasing alone). Hiding it is honest: there is no
-         scene that way, the button is already inert and out of the tab order,
-         and the remaining arrow shows the one direction that still works. */
+      /* At the first or last reachable scene: nothing that way to go. It is
+         not drawn at all rather than drawn faintly.
+         Every dimmed treatment tried here measured under the 3:1 non-text
+         floor once the rail's idle fade multiplied it, and a faint disc beside
+         a bold one also muddies the bold one: the eye reads "two similar
+         controls, both a bit washed out" instead of "one button". Leaving a
+         single arrow makes the live one unmistakable, and its direction is
+         itself the information: only one way to go from here.
+         Kept in the layout with visibility rather than display, so the live
+         button does not jump position at the ends of the running order. */
       .sr-step:disabled {
         cursor: default;
-      }
-      .sr-step:disabled svg {
         visibility: hidden;
       }
       .sr-step:focus-visible {
