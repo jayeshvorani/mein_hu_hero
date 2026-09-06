@@ -2027,155 +2027,6 @@
       .legend-swatch.music-flag {
         position: static;
       }
-
-      /* Progress while the cue audio is being pulled down, in the Options
-         sheet directly under the toggle that triggers it. */
-      .music-prefetch-note {
-        margin: -0.4rem 0 0.9rem;
-        padding: 0 0.2rem;
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.66rem;
-        letter-spacing: 0.03em;
-        color: var(--muted);
-      }
-      .music-prefetch-note.is-ready {
-        color: var(--c-music);
-      }
-
-      /* ---------- cue play buttons ----------
-         An inline control sitting immediately after the cue text it plays, so
-         the sound operator triggers the right track without leaving the line
-         they are reading. Inline rather than pinned to the corner of the line
-         because two cues can live in one line (scene 1 carries the sad music
-         and the switch to happy), and a corner marker cannot say which is
-         which.
-
-         The glyph is drawn in CSS rather than shipped as an SVG so the button
-         can be a single small element in the markup, and so the play and stop
-         shapes can cross-fade without swapping nodes. */
-      .cue-play {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        /* the visible disc; the tap target is extended to 44px by ::before */
-        position: relative;
-        width: 1.6rem;
-        height: 1.6rem;
-        margin: 0 0.15rem 0 0.3rem;
-        padding: 0;
-        vertical-align: -0.35em;
-        border-radius: 999px;
-        border: 1px solid color-mix(in srgb, var(--teal) 55%, transparent);
-        background: color-mix(in srgb, var(--teal) 16%, transparent);
-        color: var(--c-music);
-        cursor: pointer;
-        flex-shrink: 0;
-        transition:
-          background var(--motion-1) var(--ease),
-          border-color var(--motion-1) var(--ease),
-          color var(--motion-1) var(--ease);
-      }
-      /* Widens the hit area horizontally, into the inline margin either side,
-         where there is nothing but the gap between words.
-
-         Deliberately NOT 44px tall. The button sits mid-paragraph in wrapped
-         stage directions with a 25.9px line-height, so a 44px pad reaches a
-         third of a line box into the text above and below it: measured, every
-         probe 18px above and below the disc was hitting the button. In a
-         rehearsal that means tapping a word plays a cue out loud. Height is
-         capped to the disc, and the extra reach is taken sideways only. */
-      .cue-play::before {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 44px;
-        height: 100%;
-        transform: translate(-50%, -50%);
-      }
-      /* the play triangle, and the stop square it becomes */
-      .cue-play::after {
-        content: "";
-        width: 0;
-        height: 0;
-        margin-left: 0.15em; /* optical centring of a triangle in a circle */
-        border-style: solid;
-        border-width: 0.34em 0 0.34em 0.55em;
-        border-color: transparent transparent transparent currentColor;
-        transition:
-          border-width var(--motion-1) var(--ease),
-          border-radius var(--motion-1) var(--ease);
-      }
-      .cue-play[aria-pressed="true"] {
-        background: var(--c-music);
-        border-color: var(--c-music);
-        color: var(--accent-contrast);
-      }
-      .cue-play[aria-pressed="true"]::after {
-        /* square: a zero-width left border with equal top and bottom reads as
-           a block once the background flips */
-        margin-left: 0;
-        width: 0.5em;
-        height: 0.5em;
-        border-width: 0;
-        border-radius: 1px;
-        background: currentColor;
-      }
-      /* fetching after a press; the prefetch reports in the Options sheet
-         instead and never touches the buttons */
-      .cue-play.is-loading::after {
-        margin-left: 0;
-        width: 0.55em;
-        height: 0.55em;
-        border-width: 2px;
-        border-style: solid;
-        border-color: currentColor transparent currentColor transparent;
-        border-radius: 999px;
-        animation: cue-spin 700ms linear infinite;
-      }
-      @keyframes cue-spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-      /* The file is missing or the browser could not play it. Still a live
-         control, and still shows a pointer: pressing it retries, which is what
-         the accessible name promises. A not-allowed cursor would tell a mouse
-         user the opposite of what a screen reader is being told. */
-      .cue-play.is-unavailable {
-        border-color: var(--hairline-strong);
-        background: transparent;
-        color: var(--muted);
-      }
-      .cue-play.is-unavailable::after {
-        margin-left: 0;
-        width: 0.5em;
-        height: 2px;
-        border-width: 0;
-        border-radius: 1px;
-        background: currentColor;
-      }
-      @media (hover: hover) {
-        .cue-play:hover:not(.is-unavailable) {
-          background: color-mix(in srgb, var(--teal) 30%, transparent);
-          border-color: var(--c-music);
-        }
-        .cue-play[aria-pressed="true"]:hover {
-          background: var(--c-music);
-        }
-      }
-      .cue-play:focus-visible {
-        outline: 2px solid var(--accent);
-        outline-offset: 2px;
-      }
-      /* A cue line already reserves room on the right for the MUSIC badge. The
-         buttons are inline in the text, so nothing more is needed there, but
-         under reduced motion the spinner must not spin. */
-      @media (prefers-reduced-motion: reduce) {
-        .cue-play.is-loading::after {
-          animation: none;
-        }
-      }
       /* the practice reveal button and the music flag both sit top-right; when
          both are present on one line, drop the flag below the reveal button */
       body.practice-mode .line.is-practicing:not(.peek).has-music .music-flag {
@@ -2265,20 +2116,6 @@
         filter: blur(7px);
         user-select: none;
         cursor: pointer;
-      }
-      /* Two cues sit on actor-attributed lines (Maneesh in scene 6, Apurva in
-         scene 8), so in practice mode their play button would be inside a
-         blurred subtree. A filter on an ancestor rasterises everything beneath
-         it and `filter: none` on a child cannot undo that, so the button
-         cannot stay in .content and be legible. The JS moves it out to the
-         line itself while the line is blurred (see moveCueButtonsForPractice)
-         and puts it back afterwards; this positions it in that state. */
-      .line > .cue-play.is-detached {
-        position: absolute;
-        right: 0.9rem;
-        bottom: 0.7rem;
-        margin: 0;
-        z-index: 2;
       }
       body.practice-mode .line.is-practicing:not(.peek) .reveal-btn {
         display: inline-flex;
@@ -2952,7 +2789,6 @@
         footer.page-footer,
         .cast-bar,
         .reveal-btn,
-        .cue-play,
         .scene-rail,
         .read-progress,
         .bottombar,
@@ -3404,17 +3240,6 @@
           </span>
           <span class="st-switch" aria-hidden="true"></span>
         </button>
-        <!-- Prefetch progress. The counter is visible but NOT announced: a
-             live region here would read out all seven steps one after another
-             while the operator is trying to use the sheet. Only the settled
-             result is announced, through the sr-only region below. -->
-        <p class="music-prefetch-note" id="musicPrefetchNote" hidden></p>
-        <span
-          class="sr-only"
-          id="musicPrefetchLive"
-          role="status"
-          aria-live="polite"
-        ></span>
 
         <button
           type="button"
@@ -4063,13 +3888,7 @@
                     ><span class="c-music is-italic">ushi kabhi g</span
                     ><span class="c-music is-italic">a</span
                     ><span class="c-music is-italic">m music).</span
-                    ><span class="c-music"> </span
-                    ><button
-                      type="button"
-                      class="cue-play"
-                      data-audio="Audio files/01 - Kabhi Khushi - Sad.mp3"
-                      data-cue="Kabhi khushi kabhi gam, sad"
-                    ></button>
+                    ><span class="c-music"> </span>
                   </p>
                   <p>
                     <span class="is-italic">(</span
@@ -4081,13 +3900,7 @@
                       then</span
                     >
                     <span class="c-music is-italic">music changes and </span
-                    ><span class="c-music is-italic">on a happy note</span
-                    ><button
-                      type="button"
-                      class="cue-play"
-                      data-audio="Audio files/02 - Kabhi Khushi - Happy.mp3"
-                      data-cue="Kabhi khushi kabhi gam, happy"
-                    ></button>
+                    ><span class="c-music is-italic">on a happy note</span>
                     <span class="is-italic">Raj</span
                     ><span class="is-italic">
                       enters. Mother does aarti. He bends down to take Ashirwad
@@ -4565,12 +4378,6 @@
                     ><span class="is-italic">Raj sits and </span
                     ><span class="is-italic">Simran is dancing on ‘</span
                     ><span class="c-music is-italic">Tathya tathya ho’ </span
-                    ><button
-                      type="button"
-                      class="cue-play"
-                      data-audio="Audio files/04 - Ta thaiya.mp3"
-                      data-cue="Tathya tathya ho"
-                    ></button
                     ><span class="is-italic">Raj</span
                     ><span class="is-italic"> </span
                     ><span class="is-italic">puts his </span
@@ -4805,16 +4612,9 @@
                     30 seconds or so) Suddenly Dharmchand and SumitraDevi break
                     into a dance on
                     <span class="c-music">(Le jayenge le jayenge</span
-                    ><span class="c-music"> </span
-                    ><button
-                      type="button"
-                      class="cue-play"
-                      data-audio="Audio files/05 - Le jayegne.mp3"
-                      data-cue="Le jayenge le jayenge"
-                    ></button
-                    >– everyone attending the reception joins and dances in a
-                    circle). Simran also gets up. Raj tries to hold her back but
-                    she also joins in.
+                    ><span class="c-music"> </span>– everyone attending the
+                    reception joins and dances in a circle). Simran also gets
+                    up. Raj tries to hold her back but she also joins in.
                   </p>
                   <p>Raj puts his hand on his forehead.</p>
                 </div>
@@ -4946,12 +4746,6 @@
                       Simran comes down from stairs and dances to the tune of </span
                     ><span class="c-music is-italic"
                       >‘Main nagin tu sapera’ </span
-                    ><button
-                      type="button"
-                      class="cue-play"
-                      data-audio="Audio files/06 - Mein Nagin.mp3"
-                      data-cue="Main nagin tu sapera"
-                    ></button
                     ><span class="is-italic"
                       >with tongue out and hissing like a snake.
                     </span>
@@ -5168,12 +4962,6 @@
                     ><span class="c-music">e</span
                     ><span class="c-music"> sharat karta tha…)</span
                     ><span class="c-music"> </span
-                    ><button
-                      type="button"
-                      class="cue-play"
-                      data-audio="Audio files/07 - Jab mein chota baccha.mp3"
-                      data-cue="Jab main chota bacha tha"
-                    ></button
                     ><span class="is-italic">Raj starts coughing</span>.
                   </p>
                 </div>
@@ -5318,12 +5106,7 @@
                     Dances on
                     <span class="c-music"
                       >Ek dusre se karte hain pyaar hum.</span
-                    ><button
-                      type="button"
-                      class="cue-play"
-                      data-audio="Audio files/08 - Ek Dusre se.mp3"
-                      data-cue="Ek dusre se karte hain pyaar hum"
-                    ></button>
+                    >
                   </p>
                   <p><br />We ask the whole audience to join in this dance.</p>
                   <p>The End.</p>
@@ -5602,324 +5385,6 @@
           line.appendChild(flag);
         });
 
-        // ============================================================
-        // Cue playback.
-        //
-        // Each .cue-play button in the markup names its own file. One shared
-        // Audio element serves all of them: only one cue is ever wanted at a
-        // time, and pressing a second button should cut the first rather than
-        // layer on top of it (a rehearsal plays cues in sequence).
-        //
-        // The files are prefetched when "Music cues only" is switched on,
-        // rather than on first press. See prefetchCueAudio below for why.
-        // ============================================================
-        var cueButtons = Array.prototype.slice.call(
-          document.querySelectorAll(".cue-play"),
-        );
-        var cuePlayer = null; // the shared Audio, created on first use
-        var cuePlaying = null; // the button whose track is currently sounding
-        // The absolute URL the shared element is currently pointed at. The
-        // error event says nothing about which load failed, so this is what
-        // tells a genuine failure apart from the abort that fires when a
-        // second press replaces the src.
-        var cueLoadingSrc = "";
-
-        function cueSrc(btn) {
-          // Filenames carry spaces, so they must be encoded, but the path
-          // separator must not be. encodeURI leaves "/" alone.
-          return encodeURI(btn.getAttribute("data-audio") || "");
-        }
-        function cueLabel(btn) {
-          return btn.getAttribute("data-cue") || "music cue";
-        }
-        function setCueState(btn, state) {
-          btn.classList.toggle("is-loading", state === "loading");
-          btn.classList.toggle("is-unavailable", state === "unavailable");
-          var name = cueLabel(btn);
-          if (state === "unavailable") {
-            // Not a toggle any more, so drop aria-pressed rather than report
-            // an unpressed play button that cannot be pressed. Phrased as a
-            // sentence: "Unavailable: X" reads as a stumble mid-name.
-            btn.removeAttribute("aria-pressed");
-            btn.setAttribute(
-              "aria-label",
-              name + ", audio unavailable, press to retry",
-            );
-            return;
-          }
-          btn.setAttribute(
-            "aria-pressed",
-            state === "playing" ? "true" : "false",
-          );
-          var verb =
-            state === "playing"
-              ? "Stop"
-              : state === "loading"
-                ? "Loading"
-                : "Play";
-          btn.setAttribute("aria-label", verb + " " + name);
-        }
-        function stopCue() {
-          if (cuePlayer) {
-            cuePlayer.pause();
-            try {
-              cuePlayer.currentTime = 0;
-            } catch (e) {
-              /* not seekable yet; pausing is enough */
-            }
-          }
-          if (cuePlaying) {
-            setCueState(cuePlaying, "idle");
-            cuePlaying = null;
-          }
-          // Nothing is loaded on our account any more. Detaching the source
-          // rather than only forgetting it matters: a double tap on a 26px
-          // disc runs playCue twice, the second call stops the first, and a
-          // genuine load failure arriving after that would otherwise be
-          // dropped by the src comparison and leave a broken file looking
-          // like a working button.
-          cueLoadingSrc = "";
-          if (cuePlayer) {
-            cuePlayer.removeAttribute("src");
-            cuePlayer.load();
-          }
-        }
-        function playCue(btn) {
-          // pressing the sounding cue again stops it
-          if (cuePlaying === btn) {
-            stopCue();
-            return;
-          }
-          stopCue();
-          // A cue that failed once is not dead for the session. Venue wifi
-          // drops a request, or the browser refuses the very first play()
-          // because it has not seen a gesture yet; either way the operator
-          // presses again and it should try again, not sit there inert.
-          btn.classList.remove("is-unavailable");
-          if (!cuePlayer) {
-            cuePlayer = new Audio();
-            cuePlayer.addEventListener("ended", function () {
-              stopCue();
-            });
-            cuePlayer.addEventListener("error", function () {
-              // Only speak for the cue this error actually belongs to.
-              //
-              // The listener is attached once to the shared element and the
-              // event carries no identity of its own, so the test has to be
-              // against the SOURCE the element is currently pointed at.
-              // Comparing two button references cannot work: replacing the src
-              // updates both of them in the same breath, so they are always
-              // equal and the test collapses to "is anything playing", which
-              // is what blamed the newly started cue for the aborted one's
-              // failure.
-              var current = cuePlayer.currentSrc || cuePlayer.src || "";
-              if (!cuePlaying || current !== cueLoadingSrc) return;
-              setCueState(cuePlaying, "unavailable");
-              cuePlaying = null;
-              cueLoadingSrc = "";
-            });
-          }
-          cuePlaying = btn;
-          setCueState(btn, "loading");
-          cuePlayer.src = cueSrc(btn);
-          // Read back what the element resolved the src to (an absolute URL),
-          // so the error listener compares like with like.
-          cueLoadingSrc = cuePlayer.src;
-          var p = cuePlayer.play();
-          if (p && typeof p.then === "function") {
-            p.then(function () {
-              // Still the intended cue? A second press may already have moved
-              // on, in which case this resolution is stale and must not paint.
-              if (cuePlaying === btn) setCueState(btn, "playing");
-            }).catch(function () {
-              // Autoplay refusal, a bad file, or an AbortError because a
-              // second press replaced the src while this play() was pending.
-              // Every branch of that is only ours to act on if this button is
-              // still the current one: clearing cuePlaying unconditionally
-              // would strand the cue that superseded us in its loading state
-              // and leave nothing able to stop it.
-              if (cuePlaying === btn) {
-                setCueState(btn, "unavailable");
-                cuePlaying = null;
-              }
-            });
-          } else {
-            setCueState(btn, "playing");
-          }
-        }
-        cueButtons.forEach(function (btn) {
-          setCueState(btn, "idle");
-          btn.addEventListener("click", function (e) {
-            // This button can sit inside a line that practice mode has
-            // blurred, where a document-level handler toggles the peek state
-            // on any click. Pressing play must not also reveal or re-hide the
-            // line: stop it here rather than letting it bubble.
-            e.stopPropagation();
-            playCue(btn);
-          });
-        });
-
-        // Two cues live on actor-attributed lines, so practice mode blurs the
-        // box they sit in. A CSS filter rasterises its whole subtree and a
-        // child cannot opt out, so the button is physically moved out of
-        // .content while the line is blurred and put back afterwards. The
-        // placeholder marks where it came from, so it always returns to the
-        // right spot in the sentence rather than to the end of it.
-        function moveCueButtonsForPractice() {
-          cueButtons.forEach(function (btn) {
-            var line = btn.closest(".line");
-            if (!line) return;
-            var shouldDetach =
-              document.body.classList.contains("practice-mode") &&
-              line.classList.contains("is-practicing") &&
-              !line.classList.contains("peek");
-            // Read the state from the class this function owns, not from
-            // parentage. Inferring it from "is my parent the line" happens to
-            // work while every cue sits inside .content > p, but a cue
-            // authored as a direct child of .line (where .reveal-btn and the
-            // injected .music-flag already live) would read as permanently
-            // detached and never be positioned at all.
-            var detached = btn.classList.contains("is-detached");
-            if (shouldDetach === detached) return;
-            if (shouldDetach) {
-              var mark = document.createElement("span");
-              mark.className = "cue-play-slot";
-              mark.hidden = true;
-              btn.parentNode.insertBefore(mark, btn);
-              line.appendChild(btn);
-              // The button holds a direct reference to its own placeholder.
-              // No DOM query, so no key to get out of step: an index into the
-              // button array would be written into the DOM once and then
-              // silently disagree with the array if a cue were ever added or
-              // reordered. Scene 1 already carries two cues on one line, so
-              // "the first slot in this line" is not safe either.
-              btn._cueSlot = mark;
-              btn.classList.add("is-detached");
-            } else {
-              var slot = btn._cueSlot;
-              // Only claim the button is home if it actually got there. Left
-              // out, a missing slot would strip the positioning while the
-              // button was still a child of the grid, dropping it below the
-              // dialogue with no way back.
-              if (!slot || !slot.parentNode) return;
-              slot.parentNode.insertBefore(btn, slot);
-              slot.parentNode.removeChild(slot);
-              btn._cueSlot = null;
-              btn.classList.remove("is-detached");
-            }
-          });
-        }
-
-        // ---- prefetch ----
-        // A cue that buffers when the operator presses play is a cue that has
-        // missed its moment on stage, so the audio has to be resident before
-        // it is wanted. Turning on "Music cues only" is the operator saying
-        // who they are: nobody else uses that view. So that is the trigger,
-        // and it usually happens well before the first cue is played.
-        //
-        // Sequential, not parallel: seven simultaneous downloads on venue wifi
-        // would be slower for every one of them and could stall the page.
-        //
-        // The files are deliberately NOT in the service worker's PRECACHE. At
-        // 8.8 MB they are 3.5x the hero photo, and a cast member who only
-        // reads their own lines should never pay for them.
-        // Four states. "idle" and "running" are transient; a run that had any
-        // failure returns to idle so a later toggle retries it, and only a
-        // fully successful one reaches "done". "unsupported" is terminal and
-        // means the browser has no fetch API, so nothing can be pulled down
-        // ahead of time and the cues will stream when pressed.
-        var cuePrefetchState = "idle";
-        var cuePrefetchDone = 0;
-        var cuePrefetchFailed = 0;
-        function cuePrefetchLabel() {
-          // nothing could be pulled down ahead of time; say nothing rather
-          // than promise a readiness that was never attempted
-          if (cuePrefetchState === "unsupported") return "";
-          if (cuePrefetchState === "done") return "Music ready to play";
-          if (cuePrefetchState === "running")
-            return (
-              "Loading music, " +
-              (cuePrefetchDone + cuePrefetchFailed) +
-              " of " +
-              cueButtons.length
-            );
-          // A run that ended with failures leaves the state at idle with a
-          // non-zero failure count. Say so plainly: the cues still play, they
-          // just have to stream, and the operator can retry by toggling the
-          // view. Silence here would read as "ready".
-          if (cuePrefetchFailed)
-            return "Some music could not be loaded, cues will stream";
-          return "";
-        }
-        function paintCuePrefetch() {
-          var el = document.getElementById("musicPrefetchNote");
-          if (!el) return;
-          // Only speaks while the view it belongs to is on. A download started
-          // and then left running after the operator switched back to the full
-          // script should not leave "Music ready to play" sitting in the sheet
-          // with nothing to play it against.
-          var on = document.body.classList.contains("music-only");
-          var text = on ? cuePrefetchLabel() : "";
-          el.textContent = text;
-          el.hidden = !text;
-          el.classList.toggle("is-ready", cuePrefetchState === "done");
-          // Announce only the settled outcome. The per-file counter above is
-          // visible but silent: spoken, it would interrupt seven times over.
-          var live = document.getElementById("musicPrefetchLive");
-          if (live) {
-            var settled =
-              on && cuePrefetchState !== "running" ? cuePrefetchLabel() : "";
-            if (live.textContent !== settled) live.textContent = settled;
-          }
-        }
-        function prefetchCueAudio() {
-          // "done" means every file is genuinely resident. A run that failed
-          // returns to "idle" instead, so switching the view off and on once
-          // the wifi is back tries again rather than reporting a readiness
-          // that was never achieved.
-          if (cuePrefetchState !== "idle" || !cueButtons.length) return;
-          if (!window.fetch) {
-            // No fetch API. Nothing can be pulled down ahead of time, so say
-            // nothing rather than claim the music is ready: the buttons still
-            // work, they just stream when pressed.
-            cuePrefetchState = "unsupported";
-            paintCuePrefetch();
-            return;
-          }
-          cuePrefetchState = "running";
-          cuePrefetchDone = 0;
-          cuePrefetchFailed = 0;
-          paintCuePrefetch();
-          var queue = cueButtons.map(cueSrc);
-          (function next() {
-            if (!queue.length) {
-              // Any failure at all means the promise of "press play and it
-              // sounds immediately" cannot be kept, so do not make it.
-              cuePrefetchState = cuePrefetchFailed ? "idle" : "done";
-              paintCuePrefetch();
-              return;
-            }
-            var url = queue.shift();
-            // Reading the body to completion is what actually pulls the bytes
-            // down; the service worker stores its own clone on the way past.
-            fetch(url, { cache: "force-cache" })
-              .then(function (res) {
-                if (!res || !res.ok) throw new Error("bad response");
-                return res.blob();
-              })
-              .then(function () {
-                cuePrefetchDone++;
-              })
-              .catch(function () {
-                cuePrefetchFailed++;
-              })
-              .then(function () {
-                paintCuePrefetch();
-                next();
-              });
-          })();
-        }
-
         function isLineVisible(line) {
           if (line.classList.contains("search-hidden")) return false;
           if (line.classList.contains("actor-hidden")) return false;
@@ -6023,17 +5488,6 @@
           // recompute the per-line actor filter too: entering this view lifts
           // it, leaving it restores it
           applyActorState();
-          if (on) {
-            // The operator has identified themselves. Pull the audio down now,
-            // so no cue has to buffer at the moment it is pressed.
-            prefetchCueAudio();
-          } else {
-            // leaving the view stops whatever is sounding: the operator has
-            // moved on, and a cue playing under the full script is confusing
-            stopCue();
-          }
-          // the progress note belongs to the music view; repaint either way
-          paintCuePrefetch();
           if (on) {
             // land on the first music line that is actually on screen under the
             // current filters: visible itself, and not inside a scene that the
@@ -6445,10 +5899,6 @@
           applyCueState();
           updateNavActorHighlight(val);
           refreshCueStepper();
-          // which lines are blurred has just changed, so the cue buttons on
-          // those lines may need lifting out of the blur or putting back
-          if (typeof moveCueButtonsForPractice === "function")
-            moveCueButtonsForPractice();
         }
 
         actorSelect.addEventListener("change", function () {
@@ -6626,9 +6076,6 @@
             : null;
           if (practicingLine) {
             practicingLine.classList.toggle("peek");
-            // peeking un-blurs the line, so a detached cue button belongs back
-            // in the sentence it came from (and vice versa on re-hiding)
-            moveCueButtonsForPractice();
             return;
           }
           var cueLine = e.target.closest
@@ -6646,7 +6093,6 @@
             .forEach(function (l) {
               l.classList.add("peek");
             });
-          moveCueButtonsForPractice();
         });
         hideAllBtn.addEventListener("click", function () {
           document
@@ -6654,7 +6100,6 @@
             .forEach(function (l) {
               l.classList.remove("peek");
             });
-          moveCueButtonsForPractice();
         });
 
         applyActorState();

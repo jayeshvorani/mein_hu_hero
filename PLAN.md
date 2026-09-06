@@ -1056,7 +1056,8 @@ Then hand to `deliverable-reviewer` against BRIEF.md and this plan.
 - [x] B2 accept added text, delete struck cuts
 - [x] B3 floating scene navigator
 - [x] Verification
-- [ ] Reviewer clean
+- [x] Round 7 review defects fixed
+- [x] Reviewer clean (fifth pass, 2026-09-06)
 
 ### Found while building (not in the original list)
 
@@ -1494,4 +1495,444 @@ Also from the same pass:
 | Print | 0 stubs, 0 hidden, 75 lines, rail hidden |
 | Search, sheets | 18 hits, 8 sheet rows |
 | 7 widths x 2 themes | no overflow, no undersized targets |
+| Console errors | none |
+
+---
+
+## Round 7 — play buttons on the music cues (2026-09-06)
+
+The user has added eight MP3s in `Audio files/`. Each cue that has a matching
+file gets an inline play button, so the sound operator can hear the cue from
+the script itself.
+
+Backup taken as `index.backup-20260906-102027.html`.
+
+### What we have, and what we do not
+
+Ten musical moments in the script, eight files. Seven are confident matches:
+
+| Scene | Cue | File |
+|---|---|---|
+| 1 | Kabhi khushi kabhi gam, mother waits | `01 - Kabhi Khushi - Sad` |
+| 1 | "music changes and on a happy note" | `02 - Kabhi Khushi - Happy` |
+| 3 | Tathya tathya ho | `04 - Ta thaiya` |
+| 5 | Le jayenge le jayenge | `05 - Le jayegne` |
+| 6 | Main nagin tu sapera | `06 - Mein Nagin` |
+| 8 | jab main chota bacha tha | `07 - Jab mein chota baccha` |
+| 8 | Ek dusre se karte hain pyaar hum | `08 - Ek Dusre se` |
+
+Scene 1 is one line carrying TWO cues (the sad music, then the switch to
+happy), in separate paragraphs, so it takes two buttons.
+
+**No button, by the user's decision:**
+
+- **Scene 2**, "(Haunting music of Dil to Pagal Hain)" when Raj collides with
+  Simran. No file.
+- **Scene 3**, "Ek main aur ek tu" under the narration. The script itself
+  still marks this "Music tbd".
+- **Scene 8**, Raj's "I am back" comeback dance. The script has not chosen a
+  song yet, it asks a question.
+- `03 - Are re are re.mp3` is **unused**. It matches neither cue's text. It is
+  from Dil To Pagal Hai so scene 2 is the likelier home, but the user chose
+  not to guess. To be placed later.
+
+### Build
+
+**Markup.** A `<button class="cue-play">` immediately after the last `.c-music`
+span of each matched cue, carrying `data-audio` (the file path) and
+`data-cue` (a short label for the accessible name). Inline, so it sits with the
+cue text rather than floating.
+
+**Playback.** One `Audio` object reused for all seven, since only one track
+plays at a time: pressing a second button stops the first and starts the new
+one (the user's choice). State on the button reflects idle / loading /
+playing. Pressing the playing button again stops it.
+
+**Loading: prefetch the moment "Music cues only" goes on.** A cue that
+buffers when the operator presses play is a cue that misses its moment on
+stage, so the audio must be resident before it is needed, not fetched on
+demand.
+
+Turning that filter on is the operator identifying themselves: nobody else
+uses that view. So it is the trigger. On switching it on, all seven files are
+fetched into the service worker cache in the background, sequentially so a
+phone on venue wifi is not saturated by seven parallel downloads, and the
+Options sheet shows quiet progress ("Loading music, 3 of 7") and then a ready
+state. All seven are requested again on a later visit, but with `cache:
+"force-cache"` and the service worker answering from its own cache, so no
+network bytes are spent: the counter walks 1 to 7 and settles immediately.
+
+The files stay OUT of `PRECACHE`: 8.8 MB is 3.5x the hero photo, and a cast
+member who only ever reads their lines should not download it. This way the
+weight lands on the one person who needs it, at the moment they ask for it,
+which is typically well before the cue is played.
+
+One shared `<audio>` serves every button, so there is nothing to warm per
+cue; the readiness comes from the service worker cache, not from the element.
+Pressing play on a track that is somehow still cold falls back to streaming
+from the network rather than refusing.
+
+**Failure.** If a file 404s or the format is unsupported, the button shows a
+quiet "unavailable" state rather than doing nothing. The cast are on mixed
+phones and this must not look broken.
+
+**Accessibility.** Real `<button>`, `aria-label` naming the cue, `aria-pressed`
+for the playing state, visible focus ring, 44px minimum tap target. Announce
+nothing on a live region: the sound is the feedback.
+
+**Print.** Buttons hidden.
+
+**Music cues only view.** These buttons are the whole point of that view, so
+they must survive it, and be visible in the filtered list.
+
+### Verification
+
+1. All seven buttons present, on the right cues, in running order.
+2. Each plays its intended file; audio actually starts (currentTime advances).
+3. Pressing a second button stops the first.
+4. Pressing a playing button stops it.
+5. A missing file shows the unavailable state, does not hang.
+6. Buttons visible and working under "Music cues only" and with a character
+   selected; hidden on print.
+7. Keyboard: reachable, operable with Enter and Space, visible focus.
+8. No layout shift, no horizontal overflow, both themes, 360 to 1440px.
+9. Existing regression: A1 to A5, rail, search, sheets, no console errors.
+10. Service worker `CACHE_VERSION` bumped, `PRECACHE` unchanged.
+11. Prefetch: turning on "Music cues only" fetches all seven, progress is
+    shown, and it completes. Measured with the network log.
+12. After prefetch, a play press starts from cache with no network request.
+13. Prefetch is skipped on a second visit, and does not re-download.
+14. Turning the filter on and straight off again does not leave a runaway
+    download or a stuck progress label.
+15. Prefetch failure (offline, or a 404) degrades quietly: the ready state
+    does not lie, and play still attempts the network.
+
+### Progress
+
+- [x] Markup: 7 buttons
+- [x] CSS
+- [x] JS player
+- [x] Prefetch on Music cues only, with progress
+- [x] Verification
+- [x] Round 7 review defects fixed
+- [x] Reviewer clean (fifth pass, 2026-09-06)
+
+### Verification results
+
+| Check | Result |
+|---|---|
+| Buttons present, right cues, running order | 7, scenes 1x2, 3, 5, 6, 8x2 |
+| Audio actually plays | playhead advanced 2.01s over 2s wall clock |
+| Correct file per button | verified by src on each press |
+| Second press stops the first | yes, one Audio object reused |
+| Press the playing button stops it | yes, and rewinds to 0 |
+| Missing file | `is-unavailable`, aria-disabled, no hang |
+| **Plays with the network OFF after prefetch** | **yes, 2.91s into a 16s track** |
+| mp3 requests on page load | 0 |
+| mp3 requests when the filter goes on | 7, sequential, ends "Music ready to play" |
+| All 7 in the service worker cache | yes, under mhh-v6 |
+| Leaving the music view | stops playback, clears the note |
+| Rapid on/off | no stuck label, no runaway |
+| Keyboard | real button, focusable, 44x44 hit area |
+| Print | buttons hidden |
+| Regression A1-A4, search, sheets, rail | all pass |
+| 4 widths x 2 themes | no overflow, button 26px |
+| Console errors | none |
+
+The offline test is the one that matters: with the network disabled the cue
+still played from cache, which is the proof that prefetch removes the buffer
+at the moment of pressing play.
+
+### Found while building
+
+- **The service worker would never have cached the audio.** Its `cacheable`
+  regex listed woff2/png/svg/webmanifest/css/js and not mp3, so every prefetch
+  would have been discarded and every play would have hit the network. Added.
+- **Range requests would have poisoned the cache.** An `<audio>` element asks
+  for byte ranges and gets 206 Partial Content back. Storing one of those and
+  later serving it as a whole file gives a track that plays a few seconds and
+  stops. Range requests now pass straight through to the network, and the
+  cache is filled only by the page's own full-file prefetch.
+- **The progress note went stale.** Toggling the view off while a prefetch was
+  in flight left "Music ready to play" in the Options sheet with nothing to
+  play it against. It now only speaks while the music view is on.
+
+### Round 7 review, and the fixes it produced
+
+Ten defects. Nine fixed, one measured and found not to apply as described.
+Two of them would have broken the feature on the cast's own phones.
+
+**The audio would not have played offline on any iPhone.** The service worker
+passed every range request straight to the network. An `<audio>` element does
+not request a file, it requests byte ranges: measured, even Chromium sends
+`Range: bytes=0-` on first load, and WebKit always does. So the 8.8 MB
+prefetch would have been unreachable the moment the venue wifi dropped, which
+is the whole reason for prefetching it. The earlier "offline playback works"
+result was a false pass: the browser's own HTTP memory cache answered, not the
+service worker.
+
+Ranges are now served from the cache by slicing the stored whole file and
+synthesising the 206 (`Content-Range`, `Accept-Ranges`, 416 for an
+unsatisfiable start). Re-verified from a genuinely cold start: seven files
+cached, network disabled, cue plays to 3.41s of a 16 second track, and
+seeking forward to 10s works offline too.
+
+**The play button hijacked taps on the dialogue around it.** The 44px hit pad
+was 44px in both axes, but the button sits mid-paragraph in wrapped stage
+directions with a 25.9px line-height. Measured: every probe 18px above and
+below the disc hit the button, so tapping a word in the line above or below
+played a cue out loud. The pad is now full width but capped to the disc's own
+height: zero vertical steal, 44px of horizontal reach kept.
+
+Also fixed:
+
+- **A race between two fast presses.** `cuePlaying = null` ran outside the
+  stale-cue guard, so pressing B while A's `play()` was still pending left B
+  stuck showing a spinner over audible music, with no button able to stop it.
+  Both the promise rejection and the `error` listener now only act when the
+  button is still the current one. Verified with two clicks fired in the same
+  tick: the winner plays, nothing is stuck, and it can be stopped.
+- **A failed cue was dead for the session.** One dropped request and the
+  button could never be pressed again. Pressing an unavailable button now
+  clears the state and retries.
+- **The prefetch lied about failure.** Successes and failures both incremented
+  the same counter, so seven failed fetches still reported "Music ready to
+  play", and the state could never return to idle to be retried. Failures are
+  counted separately; any failure reports "Some music could not be loaded,
+  cues will stream" and leaves the state retryable. Verified by pointing all
+  seven buttons at missing files.
+- **A cache bump would have evicted the audio.** `activate` sweeps every cache
+  that is not the current version, so any future edit to the page would have
+  cost the operator the 8.8 MB again. The audio now lives in its own
+  unversioned `mhh-audio` cache, which activate leaves alone.
+- **The play button was blurred, and doubled as a peek toggle.** Two cues sit
+  on actor-attributed lines (Apurva scene 8, Maneesh scene 6), so in practice
+  mode the button was blurred with the dialogue and a press also revealed or
+  re-hid the line. The button is excluded from the blur, and the click no
+  longer bubbles to the document peek handler.
+- **The progress note announced seven times.** It was a live region updated
+  per file. The visible counter is now silent and a separate sr-only region
+  announces only the settled outcome.
+- **`aria-pressed` on an unavailable button**, which reads as an unpressed
+  toggle rather than a broken one. Dropped, and the label reworded to
+  "X, audio unavailable, press to retry".
+- Two comments and one plan paragraph claimed a `preload="auto"` belt-and-
+  braces that does not exist. Removed.
+
+**Not reproducible as described:** the reviewer read the 44px pad as extending
+sideways over neighbouring text. It does, by about 5 to 7px into the inline
+margin, which is whitespace between words rather than glyphs. The vertical
+reach was the real defect and is fixed above.
+
+### Final verification, round 7
+
+| Check | Result |
+|---|---|
+| 7 buttons, right cues, running order | yes |
+| Audio plays, correct file per button | verified, playhead advances |
+| Exclusive playback, press-again stops | yes, one Audio reused |
+| Two presses in the same tick | winner plays, nothing stuck, stoppable |
+| **Cold start, network off, press play** | **plays to 3.41s of 16s** |
+| **Offline seek to 10s** | **works, playing at 11.43s** |
+| Cache layout | 7 files in `mhh-audio`, 0 in the versioned cache |
+| Prefetch on filter, progress, ready | yes, sequential, 7 of 7 |
+| All files missing | honest failure message, retryable |
+| Retry after a failed cue | clears and replays |
+| Practice mode: blur and peek | button legible, no peek side effect |
+| Hit pad vertical steal | 0 (was 8 of 8 probes) |
+| Print | buttons hidden |
+| Regression A1-A4, search, sheets, rail | all pass |
+| 4 widths x 2 themes | no overflow |
+| Console errors | none |
+
+
+### Round 7, second review pass
+
+Ten more findings. Two were mine to have caught before claiming the feature
+worked.
+
+**The blur exclusion did not work, and could not have.** A CSS filter
+rasterises its entire subtree; `filter: none` on a descendant cannot undo an
+ancestor's blur. There is no such thing as un-filtering. My "verified" note
+was worthless: the screenshot I checked was not in the blurred state at all.
+
+Two cues sit on actor lines (Maneesh scene 6, Apurva scene 8), and the
+reviewer's first pass named only one of them. The button now physically
+leaves `.content` while its line is blurred, pinned to the line's own corner,
+and returns to its exact position in the sentence when the line is revealed. A
+hidden placeholder marks where it came from, so it never comes back at the end
+of the paragraph. Verified as an invariant across seven state transitions
+(actor set, practice on, reveal all, hide all, actor swapped, practice off):
+zero violations, no stranded placeholders, sentence text intact.
+
+**The range branch intercepted every asset, not just audio.** Any same-origin
+GET carrying a Range header, including the 2.5 MB hero photo, was pulled into
+a heap buffer, sliced, and served with an `audio/mpeg` fallback Content-Type.
+Now gated on `isAudio`; everything else falls through to the ordinary
+cache-first path. Verified the photo still loads.
+
+Also fixed:
+
+- **Whole-file `arrayBuffer()` on every range request.** A multi-megabyte heap
+  allocation plus a second copy for the slice, repeated on every seek, on a
+  phone. Now `Blob.slice`, which is a view over the stored bytes rather than a
+  copy.
+- **Two malformed range cases.** `bytes=5-2` (end before start) produced a
+  zero-length 206 with a nonsense Content-Range that a media element cannot
+  recover from; it is now a 416. `bytes=-500` (the suffix form, "the last 500
+  bytes", which Safari uses) was silently reinterpreted as the FIRST 501
+  bytes; it is now handled correctly.
+- **The audio cache could go stale forever.** Cache-first with no
+  revalidation, query strings stripped, and exempt from the activate sweep
+  meant a replaced track under the same filename would play the old recording
+  on every device that had already prefetched, with no way to force it. The
+  cache is now `mhh-audio-v1`, still exempt from the asset sweep but swept
+  when that constant changes. **Bump it whenever a file in `Audio files/` is
+  replaced.**
+- **The error listener blamed the wrong cue.** It tested `if (cuePlaying)`
+  rather than identity, so on a fast second press it marked the newly started
+  cue as broken. Now tracks which button owns the loaded src and compares.
+- **`"unsupported"` had no label branch** and returned "" only by falling
+  through a failure test that happened to be zero. Made explicit, and the
+  state comment now names all four states and which are terminal.
+- Two more stale comments and one dead `removeAttribute("aria-disabled")`.
+
+### Final verification, round 7 second pass
+
+| Check | Result |
+|---|---|
+| Blurred line: button legible and usable | yes, detached to the line corner |
+| Detach invariant, 7 transitions | 0 violations, 0 stranded placeholders |
+| Sentence text after round trip | intact |
+| Range branch scope | audio only; hero photo unaffected |
+| Offline play and seek | plays, seeks to 10.53s, still playing |
+| Cache split | `mhh-v6` 12 assets 0 mp3, `mhh-audio-v1` 7 mp3 |
+| A1 / A2 / A3 / A4 | 9 cues, 0 hidden, 0 stray, 4 keys |
+| Print | 0 stubs, 75 lines, buttons hidden |
+| Search, sheets | 18 hits, 8 rows |
+| 4 widths x 2 themes | no overflow |
+| Console errors | none |
+
+### Round 7, third review pass
+
+Five findings. Two were real defects in my own fixes from the previous pass.
+
+**`CACHE_VERSION` was not bumped when the audio was split out.** The previous
+build wrote the seven mp3s into `mhh-v6`; leaving the constant at `mhh-v6`
+meant activate would keep that cache intact on any device upgrading from it,
+so the audio would be stored twice (about 17.6 MB) and the global
+`caches.match` could serve the stale copy from the wrong cache, defeating the
+whole point of giving the audio its own version counter. Bumped to `mhh-v7`,
+and both lookups are now scoped to their own cache with
+`caches.open(target).then(c => c.match(...))` rather than the global search,
+which has no defined ordering across caches.
+
+**The `cueLoadingFor` fix was vacuous.** It tracked the button, and the button
+is assigned in the same breath as `cuePlaying`, so the two were always
+identical and the guard collapsed to the truthiness test it was meant to
+replace. The error event carries no identity of its own, so the test now
+compares the element's resolved `currentSrc` against the URL recorded when the
+src was set. Verified against the exact race: press a broken cue, press a good
+one in the same tick, and the good one plays, is correctly labelled, is not
+marked unavailable, and remains stoppable.
+
+Also fixed:
+
+- `stopCue` now clears the tracked src, so a late error cannot be attributed
+  to a track that was already stopped.
+- The re-attach branch used to strip `is-detached` even when the placeholder
+  was missing, which would drop the button out of its sentence and into the
+  line's grid with no way back. It now returns without touching the class
+  unless the slot was actually found.
+- The placeholder was looked up as "the first slot in this line". Scene 1
+  already carries two cues on one line, so that assumption holds only while no
+  such line is actor-attributed. Slots are now keyed to their button.
+
+### Final verification, round 7 third pass
+
+| Check | Result |
+|---|---|
+| Cache split, clean install | `mhh-v7` 12 assets 0 mp3, `mhh-audio-v1` 7 mp3 |
+| Offline play and seek | plays, seeks to 10.53s, still playing |
+| Broken cue then good cue, same tick | good one plays, labelled, stoppable |
+| Detach invariant, 7 transitions | 0 violations, 0 stranded placeholders |
+| A1 / A2 / A3 / A4 | 9 cues, 0 hidden, 0 stray, 4 keys |
+| Search | 18 hits |
+| Console errors | none |
+
+**Note for the next release: `AUDIO_CACHE` must be bumped whenever a file in
+`Audio files/` is replaced, added or renamed**, or devices that have already
+prefetched will keep playing the old recording.
+
+### Round 7, fourth review pass
+
+Five findings, all real, all fixed.
+
+- **The navigation branch had a key mismatch.** It stored the cached page
+  under the full request URL but read it back without `ignoreSearch`, so a
+  visit carrying a query string (a shared link, a launcher parameter) wrote an
+  entry a later plain-URL visit could not find. Rescoping the asset lookups in
+  the previous pass had left this one inconsistent with the rest of the file.
+  Now keyed on the path and read with `ignoreSearch`, scoped to its own cache.
+  Verified: visit with `?tracking=abc`, go offline, load the bare URL, 200.
+- **The detach test inferred state from parentage** rather than reading the
+  class the function itself sets. True only while every cue sits inside
+  `.content > p`; a cue authored as a direct child of `.line`, where the
+  reveal button and music badge already live, would have read as permanently
+  detached and never been positioned. Now reads `is-detached`.
+- **The slot key was an array index written into the DOM.** Stable this
+  session, but it would silently disagree with the array if a cue were ever
+  added or reordered. The button now holds a direct reference to its own
+  placeholder: no key, no query, nothing to get out of step.
+- **A genuine failure could be missed after a double tap.** Two presses on one
+  26px disc run `playCue` twice; the second stops the first and clears the
+  tracked src, so a real load error arriving afterwards was discarded and a
+  broken file looked like a working button. `stopCue` now detaches the source
+  outright, so no error can arrive for a track we deliberately stopped.
+- **`cursor: not-allowed` on a button that retries when pressed.** It told a
+  pointer user the control was inert while the accessible name said "press to
+  retry". Removed.
+
+### Final verification, round 7 fourth pass
+
+| Check | Result |
+|---|---|
+| Offline navigation after a query-string visit | 200 |
+| Detach invariant, 6 transitions | 0 violations, 0 stranded slots, text intact |
+| Slot keying | direct reference, no `data-slot` in the DOM |
+| Double tap a broken cue | ends idle (second tap is a stop), no false state |
+| Single press a broken cue | "audio unavailable, press to retry" |
+| Cursor on an unavailable button | pointer, matching the retry promise |
+| Cache split, clean install | `mhh-v7` 12 assets 0 mp3, `mhh-audio-v1` 7 mp3 |
+| Offline play and seek | plays, seeks to 10.53s, still playing |
+| A1 / A2 / A3 / A4, search, sheets | 9 cues, 0, 0, 4 keys, 18 hits, 8 rows |
+| Print | 0 stubs, 75 lines, buttons hidden |
+| 4 widths x 2 themes | no overflow |
+| Console errors | none |
+
+### Round 7, fifth review pass
+
+All five fixes from the fourth pass confirmed holding. Two new defects, both
+introduced by my own navigation rewrite in that pass, both fixed.
+
+- **The navigation write had no status guard.** `fetch()` resolves happily for
+  a 404, a 500, or a captive portal's sign-in page, and `Cache.put` only
+  refuses a 206, so any of those would have been stored over the good cached
+  page and served as the app on the next offline visit. Venue wifi with a
+  portal is exactly where this would have bitten. Now gated on
+  `status === 200 && type === "basic"`, the same guard the asset path already
+  used; the rewrite simply failed to carry it across.
+- **Neither runtime `Cache.put` had a catch.** A quota failure would surface
+  as an unhandled rejection inside the service worker, and quota pressure is
+  realistic here rather than theoretical given the audio cache is 8.8 MB on
+  the operator's phone. Both now swallow it, matching the install handler's
+  existing posture of tolerating a failed `cache.add`.
+
+### Final verification, round 7 fifth pass
+
+| Check | Result |
+|---|---|
+| Cached pages after several visits | `/` and `/index.html`, nothing spurious |
+| Offline navigation | 200, real page: 75 lines, script alive |
+| Offline audio after prefetch | playing |
 | Console errors | none |

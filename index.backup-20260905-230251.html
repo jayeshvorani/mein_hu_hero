@@ -2,15 +2,7 @@
 <html lang="en-GB" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <!-- viewport-fit=cover so the env(safe-area-inset-*) values the layout
-         already uses actually resolve. Without it they fall back to 0, and the
-         bottom bar, the scene rail and the back-to-top all sit under the home
-         indicator on a notched phone once the page is added to the homescreen
-         and runs without browser chrome. -->
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mein hu Hero · Rehearsal Companion</title>
     <meta
       name="description"
@@ -129,6 +121,7 @@
         --accent-contrast: #1a0906;
 
         /* meaning colours, kept from the original markup */
+        --c-added: var(--terracotta);
         --c-music: var(--teal);
         --gold-bg: color-mix(in srgb, var(--marigold) 12%, transparent);
         --gold-border: color-mix(in srgb, var(--marigold) 40%, transparent);
@@ -550,7 +543,7 @@
       .search-wrap input {
         width: 100%;
         min-height: 44px;
-        /* type="search" gets native chrome on iOS and Safari: an inset
+        /* type="search" gets native chrome on iOS and Safari — an inset
            shadow, a rounded overlay and a built-in clear button that fights
            our own close button. Strip it so the field is ours. */
         appearance: none;
@@ -1438,14 +1431,6 @@
       }
       #actorSelect {
         min-height: 44px;
-        /* A select is sized by its widest option, and the longest here is
-           "Maneesh · Ramu Kaka, Man in office, Bhairav Baba". Left free it
-           measured 365px and pushed the whole page into horizontal scroll at
-           360px, which is still a live width (iPhone SE). Cap it and let the
-           label ellipsis instead. */
-        max-width: 100%;
-        min-width: 0;
-        text-overflow: ellipsis;
         font-family: inherit;
         font-size: 0.88rem;
         color: var(--ink);
@@ -1760,6 +1745,53 @@
         border-radius: 0.5rem;
       }
 
+      /* first-time orientation strip */
+      .orient {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.9rem;
+        padding: 1rem 1.2rem;
+        margin-bottom: 2.4rem;
+        border: 1px solid var(--gold-border);
+        border-radius: var(--radius-sm);
+        background: var(--gold-bg);
+        font-size: 0.9rem;
+        color: var(--ink);
+      }
+      .orient[hidden] {
+        display: none;
+      }
+      .orient-body {
+        flex: 1;
+      }
+      .orient-body strong {
+        font-family: "Bricolage Grotesque", sans-serif;
+        font-weight: 600;
+      }
+      .orient-body p {
+        margin: 0.35rem 0 0;
+        color: var(--ink-dim);
+      }
+      .orient-dismiss {
+        flex-shrink: 0;
+        min-height: 44px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.66rem;
+        letter-spacing: 0.03em;
+        color: var(--gold-ink);
+        background: transparent;
+        border: 1px solid var(--gold-border);
+        border-radius: 999px;
+        padding: 0.35rem 0.8rem;
+        cursor: pointer;
+        transition: background var(--motion-2) var(--ease);
+      }
+      @media (hover: hover) {
+        .orient-dismiss:hover {
+          background: color-mix(in srgb, var(--marigold) 16%, transparent);
+        }
+      }
+
       /* ---------- scene ---------- */
       section.scene {
         margin-bottom: 3.6rem;
@@ -1912,15 +1944,19 @@
       .content p:last-child {
         margin-bottom: 0;
       }
-      /* Draft-marking colours (.c-added) and strikethrough (.is-strike) were
-         retired in round 5: the added text is now final and the struck text
-         has been deleted from the script. Only performance markers remain. */
+      .c-added {
+        color: var(--c-added);
+      }
       .c-music {
         color: var(--c-music);
       }
       .is-italic {
         font-style: italic;
         color: var(--ink-dim);
+      }
+      .is-strike {
+        text-decoration: line-through;
+        opacity: 0.55;
       }
       .is-bold {
         font-weight: 700;
@@ -1950,25 +1986,6 @@
       .line.cue-line.peek-cue {
         border-left-style: solid;
       }
-      /* A cue line holds BOTH its full text and the short cue. Which one shows
-         is decided here, never by rewriting the DOM, so the full dialogue is
-         always present for print and for search. */
-      .cue-render {
-        display: none;
-      }
-      .line.cue-line .cue-render {
-        display: block;
-      }
-      .line.cue-line > .content {
-        display: none;
-      }
-      /* tapping a cue reveals the line it came from */
-      .line.cue-line.peek-cue > .content {
-        display: block;
-      }
-      .line.cue-line.peek-cue .cue-render {
-        display: none;
-      }
 
       mark.search-hit {
         background: var(--mark-bg);
@@ -1982,7 +1999,8 @@
         display: none;
       }
       .line.search-hidden,
-      .line.actor-hidden {
+      .line.actor-hidden,
+      .line.music-hidden {
         display: none;
       }
       section.scene.all-hidden {
@@ -2021,160 +2039,6 @@
       .music-flag svg {
         width: 12px;
         height: 12px;
-      }
-      /* In the legend the badge is a sample sitting in normal flow, not a
-         marker pinned to the corner of a line. */
-      .legend-swatch.music-flag {
-        position: static;
-      }
-
-      /* Progress while the cue audio is being pulled down, in the Options
-         sheet directly under the toggle that triggers it. */
-      .music-prefetch-note {
-        margin: -0.4rem 0 0.9rem;
-        padding: 0 0.2rem;
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.66rem;
-        letter-spacing: 0.03em;
-        color: var(--muted);
-      }
-      .music-prefetch-note.is-ready {
-        color: var(--c-music);
-      }
-
-      /* ---------- cue play buttons ----------
-         An inline control sitting immediately after the cue text it plays, so
-         the sound operator triggers the right track without leaving the line
-         they are reading. Inline rather than pinned to the corner of the line
-         because two cues can live in one line (scene 1 carries the sad music
-         and the switch to happy), and a corner marker cannot say which is
-         which.
-
-         The glyph is drawn in CSS rather than shipped as an SVG so the button
-         can be a single small element in the markup, and so the play and stop
-         shapes can cross-fade without swapping nodes. */
-      .cue-play {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        /* the visible disc; the tap target is extended to 44px by ::before */
-        position: relative;
-        width: 1.6rem;
-        height: 1.6rem;
-        margin: 0 0.15rem 0 0.3rem;
-        padding: 0;
-        vertical-align: -0.35em;
-        border-radius: 999px;
-        border: 1px solid color-mix(in srgb, var(--teal) 55%, transparent);
-        background: color-mix(in srgb, var(--teal) 16%, transparent);
-        color: var(--c-music);
-        cursor: pointer;
-        flex-shrink: 0;
-        transition:
-          background var(--motion-1) var(--ease),
-          border-color var(--motion-1) var(--ease),
-          color var(--motion-1) var(--ease);
-      }
-      /* Widens the hit area horizontally, into the inline margin either side,
-         where there is nothing but the gap between words.
-
-         Deliberately NOT 44px tall. The button sits mid-paragraph in wrapped
-         stage directions with a 25.9px line-height, so a 44px pad reaches a
-         third of a line box into the text above and below it: measured, every
-         probe 18px above and below the disc was hitting the button. In a
-         rehearsal that means tapping a word plays a cue out loud. Height is
-         capped to the disc, and the extra reach is taken sideways only. */
-      .cue-play::before {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        width: 44px;
-        height: 100%;
-        transform: translate(-50%, -50%);
-      }
-      /* the play triangle, and the stop square it becomes */
-      .cue-play::after {
-        content: "";
-        width: 0;
-        height: 0;
-        margin-left: 0.15em; /* optical centring of a triangle in a circle */
-        border-style: solid;
-        border-width: 0.34em 0 0.34em 0.55em;
-        border-color: transparent transparent transparent currentColor;
-        transition:
-          border-width var(--motion-1) var(--ease),
-          border-radius var(--motion-1) var(--ease);
-      }
-      .cue-play[aria-pressed="true"] {
-        background: var(--c-music);
-        border-color: var(--c-music);
-        color: var(--accent-contrast);
-      }
-      .cue-play[aria-pressed="true"]::after {
-        /* square: a zero-width left border with equal top and bottom reads as
-           a block once the background flips */
-        margin-left: 0;
-        width: 0.5em;
-        height: 0.5em;
-        border-width: 0;
-        border-radius: 1px;
-        background: currentColor;
-      }
-      /* fetching after a press; the prefetch reports in the Options sheet
-         instead and never touches the buttons */
-      .cue-play.is-loading::after {
-        margin-left: 0;
-        width: 0.55em;
-        height: 0.55em;
-        border-width: 2px;
-        border-style: solid;
-        border-color: currentColor transparent currentColor transparent;
-        border-radius: 999px;
-        animation: cue-spin 700ms linear infinite;
-      }
-      @keyframes cue-spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-      /* The file is missing or the browser could not play it. Still a live
-         control, and still shows a pointer: pressing it retries, which is what
-         the accessible name promises. A not-allowed cursor would tell a mouse
-         user the opposite of what a screen reader is being told. */
-      .cue-play.is-unavailable {
-        border-color: var(--hairline-strong);
-        background: transparent;
-        color: var(--muted);
-      }
-      .cue-play.is-unavailable::after {
-        margin-left: 0;
-        width: 0.5em;
-        height: 2px;
-        border-width: 0;
-        border-radius: 1px;
-        background: currentColor;
-      }
-      @media (hover: hover) {
-        .cue-play:hover:not(.is-unavailable) {
-          background: color-mix(in srgb, var(--teal) 30%, transparent);
-          border-color: var(--c-music);
-        }
-        .cue-play[aria-pressed="true"]:hover {
-          background: var(--c-music);
-        }
-      }
-      .cue-play:focus-visible {
-        outline: 2px solid var(--accent);
-        outline-offset: 2px;
-      }
-      /* A cue line already reserves room on the right for the MUSIC badge. The
-         buttons are inline in the text, so nothing more is needed there, but
-         under reduced motion the spinner must not spin. */
-      @media (prefers-reduced-motion: reduce) {
-        .cue-play.is-loading::after {
-          animation: none;
-        }
       }
       /* the practice reveal button and the music flag both sit top-right; when
          both are present on one line, drop the flag below the reveal button */
@@ -2266,20 +2130,6 @@
         user-select: none;
         cursor: pointer;
       }
-      /* Two cues sit on actor-attributed lines (Maneesh in scene 6, Apurva in
-         scene 8), so in practice mode their play button would be inside a
-         blurred subtree. A filter on an ancestor rasterises everything beneath
-         it and `filter: none` on a child cannot undo that, so the button
-         cannot stay in .content and be legible. The JS moves it out to the
-         line itself while the line is blurred (see moveCueButtonsForPractice)
-         and puts it back afterwards; this positions it in that state. */
-      .line > .cue-play.is-detached {
-        position: absolute;
-        right: 0.9rem;
-        bottom: 0.7rem;
-        margin: 0;
-        z-index: 2;
-      }
       body.practice-mode .line.is-practicing:not(.peek) .reveal-btn {
         display: inline-flex;
         align-items: center;
@@ -2304,6 +2154,44 @@
       }
       body.practice-mode .line.is-practicing .speaker {
         color: var(--terracotta);
+      }
+
+      /* scene footer nav: Button-in-Button pills */
+      .scene-footer-nav {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.6rem;
+        padding-top: 1.2rem;
+        border-top: 1px solid var(--hairline);
+      }
+      .scene-nav-btn {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.76rem;
+        color: var(--ink-dim);
+        text-decoration: none;
+        padding: 0.55rem 0.95rem;
+        border: 1px solid var(--hairline);
+        border-radius: 999px;
+        background: var(--surface);
+        max-width: 48%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        transition:
+          border-color var(--motion-2) var(--ease),
+          background var(--motion-2) var(--ease);
+      }
+      @media (hover: hover) {
+        .scene-nav-btn:hover {
+          border-color: var(--accent);
+          background: var(--surface-2);
+        }
+      }
+      .scene-nav-btn.next {
+        margin-left: auto;
       }
 
       footer.page-footer {
@@ -2406,16 +2294,9 @@
       }
 
       /* ---------- back-to-top ---------- */
-      /* Sits to the LEFT of the scene rail's column, not on top of it. The
-         rail occupies 2px to 24px from the right edge; at the old 1.1rem this
-         button spanned 17.6px to 61.6px and crossed it by 6.4px. In portrait
-         the rail is short enough that they never met vertically, but in
-         landscape the rail fills the whole gap between the two bars and its
-         prev/next buttons ended up underneath this opaque disc, which sits a
-         layer above them. */
       .to-top {
         position: fixed;
-        right: calc(2rem + env(safe-area-inset-right, 0px));
+        right: calc(1.1rem + env(safe-area-inset-right, 0px));
         bottom: calc(1.1rem + env(safe-area-inset-bottom, 0px));
         z-index: 64;
         display: inline-flex;
@@ -2458,277 +2339,6 @@
       .to-top:focus-visible {
         outline: 2px solid var(--accent);
         outline-offset: 2px;
-      }
-
-      /* ============================================================
-         Scene rail: the running order, on the right edge.
-
-         Replaces the previous/next links that used to sit at the foot of
-         every scene. Those only existed at the boundary between two scenes,
-         which is the one moment you are least likely to need them; this is
-         reachable from anywhere in a scene and also answers "where am I?",
-         which the old links never did.
-
-         Eight dashes, one per scene, in order. The current one is longer and
-         in the accent colour; a short stub is a scene the active filter has
-         emptied. Fades back while you read and returns on the next scroll.
-
-         DELIBERATELY TINY. The first version carried scene titles and sat in
-         a glass panel, and the reading column was inset to clear it. That cost
-         15% of a phone's width and 21% of a tablet's, cutting the dialogue to
-         28 to 44 characters per line when comfortable reading is 45 to 75, for
-         chrome that is only on screen while you scroll. It now overlays the
-         right margin with no reserved space at all: no panel, no titles, no
-         inset. The names live in each tick's aria-label and in the Scenes
-         sheet, which is the labelled route to the same jumps.
-         ============================================================ */
-      .scene-rail {
-        position: fixed;
-        right: env(safe-area-inset-right, 0px);
-        z-index: 62;
-        /* Anchored to the gap between the top bar and the bottom bar, not
-           centred on the viewport. Centring plus a max-height cannot be made
-           to clear the bottom bar: shrinking a centred box gives space back at
-           the top exactly as fast as at the bottom. Auto margins then centre
-           the panel within that gap while it is shorter than the gap.
-
-           This lives in the base rule rather than a breakpoint because the
-           rail is visible at every width where it exists (it is display:none
-           above 900px). Scoped to 700px it left the 701 to 900px band still
-           centred, which put the rail across the bottom bar on any phone in
-           landscape.
-
-           The 0.75rem is breathing room, and covers the safe-area inset that
-           lands after --bottombar-h is first measured. Height is max-content
-           with an explicit calc cap: a percentage max-height or fit-content
-           resolves against the containing block rather than these insets, and
-           both let the panel grow back over the bars. */
-        top: calc(var(--header-h) + 0.75rem);
-        bottom: calc(var(--bottombar-h) + 0.75rem);
-        margin: auto 0;
-        height: max-content;
-        max-height: calc(
-          100dvh - var(--header-h) - var(--bottombar-h) - 1.5rem
-        );
-        overflow-y: auto;
-        scrollbar-width: none;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.3rem;
-        /* Sized to the gutter the layout already leaves: .app has 1.5rem of
-           right padding at every width, so 22px of rail plus its 2px offset
-           sits inside that margin and never covers the reading column. The
-           first slim version was 43px, which put the step buttons 16px over
-           the dialogue cards on tablet and in landscape.
-
-           A whisper of a backing, not the old glass panel: the dashes need
-           something behind them to stay legible over both the page and the
-           dark line cards, but a full tier-3 panel is what made the rail wide
-           enough to squeeze the script in the first place. */
-        /* 18px of controls plus 3px either side, 24px total, which is exactly
-           the gutter .app leaves at 1.5rem. The 3px matters: the rail is a
-           clipping box (overflow-y: auto forces overflow-x to auto too) and
-           the controls are width:100% of the content box, so without an inset
-           every focus ring was cut off down both sides, since outline-offset
-           draws from -2px and the clip box starts at 0. */
-        width: 24px;
-        padding: 0.3rem 3px;
-        border-radius: 999px;
-        background: color-mix(in srgb, var(--bg) 62%, transparent);
-        backdrop-filter: blur(6px);
-        -webkit-backdrop-filter: blur(6px);
-        opacity: 0;
-        pointer-events: none;
-        /* Deliberately NOT visibility:hidden. That takes the rail out of the
-           tab order, and since it is only revealed by a scroll event and
-           tabbing does not scroll, a keyboard user could never reach it: 45
-           tab stops down the page and the rail was still unreachable. It stays
-           focusable at all times and :focus-within below brings it into view
-           the moment it is tabbed to. */
-        transition: opacity var(--motion-2) var(--ease);
-      }
-      /* shown once past the hero; .is-idle dims it while the reader is still */
-      .scene-rail.is-shown {
-        opacity: 1;
-        pointer-events: auto;
-      }
-      /* Idle is a recessive state, not an invisible one: the rail still has to
-         answer "which scene am I in" at a glance without being tapped. Only a
-         light touch, because on a touch device this is the RESTING state (no
-         hover, no focus), and it multiplies with every opacity below it. An
-         earlier 0.55 here compounded with a 0.5 on the dash and a 0.55 on a
-         disabled tick, taking the dimmest marks to about 1.2:1. */
-      .scene-rail.is-shown.is-idle {
-        opacity: 0.82;
-      }
-      /* Focus always wins, shown or not: this is what makes the rail reachable
-         from the top of the page with a keyboard. */
-      .scene-rail:focus-within,
-      .scene-rail.is-shown:hover {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
-      .sr-ticks {
-        display: flex;
-        flex-direction: column;
-        gap: 0.12rem;
-        align-items: flex-end;
-        width: 100%;
-      }
-      /* Eight rows at the full 44px would make the tick column taller than a
-         third of a phone screen, so the rows are 32px and the whole row is the
-         hit area. That is under the 44px floor the rest of the app holds to,
-         and deliberately: this is a precision control for picking one scene
-         out of eight, the prev/next buttons directly below it are full 44px,
-         and the Scenes sheet remains the large-target route to the same jumps.
-
-         The scene TITLE is never rendered here at any width. Carrying it made
-         the rail 158px wide on a tablet and cut the dialogue to 44 characters
-         per line, which is below comfortable reading for an actor holding a
-         phone at arm's length. The title lives in the tick's aria-label for
-         screen readers, and in the Scenes sheet for everyone else. */
-      .sr-tick {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        min-height: 32px;
-        border: 0;
-        background: none;
-        cursor: pointer;
-        /* --ink-dim, not --muted. These are 2px marks seen through the rail's
-           idle fade, so the token has to start well above the 3:1 floor to
-           still clear it after that multiply: --muted measured 2.3 to 2.6:1 on
-           screen, --ink-dim measures 4.5:1 or better in both themes. */
-        color: var(--ink-dim);
-      }
-      /* Every state below changes WIDTH and COLOUR, never opacity. Opacity on
-         a mark this small compounds with the rail's own idle fade, and that is
-         what took the dimmest dashes to roughly 1.2:1 against the page. */
-      .sr-tick .sr-dash {
-        display: block;
-        width: 10px;
-        height: 2px;
-        border-radius: 2px;
-        background: currentColor;
-        transition:
-          width var(--motion-2) var(--ease),
-          background var(--motion-2) var(--ease);
-      }
-      .sr-tick.is-current {
-        color: var(--accent-strong);
-      }
-      .sr-tick.is-current .sr-dash {
-        width: 16px;
-        height: 3px;
-      }
-      /* A scene the current filter has emptied. Distinguished by LENGTH, not
-         by fading: a third the width of a live tick is unmistakable at a
-         glance, and measured on screen it still clears the 3:1 non-text floor,
-         which a dimmed colour at this size did not (1.5:1). The running order
-         is information even when a scene has nothing in it, so these have to
-         stay visible. The button is also genuinely inert, not merely faded
-         while still accepting a tap that scrolls nowhere. */
-      .sr-tick[disabled] {
-        cursor: default;
-      }
-      .sr-tick[disabled] .sr-dash {
-        width: 5px;
-      }
-      @media (hover: hover) {
-        .sr-tick:hover:not([disabled]) {
-          color: var(--accent-strong);
-        }
-        .sr-tick:hover:not([disabled]) .sr-dash {
-          width: 16px;
-        }
-      }
-      .sr-tick:focus-visible {
-        outline: 2px solid var(--accent);
-        outline-offset: 2px;
-        border-radius: 4px;
-      }
-
-      .sr-steps {
-        display: flex;
-        flex-direction: column;
-        gap: 0.1rem;
-        padding-top: 0.35rem;
-        margin-top: 0.2rem;
-        border-top: 1px solid var(--hairline-strong);
-        width: 100%;
-        align-items: center;
-      }
-      /* Full rail width by 40px tall. Narrower than the 44px square the rest
-         of the app holds to, and knowingly: the rail lives inside the 24px
-         gutter the layout already leaves, and a 44px-wide button would set the
-         rail's whole width and push it back over the dialogue. It clears the
-         WCAG 2.5.8 minimum of 24x24 with room to spare, the vertical run is
-         what a thumb actually needs on a stacked control, and the Scenes sheet
-         remains the full-size route to every jump these buttons make. */
-      .sr-step {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        height: 40px;
-        border-radius: 6px;
-        border: 0;
-        background: none;
-        color: var(--ink-dim);
-        cursor: pointer;
-        transition:
-          color var(--motion-1) var(--ease),
-          background var(--motion-1) var(--ease);
-      }
-      .sr-step svg {
-        width: 14px;
-        height: 14px;
-      }
-      @media (hover: hover) {
-        /* a tint of the accent, not --surface-2: that token is a near-opaque
-           white built to sit inside a glass panel, and this control has none */
-        .sr-step:hover:not(:disabled) {
-          color: var(--accent-strong);
-          background: color-mix(in srgb, var(--accent) 18%, transparent);
-        }
-      }
-      /* A disabled step is at the first or last reachable scene, and is simply
-         not drawn: at 14px a chevron is a pair of thin diagonals, and every
-         way of showing a weakened version of it landed under the 3:1 non-text
-         floor once the rail's idle fade multiplied it (--muted-2 2.38:1,
-         --muted 2.30:1, --ink-dim at 0.75 opacity 2.48:1, a smaller glyph
-         2.69:1 through anti-aliasing alone). Hiding it is honest: there is no
-         scene that way, the button is already inert and out of the tab order,
-         and the remaining arrow shows the one direction that still works. */
-      .sr-step:disabled {
-        cursor: default;
-      }
-      .sr-step:disabled svg {
-        visibility: hidden;
-      }
-      .sr-step:focus-visible {
-        outline: 2px solid var(--accent);
-        outline-offset: 2px;
-      }
-
-      /* Above 900px the sticky sidebar already lists all eight scenes with
-         their titles and an active state, so the rail would be a second copy
-         of the same control. It exists for the widths where that sidebar is
-         hidden, which is exactly where the old footer links used to be the
-         only way to move between scenes. */
-      @media (min-width: 901px) {
-        .scene-rail {
-          display: none;
-        }
-      }
-
-      /* the rail scrolls only on a cramped landscape screen; hide the bar */
-      .scene-rail::-webkit-scrollbar {
-        display: none;
       }
 
       /* ---------- responsive ---------- */
@@ -2875,6 +2485,16 @@
           position: static !important;
           margin-top: 0.5rem;
         }
+        .scene-footer-nav {
+          flex-direction: column;
+        }
+        .scene-nav-btn {
+          max-width: none;
+          white-space: normal;
+        }
+        .scene-nav-btn.next {
+          margin-left: 0;
+        }
         header.topbar {
           border-radius: 999px;
           padding: 0.35rem 0.4rem 0.35rem 0.9rem;
@@ -2935,12 +2555,6 @@
         .sheet {
           transition: none !important;
         }
-        /* The rail's idle fade is motion in its own right, and a control that
-           dims and undims under the reader is exactly what this preference is
-           asking us not to do. Once shown, it simply stays. */
-        .scene-rail.is-shown.is-idle {
-          opacity: 1;
-        }
       }
 
       @media print {
@@ -2949,11 +2563,11 @@
         header.topbar,
         nav.scene-nav,
         .picker,
+        .orient,
         footer.page-footer,
         .cast-bar,
         .reveal-btn,
-        .cue-play,
-        .scene-rail,
+        .scene-footer-nav,
         .read-progress,
         .bottombar,
         .sheet,
@@ -3077,19 +2691,6 @@
         body.cue-mode .line.cue-line .content {
           filter: none !important;
           user-select: text !important;
-        }
-        /* Paper always carries the full script. Cue mode swaps each cue line's
-           dialogue for a "CUE …" stub on screen; here that is reversed, so a
-           script printed while rehearsing is never missing its lines. This is
-           pure CSS, and there is deliberately no beforeprint handler any more:
-           Safari does not fire that event reliably, and a printout with holes
-           in it is worse than no printout. */
-        .line.cue-line > .content {
-          display: block !important;
-          filter: none !important;
-        }
-        .cue-render {
-          display: none !important;
         }
         /* keep the music badge legible on the print palette; music-only view is
            intentionally left filtered so printing in that mode yields a clean
@@ -3404,17 +3005,6 @@
           </span>
           <span class="st-switch" aria-hidden="true"></span>
         </button>
-        <!-- Prefetch progress. The counter is visible but NOT announced: a
-             live region here would read out all seven steps one after another
-             while the operator is trying to use the sheet. Only the settled
-             result is announced, through the sr-only region below. -->
-        <p class="music-prefetch-note" id="musicPrefetchNote" hidden></p>
-        <span
-          class="sr-only"
-          id="musicPrefetchLive"
-          role="status"
-          aria-live="polite"
-        ></span>
 
         <button
           type="button"
@@ -3828,13 +3418,19 @@
             </div>
             <div class="legend-row">
               <div class="legend-sample">
+                <span class="legend-swatch c-added">Added text</span>
+              </div>
+              <div class="legend-meaning">Recent/Latest edits</div>
+            </div>
+            <div class="legend-row">
+              <div class="legend-sample">
                 <span class="legend-swatch c-music">Music cue</span>
               </div>
               <div class="legend-meaning">Music piece</div>
             </div>
             <div class="legend-row">
               <div class="legend-sample">
-                <span class="legend-swatch music-flag">
+                <span class="legend-swatch music-flag" style="position: static">
                   <svg
                     viewBox="0 0 24 24"
                     fill="none"
@@ -3861,7 +3457,34 @@
               </div>
               <div class="legend-meaning">Scene/action descriptions</div>
             </div>
+            <div class="legend-row">
+              <div class="legend-sample">
+                <span class="legend-swatch is-strike">Cut this</span>
+              </div>
+              <div class="legend-meaning">
+                Struck-through text marks a suggested cut or an edit already
+                made in this draft.
+              </div>
+            </div>
           </section>
+
+          <div class="orient" id="orientStrip" hidden>
+            <div class="orient-body">
+              <strong>New here? How to rehearse</strong>
+              <p>
+                Pick your character above to blur your own lines (Practice mode)
+                so you can test yourself. Cue mode shows just the tail of the
+                line before yours, then a blank for you. Tap any blurred line to
+                peek. Colours: <span class="c-added">added text</span>,
+                <span class="c-music">music cue</span>,
+                <span class="legend-gold">optional cut</span>,
+                <span class="is-strike">struck cut</span>.
+              </p>
+            </div>
+            <button type="button" class="orient-dismiss" id="orientDismiss">
+              Got it
+            </button>
+          </div>
 
           <section class="scene reveal-on-scroll" id="scene-1" data-scene="1">
             <div class="scene-head">
@@ -3895,7 +3518,7 @@
             <div class="dialogue">
               <div
                 class="line"
-                data-search="narrator namaste. aaj hum milane jaa rahe hain ek aajebo garib naujavan raj se. naam to suna he hoga! raj hindi filmo se tang aa chuka hai. nahi nahi; use filmo se koi shikaayat nahee, vah to kabhi kabhi ek do picture bhee dekh letaa hai. use problem hain filmi fans se jo uske jeevan mein bohut hein. hamaare is natak ka naam hai ‘mein hu hero’. aao dekhen raj malhotra ke ghar mein kya scene hain. milate hain unke pitaa dharamchand aur mataji sumitradevi se."
+                data-search="narrator namaste. aaj hum milane jaa rahe hain ek aajebo garib naujavan raj se. naam to suna he hoga! raj hindi filmo se tang aa chuka hai. nahi nahi; use filmo se koi shikaayat nahee, vah to kabhi kabhi ek do picture bhee dekh letaa hai. use problem hain filmi fans se jo uske jeevan mein bohut hein. hamaare is natak ka naam hai  ‘mein hu hero’.  aao dekhen raj malhotra ke ghar mein kya scene hain. milate hain unke pitaa dharamchand aur mataji sumitradevi se."
                 data-actor="Madhuri"
               >
                 <div class="speaker">Narrator</div>
@@ -3935,7 +3558,7 @@
               </div>
               <div
                 class="line"
-                data-search="father (dharamchand) (keeps newspaper aside) arre bhagwaan, suntee ho! (loud voice)"
+                data-search="father (dharamchand) (keeps newspaper aside)  arre bhagwaan, suntee ho! (loud voice)"
                 data-actor="Rajesh"
               >
                 <div class="speaker">Father (Dharamchand)</div>
@@ -3947,7 +3570,7 @@
               </div>
               <div
                 class="line"
-                data-search="mother (sumitradevi) (comes from the kitchen wiping her hands on the sari) kya hai raj ke papa."
+                data-search="mother (sumitradevi) (comes from the kitchen wiping her hands on the sari)  kya hai raj ke papa."
                 data-actor="Harsh"
               >
                 <div class="speaker">Mother (Sumitradevi)</div>
@@ -3980,23 +3603,35 @@
                 <div class="speaker">Mother (Sumitradevi)</div>
                 <div class="content">
                   <p>
-                    Aaj hamara beta Raj aa raha hain na (vilaayat se). Uski
-                    taiyari kar rahi thee.
+                    Aaj hamara beta Raj aa raha hain na
+                    <span class="c-added">(vilaayat se</span
+                    ><span class="c-added">)</span
+                    ><span class="c-added">.</span> Uski taiyari kar rahi thee.
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
               </div>
               <div
                 class="line"
-                data-search="father (dharamchand) han. aaj 3 saal baad apna beta vilayat se degree lekar aa rahaa hain. woh bhi first class first number lekar. baap dadaonka naam roshan kiya hain. aakhir beta kiska hain."
+                data-search="father (dharamchand) han. aaj 3 saal baad apna beta vilayat se degree lekar aa rahaa hain. woh bhi first class first number lekar. baap dadaonka  naam roshan kiya hain. aur first class first bhi mela hain. aakhir beta kiska hain."
                 data-actor="Rajesh"
               >
                 <div class="speaker">Father (Dharamchand)</div>
                 <div class="content">
                   <p>
                     Han. Aaj 3 saal baad apna beta vilayat se degree lekar aa
-                    rahaa hain. Woh bhi first class first number lekar. Baap
-                    dadaonka naam roshan kiya hain. Aakhir beta kiska hain.
+                    rahaa hain. <span class="c-added">Wo</span
+                    ><span class="c-added">h</span
+                    ><span class="c-added"> bhi </span
+                    ><span class="c-added"
+                      >first class first number lekar.</span
+                    >
+                    Baap dada<span class="c-added">on</span>ka naam roshan kiya
+                    hain.
+                    <span class="is-strike"
+                      >Aur first class first bhi mela hain.</span
+                    >
+                    Aakhir beta kiska hain.
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
@@ -4053,7 +3688,7 @@
               </div>
               <div
                 class="line"
-                data-search="background (kabhi khushi kabhi gam music). (mother walks to the door and realises raj has not arrived. she turns back disheartened and then music changes and on a happy note raj enters. mother does aarti. he bends down to take ashirwad of mother and father)."
+                data-search="background (kabhi khushi kabhi gam music).  (mother walks to the door and realises raj has not arrived. she turns back disheartened and then music changes and on a happy note raj enters. mother does aarti. he bends down to take ashirwad of mother and father)."
               >
                 <div class="speaker">Background</div>
                 <div class="content">
@@ -4063,13 +3698,7 @@
                     ><span class="c-music is-italic">ushi kabhi g</span
                     ><span class="c-music is-italic">a</span
                     ><span class="c-music is-italic">m music).</span
-                    ><span class="c-music"> </span
-                    ><button
-                      type="button"
-                      class="cue-play"
-                      data-audio="Audio files/01 - Kabhi Khushi - Sad.mp3"
-                      data-cue="Kabhi khushi kabhi gam, sad"
-                    ></button>
+                    ><span class="c-music"> </span>
                   </p>
                   <p>
                     <span class="is-italic">(</span
@@ -4081,13 +3710,7 @@
                       then</span
                     >
                     <span class="c-music is-italic">music changes and </span
-                    ><span class="c-music is-italic">on a happy note</span
-                    ><button
-                      type="button"
-                      class="cue-play"
-                      data-audio="Audio files/02 - Kabhi Khushi - Happy.mp3"
-                      data-cue="Kabhi khushi kabhi gam, happy"
-                    ></button>
+                    ><span class="c-music is-italic">on a happy note</span>
                     <span class="is-italic">Raj</span
                     ><span class="is-italic">
                       enters. Mother does aarti. He bends down to take Ashirwad
@@ -4109,7 +3732,7 @@
               </div>
               <div
                 class="line is-cut"
-                data-search="raj (raj walks to dadaji’s photo and keeps his degree near the photo) dadaji aaj main vilayat se degree leke aayaa hun. aapka sapna maine puraa kiya hain. muze aashirwad deejiye."
+                data-search="raj (raj walks to dadaji’s photo and keeps his degree near the photo)  dadaji aaj main vilayat se degree leke aayaa hun. aapka sapna maine puraa kiya hain. muze aashirwad deejiye."
                 data-actor="Apurva"
               >
                 <div class="speaker">Raj</div>
@@ -4141,21 +3764,22 @@
               </div>
               <div
                 class="line"
-                data-search="raj maine ek company mein job ke liye apply kiya tha. aaj hi interview ke liye jaana hai."
+                data-search="raj maine ek company mein job ke liye apply kiya tha.  to aaj hi interview ke liye jaana hai. unga."
                 data-actor="Apurva"
               >
                 <div class="speaker">Raj</div>
                 <div class="content">
                   <p>
-                    Maine ek company mein job ke liye apply kiya tha. Aaj hi
-                    interview ke liye jaana hai.
+                    Maine ek company mein job ke liye apply kiya tha.
+                    <span class="is-strike">to</span> Aaj hi interview ke liye
+                    jaana hai. <span class="is-strike">unga.</span>
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
               </div>
               <div
                 class="line"
-                data-search="raj (turns to mum) maa, mujhe bahut bhook lagee hai. kuch khane ko do na"
+                data-search="raj (turns to mum)  maa, mujhe bahut bhook lagee hai. kuch khane ko do na"
                 data-actor="Apurva"
               >
                 <div class="speaker">Raj</div>
@@ -4181,7 +3805,7 @@
               </div>
               <div
                 class="line no-speaker"
-                data-search="(food is served by ramu. mother walks to raj with a bowl of gajar ka halwa and tries to feed him.)"
+                data-search=" (food is served by ramu. mother walks to raj with a bowl of gajar ka halwa and tries to feed him.)"
               >
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
@@ -4241,6 +3865,11 @@
                 <button type="button" class="reveal-btn">Tap to reveal</button>
               </div>
             </div>
+            <div class="scene-footer-nav">
+              <a class="scene-nav-btn next" href="#scene-2"
+                >Scene 02 · The Job Interview →</a
+              >
+            </div>
           </section>
 
           <section class="scene reveal-on-scroll" id="scene-2" data-scene="2">
@@ -4284,19 +3913,20 @@
             <div class="dialogue">
               <div
                 class="line"
-                data-search="narrator raj apne interview ke liye deendayal shetji ke office pahoch gaya hai. chaliye dekhate hain udhar kya hota hain."
+                data-search="narrator raj apne interview ke liye deendayal shetji ke office pahoch gaya hai. chaliye dekhate hain dhekhe udhar kya hota hain."
                 data-actor="Madhuri"
               >
                 <div class="speaker">Narrator</div>
                 <div class="content">
                   <p>
                     Raj apne interview ke liye Deendayal shetji ke office pahoch
-                    gaya hai. Chaliye dekhate hain udhar kya hota hain.
+                    gaya hai. Chaliye dekhate hain
+                    <span class="is-strike">Dhekhe</span> udhar kya hota hain.
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
               </div>
-              <div class="line no-speaker" data-search="office scene">
+              <div class="line no-speaker" data-search=" office scene">
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
                   <p>
@@ -4318,7 +3948,7 @@
               </div>
               <div
                 class="line no-speaker"
-                data-search="raj gets up to walk towards the shetji’s office door. a man who is sitting in the office for interview comes and stands in front of him."
+                data-search=" raj gets up to walk towards the shetji’s office door. a man who is sitting in the office for interview comes and stands in front of him."
               >
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
@@ -4346,8 +3976,8 @@
                 <div class="content">
                   <p>
                     Kya kar rahe ho. Muzhe bulaayaa hai.
-                    <span class="is-italic">Aap mere baad jaanaa</span
-                    ><span class="is-italic">.</span>
+                    <span class="c-added is-italic">Aap mere baad jaanaa</span
+                    ><span class="c-added is-italic">.</span>
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
@@ -4367,7 +3997,7 @@
               </div>
               <div
                 class="line"
-                data-search="office receptionist (pushes the man aside) chal hat. kahan kahan se aa jaate hain amitabh. raj with one hand over his forehead."
+                data-search="office receptionist (pushes the man aside) chal hat. kahan kahan se aa jaate hain amitabh.  raj with one hand over his forehead."
                 data-actor="Aneeta"
               >
                 <div class="speaker">Office Receptionist</div>
@@ -4387,7 +4017,10 @@
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
               </div>
-              <div class="line no-speaker" data-search="inside shetji’s office">
+              <div
+                class="line no-speaker"
+                data-search=" inside shetji’s office"
+              >
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content"><p>Inside Shetji’s office</p></div>
               </div>
@@ -4399,11 +4032,17 @@
                 <div class="speaker">Deendayal (Simran’s father)</div>
                 <div class="content">
                   <p>
-                    (Raj enters the office. Receptionist and man in office can
-                    walk out of the stage so focus will shift to office space)
-                    Aao barkhudar. Tum vilaayat se first class first leke aaye
-                    ho. Ye manager ka job tumhara hain. Bahar jaakar munimjee se
-                    apna appointment letter le lo. Kab join karna chaho ge.
+                    <span class="c-added">(Raj enters the office</span
+                    ><span class="c-added"
+                      >. Receptionist and man in office can walk out of the
+                      stage</span
+                    ><span class="c-added">
+                      so focus will shift to office space</span
+                    ><span class="c-added">)</span
+                    ><span class="c-added"> </span>Aao barkhudar. Tum vilaayat
+                    se first class first leke aaye ho. Ye manager ka job tumhara
+                    hain. Bahar jaakar munimjee se apna appointment letter le
+                    lo. Kab join karna chaho ge.
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
@@ -4421,7 +4060,7 @@
               </div>
               <div
                 class="line no-speaker"
-                data-search="raj shakes hand with shetji and walks towards the door. he collides with simran. they look into each other’s eyes and go on staring at each other. (haunting music of dil to pagal hain). shetji coughs loudly. raj then hastily leaves the office. simran goes towards her dad."
+                data-search=" raj shakes hand with shetji and walks towards the door. he collides with simran. they look into each other’s eyes and go on staring at each other. (haunting music of dil to pagal hain). shetji coughs loudly. raj then hastily leaves the office. simran goes towards her dad."
               >
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
@@ -4461,14 +4100,16 @@
               </div>
               <div
                 class="line"
-                data-search="deendayal (simran’s father) voh raj hain. bahut honhaar naujawan hain, vilayat se first class first lekar aayaa hain, kal se office join karega."
+                data-search="deendayal (simran’s father) voh raj hain. bahut honhaar naujawan hain, vilayat se first class first lekar aayaa hain, aur kal se office join karne vala hain. karega."
                 data-actor="Shailendra"
               >
                 <div class="speaker">Deendayal (Simran’s father)</div>
                 <div class="content">
                   <p>
                     Voh Raj hain. Bahut honhaar naujawan hain, vilayat se first
-                    class first lekar aayaa hain, Kal se office join karega.
+                    class first lekar aayaa hain,
+                    <span class="is-strike">aur</span> Kal se office join
+                    <span class="is-strike">karne vala hain.</span> karega.
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
@@ -4497,6 +4138,13 @@
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
               </div>
+            </div>
+            <div class="scene-footer-nav">
+              <a class="scene-nav-btn prev" href="#scene-1"
+                >← Scene 01 · Homecoming</a
+              ><a class="scene-nav-btn next" href="#scene-3"
+                >Scene 03 · The Park →</a
+              >
             </div>
           </section>
 
@@ -4533,12 +4181,17 @@
             <div class="dialogue">
               <div
                 class="line"
-                data-search="narrator raj aur simran aksar ek doosare se milne lage hain. (music tbd – background music dhun of “ek main aur ek tu, dono mile is tarah” while narrator speaks and raj & simran take entry into the park.)"
+                data-search="narrator raj aur simran aksar ek doosare se milne lage hain.  (music tbd – background music dhun of “ek main aur ek tu, dono mile is tarah” while narrator speaks and raj &amp; simran take entry into the park.)"
                 data-actor="Madhuri"
               >
                 <div class="speaker">Narrator</div>
                 <div class="content">
-                  <p>Raj aur Simran aksar ek doosare se milne lage hain.</p>
+                  <p>
+                    <span class="c-added">Raj aur Simran </span
+                    ><span class="c-added"
+                      >aksar ek doosare se milne lage hain</span
+                    ><span class="c-added">.</span>
+                  </p>
                   <p>
                     <span class="c-music">(Music tbd – Background mus</span
                     ><span class="c-music">ic dhun of </span
@@ -4556,21 +4209,19 @@
               </div>
               <div
                 class="line no-speaker"
-                data-search="raj sits and simran is dancing on ‘tathya tathya ho’ raj puts his hand on his head. simran pulls him aside and scene is closed by showing two flowers cross over each other. (flower cross over upon exit of raj and simran instead of over their faces, so no queries by children. also as simran takes raj away person enters with flowers) ."
+                data-search=" raj and simran are in the park. raj sits and simran is dancing on ‘tathya tathya ho’ raj puts his hand on his head. simran pulls him aside and scene is closed by showing two flowers cross over each other. (flower cross over upon exit of raj and simran instead of over their faces, so no queries by children. also as simran takes raj away person enters with flowers) ."
               >
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
                   <p>
-                    <span class="is-italic"> </span
+                    <span class="is-italic is-strike">Raj</span
+                    ><span class="is-italic is-strike"> and Simran are i</span
+                    ><span class="is-italic is-strike">n the </span
+                    ><span class="is-italic is-strike">park.</span
+                    ><span class="is-italic"> </span
                     ><span class="is-italic">Raj sits and </span
                     ><span class="is-italic">Simran is dancing on ‘</span
                     ><span class="c-music is-italic">Tathya tathya ho’ </span
-                    ><button
-                      type="button"
-                      class="cue-play"
-                      data-audio="Audio files/04 - Ta thaiya.mp3"
-                      data-cue="Tathya tathya ho"
-                    ></button
                     ><span class="is-italic">Raj</span
                     ><span class="is-italic"> </span
                     ><span class="is-italic">puts his </span
@@ -4584,22 +4235,31 @@
                     ><span class="is-italic">t</span
                     ><span class="is-italic">wo flowers cross over </span
                     ><span class="is-italic">each other</span
-                    ><span class="is-italic">. </span
-                    ><span class="is-italic"
+                    ><span class="c-added is-italic">. </span
+                    ><span class="c-added is-italic"
                       >(flower cross over upon exit of Raj and Simran instead of
                       over their faces</span
-                    ><span class="is-italic">, so no queries by children</span
-                    ><span class="is-italic"
+                    ><span class="c-added is-italic"
+                      >, so no queries by children</span
+                    ><span class="c-added is-italic"
                       >. Also as Simran takes Raj away </span
-                    ><span class="is-italic">person enters with flowers</span
-                    ><span class="is-italic">)</span
-                    ><span class="is-italic"> </span
-                    ><span class="is-italic">.</span
-                    ><span class="is-italic"> </span
-                    ><span class="is-italic"> </span>
+                    ><span class="c-added is-italic"
+                      >person enters with flowers</span
+                    ><span class="c-added is-italic">)</span
+                    ><span class="c-added is-italic"> </span
+                    ><span class="c-added is-italic">.</span
+                    ><span class="c-added is-italic"> </span
+                    ><span class="c-added is-italic"> </span>
                   </p>
                 </div>
               </div>
+            </div>
+            <div class="scene-footer-nav">
+              <a class="scene-nav-btn prev" href="#scene-2"
+                >← Scene 02 · The Job Interview</a
+              ><a class="scene-nav-btn next" href="#scene-4"
+                >Scene 04 · Fixing the Match →</a
+              >
             </div>
           </section>
 
@@ -4649,13 +4309,18 @@
               </div>
               <div
                 class="line"
-                data-search="sumitradevi ramu kahan mar gaya. mehmaan aa gaye. chai nashta le aanaa"
+                data-search="sumitradevi ramu kahan mar gaya. mehmaan aa gaye. chai nashta lana le aanaa"
                 data-actor="Harsh"
               >
                 <div class="speaker">Sumitradevi</div>
                 <div class="content">
                   <p>
-                    Ramu kahan mar gaya. Mehmaan aa gaye. Chai nashta le aanaa
+                    Ramu kahan mar gaya. Mehmaan aa gaye. Chai
+                    <span class="c-added">nashta</span>
+                    <span class="is-strike">lana</span
+                    ><span class="is-strike"> </span
+                    ><span class="c-added">le aanaa</span
+                    ><span class="c-added"> </span>
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
@@ -4697,28 +4362,60 @@
                 <div class="speaker">Sumitradevi</div>
                 <div class="content">
                   <p>
-                    Kitni sundar bahu dhundee hain hamaare Raj ne. Kitni
-                    sanskari bhi hain. Main diya lekar dundne jaate tab bhi aise
-                    sundar bahu nahee milatee.
+                    Kitni sundar bahu dhundee hain
+                    <span class="c-added">hamaare</span> Raj ne. Kitni sanskari
+                    bhi hain. Main diya lekar dundne jaate tab bhi aise sundar
+                    bahu nahee milatee.
                   </p>
-                  <p>(Simran sharmatee hai aur Raj ko aankh maaratee hai).</p>
+                  <p>
+                    <span class="c-added"
+                      >(Simran sharmatee hai aur Raj ko aankh maaratee
+                      hai).</span
+                    >
+                  </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
               </div>
               <div
                 class="line"
-                data-search="deendayal hum ye shaadi dhoom dhaam se manaaenge."
+                data-search="deendayal dono bachho ki shaadi dhum dham se karenge. hum ye shaadi dhoom dhaam se manaaenge."
                 data-actor="Shailendra"
               >
                 <div class="speaker">Deendayal</div>
                 <div class="content">
-                  <p>Hum ye shaadi dhoom dhaam se manaaenge.</p>
+                  <p>
+                    <span class="is-strike"
+                      >Dono bachho ki shaadi dhum dham se </span
+                    ><span class="is-strike">karenge</span
+                    ><span class="is-strike">.</span>
+                  </p>
+                  <p>
+                    <span class="c-added"
+                      >Hum ye shaadi dhoom dhaam se manaaenge.</span
+                    >
+                  </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
               </div>
               <div
                 class="line"
-                data-search="dharmachand (sumitradevi nudges dharmachand) thehero. ek baat to main bolna bhool hi gaya. (deendayal looks a bit worried/scared). ghabrao naahi sambdhijee. hamaree koi paison ki maange nahi hain. lekin (big pause) ham chahate hain ki baraateeyon ka swagat paan parag se kiya jaaye."
+                data-search="sharda devi (looking at dharamchand) ha bhai saab aap bolo vaise ham shaadi karenge."
+                data-actor="Aneeta"
+              >
+                <div class="speaker">Sharda Devi</div>
+                <div class="content">
+                  <p>
+                    <span class="is-strike"
+                      >(looking at Dharamchand) Ha bhai saab aap bolo vaise ham
+                      shaadi karenge.</span
+                    >
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="dharmachand (sumitradevi nudges dharmachand) hain.  thehero. ek baat to main bolna bhool hi gaya.  (deendayal looks a bit worried/scared).  ghabrao naahi sambdhijee. hamaree koi paison ki maange nahi hain.  lekin (big pause) ham chahate hain ki baraateeyon ka swagat paan parag se kiya jaaye."
                 data-actor="Rajesh"
               >
                 <div class="speaker">Dharmachand</div>
@@ -4727,6 +4424,8 @@
                     <span class="is-italic"
                       >(Sumitradevi nudges Dharmachand)</span
                     >
+                    <span class="is-strike">H</span
+                    ><span class="is-strike">ain.</span>
                   </p>
                   <p>Thehero. Ek baat to main bolna bhool hi gaya.</p>
                   <p>
@@ -4737,16 +4436,19 @@
                     ><span class="is-italic">). </span>
                   </p>
                   <p>
-                    Ghabrao naahi sambdhijee. Hamaree koi paison ki maange nahi
-                    hain. Lekin (big pause) ham chahate hain ki baraateeyon ka
-                    Swagat paan Parag se kiya jaaye.
+                    Ghabrao naahi <span class="c-added">sambdhijee</span
+                    ><span class="c-added">.</span> Hamaree koi
+                    <span class="c-added">paison</span>
+                    <span class="c-added">ki</span> maange nahi hain. Lekin (big
+                    pause) ham chahate hain ki baraateeyon ka Swagat paan Parag
+                    se kiya jaaye.
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
               </div>
               <div
                 class="line no-speaker"
-                data-search="everyone starts laughing. raj puts his hand on his forehead."
+                data-search=" everyone starts laughing. raj puts his hand on his forehead."
               >
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
@@ -4755,6 +4457,13 @@
                   </p>
                 </div>
               </div>
+            </div>
+            <div class="scene-footer-nav">
+              <a class="scene-nav-btn prev" href="#scene-3"
+                >← Scene 03 · The Park</a
+              ><a class="scene-nav-btn next" href="#scene-5"
+                >Scene 05 · The Wedding →</a
+              >
             </div>
           </section>
 
@@ -4793,7 +4502,7 @@
             <div class="dialogue">
               <div
                 class="line no-speaker"
-                data-search="wedding scene. raj and simran on stage sitting on their chairs. all the previous characters are attending the wedding reception. here we can have people coming in continuously and having a small talk with each other (just 30 seconds or so) suddenly dharmchand and sumitradevi break into a dance on (le jayenge le jayenge – everyone attending the reception joins and dances in a circle). simran also gets up. raj tries to hold her back but she also joins in. raj puts his hand on his forehead."
+                data-search=" wedding scene. raj and simran on stage sitting on their chairs. all the previous characters are attending the wedding reception. here we can have people coming in continuously and having a small talk with each other (just 30 seconds or so) suddenly dharmchand and sumitradevi break into a dance on (le jayenge le jayenge – everyone attending the reception joins and dances in a circle). simran also gets up. raj tries to hold her back but she also joins in.  raj puts his hand on his forehead."
               >
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
@@ -4805,20 +4514,20 @@
                     30 seconds or so) Suddenly Dharmchand and SumitraDevi break
                     into a dance on
                     <span class="c-music">(Le jayenge le jayenge</span
-                    ><span class="c-music"> </span
-                    ><button
-                      type="button"
-                      class="cue-play"
-                      data-audio="Audio files/05 - Le jayegne.mp3"
-                      data-cue="Le jayenge le jayenge"
-                    ></button
-                    >– everyone attending the reception joins and dances in a
-                    circle). Simran also gets up. Raj tries to hold her back but
-                    she also joins in.
+                    ><span class="c-music"> </span>– everyone attending the
+                    reception joins and dances in a circle). Simran also gets
+                    up. Raj tries to hold her back but she also joins in.
                   </p>
                   <p>Raj puts his hand on his forehead.</p>
                 </div>
               </div>
+            </div>
+            <div class="scene-footer-nav">
+              <a class="scene-nav-btn prev" href="#scene-4"
+                >← Scene 04 · Fixing the Match</a
+              ><a class="scene-nav-btn next" href="#scene-6"
+                >Scene 06 · The Naagin Scare →</a
+              >
             </div>
           </section>
 
@@ -4865,7 +4574,7 @@
               </div>
               <div
                 class="line no-speaker"
-                data-search="raj comes home from office and loosens his tie."
+                data-search=" raj comes home from office and loosens his tie."
               >
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
@@ -4886,24 +4595,39 @@
                 <div class="speaker">Sumitradevi</div>
                 <div class="content">
                   <p>
-                    Aaj hamaare ghar ek bahot bade baba aa rahen hai.
-                    <span class="is-italic">(Bhairav baba arrives)</span>
-                    Bhairav Baba ki Jai. Lagataa hai aaap ko pehle bhi kabhi
-                    dekha hain.
+                    <span class="c-added"
+                      >Aaj hamaare ghar ek bahot bade baba aa rahen hai.</span
+                    ><span class="c-added"> </span
+                    ><span class="c-added is-italic"
+                      >(Bhairav baba arrives)</span
+                    ><span class="c-added"> </span>Bhairav Baba ki Jai. Lagataa
+                    hai aaap ko pehle bhi kabhi dekha hain.
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
               </div>
               <div
                 class="line"
-                data-search="bhairav baba mumkin hai kyun ki is skit me mera double role hai. shaayad aapko main amitabh ke jaisa lag rahaa hoon."
+                data-search="bhairav baba han. mera ek judva bhai hain. use dekha hoga. mumkin hai kyun ki is skit me mera double role hai. shaayad aapko main amitabh ke jaisa lag rahaa hoon."
                 data-actor="Maneesh"
               >
                 <div class="speaker">Bhairav Baba</div>
                 <div class="content">
                   <p>
-                    Mumkin hai kyun ki is skit me mera double role hai. Shaayad
-                    aapko main Amitabh ke jaisa lag rahaa hoon.
+                    <span class="is-strike">Han. </span
+                    ><span class="is-strike">M</span
+                    ><span class="is-strike">era </span
+                    ><span class="is-strike"
+                      >ek judva bhai hain. Use dekha hoga.</span
+                    >
+                  </p>
+                  <p>
+                    <span class="c-added">Mumkin hai kyun ki </span
+                    ><span class="c-added"
+                      >is skit me mera double role hai.</span
+                    ><span class="c-added">
+                      Shaayad aapko main Amitabh ke jaisa lag rahaa hoon.</span
+                    >
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
@@ -4923,7 +4647,7 @@
               </div>
               <div
                 class="line"
-                data-search="bhairav baba aap ghabrao naahi maaji. es naagino ko nachana mujhe achee tarah aatta hai. (he starts playing his been). simran comes down from stairs and dances to the tune of ‘main nagin tu sapera’ with tongue out and hissing like a snake. raj puts his hand on his forehead."
+                data-search="bhairav baba aap ghabrao naahi maaji. es naagino ko nachana mujhe achee tarah aatta hai. (he starts playing his been). simran comes down from stairs and dances to the tune of ‘main nagin tu sapera’  with tongue out and hissing like a snake.  raj puts his hand on his forehead."
                 data-actor="Maneesh"
               >
                 <div class="speaker">Bhairav Baba</div>
@@ -4946,12 +4670,6 @@
                       Simran comes down from stairs and dances to the tune of </span
                     ><span class="c-music is-italic"
                       >‘Main nagin tu sapera’ </span
-                    ><button
-                      type="button"
-                      class="cue-play"
-                      data-audio="Audio files/06 - Mein Nagin.mp3"
-                      data-cue="Main nagin tu sapera"
-                    ></button
                     ><span class="is-italic"
                       >with tongue out and hissing like a snake.
                     </span>
@@ -4966,6 +4684,13 @@
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
               </div>
+            </div>
+            <div class="scene-footer-nav">
+              <a class="scene-nav-btn prev" href="#scene-5"
+                >← Scene 05 · The Wedding</a
+              ><a class="scene-nav-btn next" href="#scene-7"
+                >Scene 07 · Rocky’s Report Card →</a
+              >
             </div>
           </section>
 
@@ -5128,6 +4853,13 @@
                 <button type="button" class="reveal-btn">Tap to reveal</button>
               </div>
             </div>
+            <div class="scene-footer-nav">
+              <a class="scene-nav-btn prev" href="#scene-6"
+                >← Scene 06 · The Naagin Scare</a
+              ><a class="scene-nav-btn next" href="#scene-8"
+                >Scene 08 · The Finale →</a
+              >
+            </div>
           </section>
 
           <section class="scene reveal-on-scroll" id="scene-8" data-scene="8">
@@ -5168,12 +4900,6 @@
                     ><span class="c-music">e</span
                     ><span class="c-music"> sharat karta tha…)</span
                     ><span class="c-music"> </span
-                    ><button
-                      type="button"
-                      class="cue-play"
-                      data-audio="Audio files/07 - Jab mein chota baccha.mp3"
-                      data-cue="Jab main chota bacha tha"
-                    ></button
                     ><span class="is-italic">Raj starts coughing</span>.
                   </p>
                 </div>
@@ -5190,7 +4916,7 @@
               </div>
               <div
                 class="line no-speaker"
-                data-search="simran, rocky all ask raj to lie on the bed. they light a small lamp."
+                data-search=" simran, rocky all ask raj to lie on the bed. they light a small lamp."
               >
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
@@ -5240,7 +4966,7 @@
               </div>
               <div
                 class="line no-speaker"
-                data-search="light on the lamp flickers and goes off"
+                data-search=" light on the lamp flickers and goes off"
               >
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
@@ -5274,7 +5000,7 @@
               </div>
               <div
                 class="line"
-                data-search="raj (gets up and starts beating everyone with his stick). chup karo saab log. diya bujh gayaa. mein abhi bhee zinda hoon. (raj’s hand starts to go to his forehead though suddenly he shrugs and breaks into a dance) can we have a song saying something like i am back or exhibiting some attitude saying don’t worry just live, have fun and raj invites family to dance)."
+                data-search="raj (gets up and starts beating everyone with his stick). chup bheto karo saab log. diya bujh gayaa. mein abhi bhee zinda hoon.  (raj’s hand starts to go to his forehead though suddenly he shrugs and breaks into a dance) can we have a song saying something like i am back or exhibiting some attitude saying don’t worry just live, have fun and raj invites family to dance)."
                 data-actor="Apurva"
               >
                 <div class="speaker">Raj</div>
@@ -5284,7 +5010,8 @@
                     ><span class="is-italic"
                       >Gets up and starts beating everyone with his stick</span
                     ><span class="is-italic">)</span
-                    ><span class="is-italic">.</span> Chup karo saab log. Diya
+                    ><span class="is-italic">.</span> Chup
+                    <span class="is-strike">bheto</span> karo saab log. Diya
                     bujh gayaa. Mein abhi bhee zinda hoon.
                   </p>
                   <p>
@@ -5310,7 +5037,8 @@
               </div>
               <div
                 class="line"
-                data-search="everyone dances on ek dusre se karte hain pyaar hum. we ask the whole audience to join in this dance. the end."
+                data-search="everyone dances on ek dusre se karte hain pyaar hum. surprise surprise raj too joins them.
+we ask the whole audience to join in this dance. the end."
               >
                 <div class="speaker">Everyone</div>
                 <div class="content">
@@ -5318,68 +5046,28 @@
                     Dances on
                     <span class="c-music"
                       >Ek dusre se karte hain pyaar hum.</span
-                    ><button
-                      type="button"
-                      class="cue-play"
-                      data-audio="Audio files/08 - Ek Dusre se.mp3"
-                      data-cue="Ek dusre se karte hain pyaar hum"
-                    ></button>
+                    >
                   </p>
-                  <p><br />We ask the whole audience to join in this dance.</p>
+                  <p>
+                    <span class="is-strike">Surprise Surprise </span
+                    ><span class="is-strike">Raj</span
+                    ><span class="is-strike"> </span
+                    ><span class="is-strike">too </span
+                    ><span class="is-strike">joins them.</span><br />We ask the
+                    whole audience to join in this dance.
+                  </p>
                   <p>The End.</p>
                 </div>
               </div>
             </div>
+            <div class="scene-footer-nav">
+              <a class="scene-nav-btn prev" href="#scene-7"
+                >← Scene 07 · Rocky’s Report Card</a
+              >
+            </div>
           </section>
         </main>
       </div>
-
-      <!-- Scene rail: running order plus prev/next, fixed to the right edge.
-           Ticks are built at runtime from the scene sections, so the rail can
-           never drift from the script.
-
-           Placed AFTER the script rather than before it: the rail is fixed
-           chrome, so its position here does not affect where it renders, but
-           it does set its place in the tab order. Earlier in the document it
-           was the very first tab stop, putting eight invisible scene buttons
-           in front of a keyboard user before they reached any content. -->
-      <nav class="scene-rail" id="sceneRail" aria-label="Jump between scenes">
-        <div class="sr-ticks" id="sceneRailTicks"></div>
-        <div class="sr-steps">
-          <button
-            type="button"
-            class="sr-step"
-            id="sceneRailPrev"
-            aria-label="Previous scene"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              aria-hidden="true"
-            >
-              <polyline points="18 15 12 9 6 15" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            class="sr-step"
-            id="sceneRailNext"
-            aria-label="Next scene"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              aria-hidden="true"
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </button>
-        </div>
-      </nav>
 
       <footer class="page-footer">
         Mein hu Hero · rehearsal companion, generated from the production
@@ -5602,324 +5290,6 @@
           line.appendChild(flag);
         });
 
-        // ============================================================
-        // Cue playback.
-        //
-        // Each .cue-play button in the markup names its own file. One shared
-        // Audio element serves all of them: only one cue is ever wanted at a
-        // time, and pressing a second button should cut the first rather than
-        // layer on top of it (a rehearsal plays cues in sequence).
-        //
-        // The files are prefetched when "Music cues only" is switched on,
-        // rather than on first press. See prefetchCueAudio below for why.
-        // ============================================================
-        var cueButtons = Array.prototype.slice.call(
-          document.querySelectorAll(".cue-play"),
-        );
-        var cuePlayer = null; // the shared Audio, created on first use
-        var cuePlaying = null; // the button whose track is currently sounding
-        // The absolute URL the shared element is currently pointed at. The
-        // error event says nothing about which load failed, so this is what
-        // tells a genuine failure apart from the abort that fires when a
-        // second press replaces the src.
-        var cueLoadingSrc = "";
-
-        function cueSrc(btn) {
-          // Filenames carry spaces, so they must be encoded, but the path
-          // separator must not be. encodeURI leaves "/" alone.
-          return encodeURI(btn.getAttribute("data-audio") || "");
-        }
-        function cueLabel(btn) {
-          return btn.getAttribute("data-cue") || "music cue";
-        }
-        function setCueState(btn, state) {
-          btn.classList.toggle("is-loading", state === "loading");
-          btn.classList.toggle("is-unavailable", state === "unavailable");
-          var name = cueLabel(btn);
-          if (state === "unavailable") {
-            // Not a toggle any more, so drop aria-pressed rather than report
-            // an unpressed play button that cannot be pressed. Phrased as a
-            // sentence: "Unavailable: X" reads as a stumble mid-name.
-            btn.removeAttribute("aria-pressed");
-            btn.setAttribute(
-              "aria-label",
-              name + ", audio unavailable, press to retry",
-            );
-            return;
-          }
-          btn.setAttribute(
-            "aria-pressed",
-            state === "playing" ? "true" : "false",
-          );
-          var verb =
-            state === "playing"
-              ? "Stop"
-              : state === "loading"
-                ? "Loading"
-                : "Play";
-          btn.setAttribute("aria-label", verb + " " + name);
-        }
-        function stopCue() {
-          if (cuePlayer) {
-            cuePlayer.pause();
-            try {
-              cuePlayer.currentTime = 0;
-            } catch (e) {
-              /* not seekable yet; pausing is enough */
-            }
-          }
-          if (cuePlaying) {
-            setCueState(cuePlaying, "idle");
-            cuePlaying = null;
-          }
-          // Nothing is loaded on our account any more. Detaching the source
-          // rather than only forgetting it matters: a double tap on a 26px
-          // disc runs playCue twice, the second call stops the first, and a
-          // genuine load failure arriving after that would otherwise be
-          // dropped by the src comparison and leave a broken file looking
-          // like a working button.
-          cueLoadingSrc = "";
-          if (cuePlayer) {
-            cuePlayer.removeAttribute("src");
-            cuePlayer.load();
-          }
-        }
-        function playCue(btn) {
-          // pressing the sounding cue again stops it
-          if (cuePlaying === btn) {
-            stopCue();
-            return;
-          }
-          stopCue();
-          // A cue that failed once is not dead for the session. Venue wifi
-          // drops a request, or the browser refuses the very first play()
-          // because it has not seen a gesture yet; either way the operator
-          // presses again and it should try again, not sit there inert.
-          btn.classList.remove("is-unavailable");
-          if (!cuePlayer) {
-            cuePlayer = new Audio();
-            cuePlayer.addEventListener("ended", function () {
-              stopCue();
-            });
-            cuePlayer.addEventListener("error", function () {
-              // Only speak for the cue this error actually belongs to.
-              //
-              // The listener is attached once to the shared element and the
-              // event carries no identity of its own, so the test has to be
-              // against the SOURCE the element is currently pointed at.
-              // Comparing two button references cannot work: replacing the src
-              // updates both of them in the same breath, so they are always
-              // equal and the test collapses to "is anything playing", which
-              // is what blamed the newly started cue for the aborted one's
-              // failure.
-              var current = cuePlayer.currentSrc || cuePlayer.src || "";
-              if (!cuePlaying || current !== cueLoadingSrc) return;
-              setCueState(cuePlaying, "unavailable");
-              cuePlaying = null;
-              cueLoadingSrc = "";
-            });
-          }
-          cuePlaying = btn;
-          setCueState(btn, "loading");
-          cuePlayer.src = cueSrc(btn);
-          // Read back what the element resolved the src to (an absolute URL),
-          // so the error listener compares like with like.
-          cueLoadingSrc = cuePlayer.src;
-          var p = cuePlayer.play();
-          if (p && typeof p.then === "function") {
-            p.then(function () {
-              // Still the intended cue? A second press may already have moved
-              // on, in which case this resolution is stale and must not paint.
-              if (cuePlaying === btn) setCueState(btn, "playing");
-            }).catch(function () {
-              // Autoplay refusal, a bad file, or an AbortError because a
-              // second press replaced the src while this play() was pending.
-              // Every branch of that is only ours to act on if this button is
-              // still the current one: clearing cuePlaying unconditionally
-              // would strand the cue that superseded us in its loading state
-              // and leave nothing able to stop it.
-              if (cuePlaying === btn) {
-                setCueState(btn, "unavailable");
-                cuePlaying = null;
-              }
-            });
-          } else {
-            setCueState(btn, "playing");
-          }
-        }
-        cueButtons.forEach(function (btn) {
-          setCueState(btn, "idle");
-          btn.addEventListener("click", function (e) {
-            // This button can sit inside a line that practice mode has
-            // blurred, where a document-level handler toggles the peek state
-            // on any click. Pressing play must not also reveal or re-hide the
-            // line: stop it here rather than letting it bubble.
-            e.stopPropagation();
-            playCue(btn);
-          });
-        });
-
-        // Two cues live on actor-attributed lines, so practice mode blurs the
-        // box they sit in. A CSS filter rasterises its whole subtree and a
-        // child cannot opt out, so the button is physically moved out of
-        // .content while the line is blurred and put back afterwards. The
-        // placeholder marks where it came from, so it always returns to the
-        // right spot in the sentence rather than to the end of it.
-        function moveCueButtonsForPractice() {
-          cueButtons.forEach(function (btn) {
-            var line = btn.closest(".line");
-            if (!line) return;
-            var shouldDetach =
-              document.body.classList.contains("practice-mode") &&
-              line.classList.contains("is-practicing") &&
-              !line.classList.contains("peek");
-            // Read the state from the class this function owns, not from
-            // parentage. Inferring it from "is my parent the line" happens to
-            // work while every cue sits inside .content > p, but a cue
-            // authored as a direct child of .line (where .reveal-btn and the
-            // injected .music-flag already live) would read as permanently
-            // detached and never be positioned at all.
-            var detached = btn.classList.contains("is-detached");
-            if (shouldDetach === detached) return;
-            if (shouldDetach) {
-              var mark = document.createElement("span");
-              mark.className = "cue-play-slot";
-              mark.hidden = true;
-              btn.parentNode.insertBefore(mark, btn);
-              line.appendChild(btn);
-              // The button holds a direct reference to its own placeholder.
-              // No DOM query, so no key to get out of step: an index into the
-              // button array would be written into the DOM once and then
-              // silently disagree with the array if a cue were ever added or
-              // reordered. Scene 1 already carries two cues on one line, so
-              // "the first slot in this line" is not safe either.
-              btn._cueSlot = mark;
-              btn.classList.add("is-detached");
-            } else {
-              var slot = btn._cueSlot;
-              // Only claim the button is home if it actually got there. Left
-              // out, a missing slot would strip the positioning while the
-              // button was still a child of the grid, dropping it below the
-              // dialogue with no way back.
-              if (!slot || !slot.parentNode) return;
-              slot.parentNode.insertBefore(btn, slot);
-              slot.parentNode.removeChild(slot);
-              btn._cueSlot = null;
-              btn.classList.remove("is-detached");
-            }
-          });
-        }
-
-        // ---- prefetch ----
-        // A cue that buffers when the operator presses play is a cue that has
-        // missed its moment on stage, so the audio has to be resident before
-        // it is wanted. Turning on "Music cues only" is the operator saying
-        // who they are: nobody else uses that view. So that is the trigger,
-        // and it usually happens well before the first cue is played.
-        //
-        // Sequential, not parallel: seven simultaneous downloads on venue wifi
-        // would be slower for every one of them and could stall the page.
-        //
-        // The files are deliberately NOT in the service worker's PRECACHE. At
-        // 8.8 MB they are 3.5x the hero photo, and a cast member who only
-        // reads their own lines should never pay for them.
-        // Four states. "idle" and "running" are transient; a run that had any
-        // failure returns to idle so a later toggle retries it, and only a
-        // fully successful one reaches "done". "unsupported" is terminal and
-        // means the browser has no fetch API, so nothing can be pulled down
-        // ahead of time and the cues will stream when pressed.
-        var cuePrefetchState = "idle";
-        var cuePrefetchDone = 0;
-        var cuePrefetchFailed = 0;
-        function cuePrefetchLabel() {
-          // nothing could be pulled down ahead of time; say nothing rather
-          // than promise a readiness that was never attempted
-          if (cuePrefetchState === "unsupported") return "";
-          if (cuePrefetchState === "done") return "Music ready to play";
-          if (cuePrefetchState === "running")
-            return (
-              "Loading music, " +
-              (cuePrefetchDone + cuePrefetchFailed) +
-              " of " +
-              cueButtons.length
-            );
-          // A run that ended with failures leaves the state at idle with a
-          // non-zero failure count. Say so plainly: the cues still play, they
-          // just have to stream, and the operator can retry by toggling the
-          // view. Silence here would read as "ready".
-          if (cuePrefetchFailed)
-            return "Some music could not be loaded, cues will stream";
-          return "";
-        }
-        function paintCuePrefetch() {
-          var el = document.getElementById("musicPrefetchNote");
-          if (!el) return;
-          // Only speaks while the view it belongs to is on. A download started
-          // and then left running after the operator switched back to the full
-          // script should not leave "Music ready to play" sitting in the sheet
-          // with nothing to play it against.
-          var on = document.body.classList.contains("music-only");
-          var text = on ? cuePrefetchLabel() : "";
-          el.textContent = text;
-          el.hidden = !text;
-          el.classList.toggle("is-ready", cuePrefetchState === "done");
-          // Announce only the settled outcome. The per-file counter above is
-          // visible but silent: spoken, it would interrupt seven times over.
-          var live = document.getElementById("musicPrefetchLive");
-          if (live) {
-            var settled =
-              on && cuePrefetchState !== "running" ? cuePrefetchLabel() : "";
-            if (live.textContent !== settled) live.textContent = settled;
-          }
-        }
-        function prefetchCueAudio() {
-          // "done" means every file is genuinely resident. A run that failed
-          // returns to "idle" instead, so switching the view off and on once
-          // the wifi is back tries again rather than reporting a readiness
-          // that was never achieved.
-          if (cuePrefetchState !== "idle" || !cueButtons.length) return;
-          if (!window.fetch) {
-            // No fetch API. Nothing can be pulled down ahead of time, so say
-            // nothing rather than claim the music is ready: the buttons still
-            // work, they just stream when pressed.
-            cuePrefetchState = "unsupported";
-            paintCuePrefetch();
-            return;
-          }
-          cuePrefetchState = "running";
-          cuePrefetchDone = 0;
-          cuePrefetchFailed = 0;
-          paintCuePrefetch();
-          var queue = cueButtons.map(cueSrc);
-          (function next() {
-            if (!queue.length) {
-              // Any failure at all means the promise of "press play and it
-              // sounds immediately" cannot be kept, so do not make it.
-              cuePrefetchState = cuePrefetchFailed ? "idle" : "done";
-              paintCuePrefetch();
-              return;
-            }
-            var url = queue.shift();
-            // Reading the body to completion is what actually pulls the bytes
-            // down; the service worker stores its own clone on the way past.
-            fetch(url, { cache: "force-cache" })
-              .then(function (res) {
-                if (!res || !res.ok) throw new Error("bad response");
-                return res.blob();
-              })
-              .then(function () {
-                cuePrefetchDone++;
-              })
-              .catch(function () {
-                cuePrefetchFailed++;
-              })
-              .then(function () {
-                paintCuePrefetch();
-                next();
-              });
-          })();
-        }
-
         function isLineVisible(line) {
           if (line.classList.contains("search-hidden")) return false;
           if (line.classList.contains("actor-hidden")) return false;
@@ -5938,29 +5308,18 @@
         function refreshSceneVisibility() {
           var practicing = document.body.classList.contains("practice-mode");
           var ownOnly = document.body.classList.contains("practice-own-only");
-          var musicOnly = document.body.classList.contains("music-only");
           var val = actorSelect.value;
           scenes.forEach(function (sec) {
             var any = Array.prototype.some.call(
               sec.querySelectorAll(".line"),
               isLineVisible,
             );
-            // "This scene has none of your lines, so collapse it" is right when
-            // the reader is filtering to a character, but wrong under Music
-            // cues only: that view belongs to the sound operator, who wants
-            // every cue in the show regardless of who speaks around it. Left
-            // in, it silently dropped 4 of the 9 cues for anyone who had ever
-            // picked a character, because the choice is remembered.
             var actorAbsent =
-              val && !musicOnly && (!practicing || ownOnly)
+              val && (!practicing || ownOnly)
                 ? !sec.querySelector('.line[data-actor="' + val + '"]')
                 : false;
             sec.classList.toggle("all-hidden", !any || actorAbsent);
           });
-          // the rail dims scenes the filters have emptied, and disables a step
-          // button when there is nothing that way to step to
-          if (typeof syncRailAvailability === "function")
-            syncRailAvailability();
         }
         // Scroll a line to centre and give it a one-shot landing pulse, so
         // every programmatic jump (stepper, actor jump, search, scene jump)
@@ -6008,9 +5367,6 @@
             on ? "Show optional cuts" : "Hide optional cuts",
           );
           refreshSceneVisibility();
-          // cues are chosen from the visible lines, so hiding cuts changes
-          // which line is the cue for each of your lines
-          applyCueState();
           refreshCueStepper();
         });
 
@@ -6020,20 +5376,8 @@
           var on = document.body.classList.toggle("music-only");
           musicBtn.setAttribute("aria-pressed", on ? "true" : "false");
           setPillLabel(musicBtn, on ? "Show all lines" : "Music cues only");
-          // recompute the per-line actor filter too: entering this view lifts
-          // it, leaving it restores it
-          applyActorState();
-          if (on) {
-            // The operator has identified themselves. Pull the audio down now,
-            // so no cue has to buffer at the moment it is pressed.
-            prefetchCueAudio();
-          } else {
-            // leaving the view stops whatever is sounding: the operator has
-            // moved on, and a cue playing under the full script is confusing
-            stopCue();
-          }
-          // the progress note belongs to the music view; repaint either way
-          paintCuePrefetch();
+          refreshSceneVisibility();
+          refreshCueStepper();
           if (on) {
             // land on the first music line that is actually on screen under the
             // current filters: visible itself, and not inside a scene that the
@@ -6110,7 +5454,6 @@
             el.classList.toggle("search-hidden", !match);
           });
           refreshSceneVisibility();
-          applyCueState();
           refreshCueStepper();
           if (!q) return;
           var firstMatch = null;
@@ -6118,9 +5461,6 @@
             if (!isLineVisible(el)) return;
             highlightIn(el.querySelector(".speaker"), q);
             highlightIn(el.querySelector(".content"), q);
-            // a cue line shows its shortened cue, not .content, so highlight
-            // that too or the match would be invisible on screen
-            highlightIn(el.querySelector(".cue-render .cue-tail"), q);
             if (!firstMatch) firstMatch = el;
           });
           if (firstMatch) landOn(firstMatch, "center");
@@ -6314,45 +5654,17 @@
           });
         }
 
-        // Cue mode: the line immediately before each of your blurred lines is
-        // compressed down to just its last few words, styled as a "cue".
-        //
-        // The cue is ADDED as a sibling of .content rather than replacing it,
-        // and the full text is hidden with CSS. Three bugs came from the old
-        // approach of overwriting .content and caching its innerHTML:
-        //
-        //  - Printing. @media print can now simply reverse the two elements,
-        //    so a printed script always carries full dialogue. The old code
-        //    depended on a beforeprint handler firing, which Safari does not
-        //    do reliably, and printed "CUE …" stubs instead of the lines.
-        //  - Stale search highlights. The cached HTML could contain <mark>
-        //    elements injected by a search that was later cleared, so
-        //    restoring it re-introduced a highlight for a dead query. Nothing
-        //    is cached now, so there is nothing to go stale.
-        //  - Cues on hidden lines: see pickCueFor below.
+        // Cue mode: the line immediately before each of your blurred lines gets
+        // compressed down to just its last few words, styled as a "cue". Original
+        // content is cached per-line so it can be restored when toggled off.
+        var cueOriginal = new Map();
         function clearCueLines() {
-          Array.prototype.forEach.call(
-            document.querySelectorAll(".line.cue-line"),
-            function (line) {
-              line.classList.remove("cue-line", "peek-cue");
-              var c = line.querySelector(".cue-render");
-              if (c) c.parentNode.removeChild(c);
-            },
-          );
-        }
-        // The cue for a practising line is the nearest line ABOVE it that the
-        // reader can actually see. Walking back exactly one line in document
-        // order (what the old code did) picked lines that the cuts filter or
-        // the actor filter had hidden, so two of Apurva's lines showed a blank
-        // where their cue should be whenever "Hide optional cuts" was on.
-        function pickCueFor(index) {
-          for (var j = index - 1; j >= 0; j--) {
-            var cand = lines[j];
-            if (cand.classList.contains("is-practicing")) return null;
-            if (!isLineVisible(cand)) continue;
-            return cand;
-          }
-          return null;
+          cueOriginal.forEach(function (html, line) {
+            var c = line.querySelector(".content");
+            if (c) c.innerHTML = html;
+            line.classList.remove("cue-line", "peek-cue");
+          });
+          cueOriginal.clear();
         }
         function applyCueState() {
           clearCueLines();
@@ -6360,29 +5672,37 @@
             document.body.classList.contains("cue-mode") &&
             document.body.classList.contains("practice-mode");
           if (!on) return;
-          var used = [];
           for (var i = 0; i < lines.length; i++) {
             if (!lines[i].classList.contains("is-practicing")) continue;
-            var prev = pickCueFor(i);
-            if (!prev || used.indexOf(prev) !== -1) continue;
+            var prev = lines[i - 1];
+            if (
+              !prev ||
+              prev.classList.contains("is-practicing") ||
+              cueOriginal.has(prev)
+            )
+              continue;
             var contentEl = prev.querySelector(".content");
             if (!contentEl) continue;
             var plain = contentEl.textContent.replace(/\s+/g, " ").trim();
             if (!plain) continue;
+            cueOriginal.set(prev, contentEl.innerHTML);
             var words = plain.split(" ");
             var tail =
               words.length > 8 ? "… " + words.slice(-8).join(" ") : plain;
-            var render = document.createElement("div");
-            render.className = "cue-render";
-            render.innerHTML =
+            contentEl.innerHTML =
               '<span class="cue-flag">CUE</span><span class="cue-tail">' +
               escapeHtml(tail) +
               "</span>";
-            contentEl.parentNode.insertBefore(render, contentEl.nextSibling);
             prev.classList.add("cue-line");
-            used.push(prev);
           }
         }
+        window.addEventListener("beforeprint", function () {
+          window.__cueWasOn = document.body.classList.contains("cue-mode");
+          clearCueLines();
+        });
+        window.addEventListener("afterprint", function () {
+          if (window.__cueWasOn) applyCueState();
+        });
 
         function applyActorState() {
           var practicing = document.body.classList.contains("practice-mode");
@@ -6400,12 +5720,6 @@
             setMode("read");
           }
           var count = 0;
-          // Music cues only is the sound operator's view and outranks the
-          // actor filter: it must show every cue in the show, not just the
-          // ones near the selected character's lines. Without this the actor
-          // filter still hid other people's music lines one by one, even
-          // after the scene-level fix in refreshSceneVisibility.
-          var musicOnly = document.body.classList.contains("music-only");
           lines.forEach(function (line) {
             var actor = line.getAttribute("data-actor") || "";
             line.classList.remove("is-practicing");
@@ -6413,7 +5727,7 @@
               line.classList.add("is-practicing");
               count++;
             }
-            if (!musicOnly && (!practicing || ownOnly)) {
+            if (!practicing || ownOnly) {
               if (actor && val && actor !== val) {
                 line.classList.add("actor-hidden");
               } else {
@@ -6445,10 +5759,6 @@
           applyCueState();
           updateNavActorHighlight(val);
           refreshCueStepper();
-          // which lines are blurred has just changed, so the cue buttons on
-          // those lines may need lifting out of the blur or putting back
-          if (typeof moveCueButtonsForPractice === "function")
-            moveCueButtonsForPractice();
         }
 
         actorSelect.addEventListener("change", function () {
@@ -6489,38 +5799,6 @@
             });
         }
 
-        // Practice and Cue were the two settings that did NOT survive a reload,
-        // so a cast member re-enabled them at the start of every rehearsal.
-        // Chained after the actor restore for the same reason the mode restore
-        // is: both are meaningless without a character, and the toggles below
-        // would otherwise auto-assign the first actor in the list.
-        function restoreRehearsalState() {
-          if (!actorSelect.value) return Promise.resolve();
-          return storage
-            .get("mhh-practice", false)
-            .then(function (res) {
-              if (!(res && res.value === "1")) return null;
-              ensurePracticeModeOn();
-              return storage.get("mhh-cue", false);
-            })
-            .then(function (res) {
-              if (!(res && res.value === "1")) return;
-              document.body.classList.add("cue-mode");
-              cueToggle.setAttribute("aria-pressed", "true");
-              setPillLabel(cueToggle, "Exit cue mode");
-              // Cue mode needs full context, so the scope toggle is locked
-              // while it is on, exactly as the click handler does.
-              setScope(false, true);
-              scopeToggle.disabled = true;
-            })
-            .then(function () {
-              applyActorState();
-              updateJumpBtn();
-              syncMirrors();
-            })
-            .catch(function () {});
-        }
-
         storage
           .get("mhh-actor", false)
           .then(function (res) {
@@ -6539,8 +5817,7 @@
             updateJumpBtn();
           })
           .catch(function () {})
-          .then(restoreSavedMode)
-          .then(restoreRehearsalState);
+          .then(restoreSavedMode);
 
         function ensurePracticeModeOn() {
           if (document.body.classList.contains("practice-mode")) return;
@@ -6562,24 +5839,6 @@
           if (allOpt) allOpt.disabled = true;
         }
 
-        // Remember the rehearsal setup, so the cast do not rebuild it at the
-        // start of every rehearsal. Both keys are also read back on load, in
-        // restoreRehearsalState above.
-        function persistRehearsalState() {
-          storage
-            .set(
-              "mhh-practice",
-              document.body.classList.contains("practice-mode") ? "1" : "0",
-            )
-            .catch(function () {});
-          storage
-            .set(
-              "mhh-cue",
-              document.body.classList.contains("cue-mode") ? "1" : "0",
-            )
-            .catch(function () {});
-        }
-
         practiceToggle.addEventListener("click", function () {
           var turningOn = !document.body.classList.contains("practice-mode");
           if (turningOn) {
@@ -6599,7 +5858,6 @@
           }
           applyActorState();
           updateJumpBtn();
-          persistRehearsalState();
         });
 
         cueToggle.addEventListener("click", function () {
@@ -6616,7 +5874,6 @@
           setPillLabel(cueToggle, turningOn ? "Exit cue mode" : "Cue mode");
           applyActorState();
           updateJumpBtn();
-          persistRehearsalState();
         });
 
         document.addEventListener("click", function (e) {
@@ -6626,16 +5883,15 @@
             : null;
           if (practicingLine) {
             practicingLine.classList.toggle("peek");
-            // peeking un-blurs the line, so a detached cue button belongs back
-            // in the sentence it came from (and vice versa on re-hiding)
-            moveCueButtonsForPractice();
             return;
           }
           var cueLine = e.target.closest
             ? e.target.closest(".line.cue-line:not(.peek-cue)")
             : null;
           if (cueLine) {
-            // the full text was never removed, so peeking is just a class
+            var orig = cueOriginal.get(cueLine);
+            var c = cueLine.querySelector(".content");
+            if (orig && c) c.innerHTML = orig;
             cueLine.classList.add("peek-cue");
           }
         });
@@ -6646,7 +5902,6 @@
             .forEach(function (l) {
               l.classList.add("peek");
             });
-          moveCueButtonsForPractice();
         });
         hideAllBtn.addEventListener("click", function () {
           document
@@ -6654,7 +5909,6 @@
             .forEach(function (l) {
               l.classList.remove("peek");
             });
-          moveCueButtonsForPractice();
         });
 
         applyActorState();
@@ -6664,7 +5918,7 @@
         // Build one card per playable character from the actor <select>,
         // showing character, actor and how many scenes they appear in.
         // Choosing a card sets the actor, starts practice mode and jumps
-        // to their first line: the primary path into the tool.
+        // to their first line - the primary path into the tool.
         (function buildPicker() {
           var grid = document.getElementById("pickerGrid");
           if (!grid) return;
@@ -6702,7 +5956,7 @@
             });
             grid.appendChild(card);
           });
-          // "Just reading" escape: no character, all lines visible.
+          // "Just reading" escape - no character, all lines visible.
           var allCard = document.createElement("button");
           allCard.type = "button";
           allCard.className = "cast-card cc-all";
@@ -6743,7 +5997,6 @@
           // the select directly rather than firing a change event, so persist
           // here too or the choice is forgotten on this path.
           storage.set("mhh-actor", val || "").catch(function () {});
-          persistRehearsalState();
         }
 
         // ============================================================
@@ -6825,8 +6078,33 @@
           });
         }
 
-        // The first-time orientation strip was removed in round 5: the cast
-        // know the tool now, and it cost a screenful above the first scene.
+        // ---- first-time orientation strip ----
+        (function orientation() {
+          var strip = document.getElementById("orientStrip");
+          var dismiss = document.getElementById("orientDismiss");
+          if (!strip || !dismiss) return;
+          function hide(persist) {
+            strip.hidden = true;
+            if (persist && storage && storage.set) {
+              storage.set("mhh-orient", "1", false).catch(function () {});
+            }
+          }
+          dismiss.addEventListener("click", function () {
+            hide(true);
+          });
+          if (storage && storage.get) {
+            storage
+              .get("mhh-orient", false)
+              .then(function (res) {
+                if (!(res && res.value)) strip.hidden = false;
+              })
+              .catch(function () {
+                strip.hidden = false;
+              });
+          } else {
+            strip.hidden = false;
+          }
+        })();
 
         // ---- scene scroll-spy (active nav tab) ----
         if ("IntersectionObserver" in window) {
@@ -6847,12 +6125,6 @@
                   // The horizontal tab strip this used to scroll into view was
                   // replaced by the Scene sheet, which shows all eight scenes
                   // at once and needs no scrolling.
-                  //
-                  // The scene rail rides this same observer rather than adding
-                  // a second one: one source of truth for "which scene am I in".
-                  if (typeof markRailCurrent === "function") {
-                    markRailCurrent(entry.target.getAttribute("data-scene"));
-                  }
                 }
               });
             },
@@ -6862,221 +6134,6 @@
             obs.observe(s);
           });
         }
-
-        // ============================================================
-        // Scene rail: the running order on the right edge, plus prev/next.
-        //
-        // Replaced the per-scene footer links, which only existed at the
-        // boundary between two scenes and never said where you were.
-        //
-        // Prev/next step through VISIBLE scenes only, skipping any the active
-        // filter has emptied, so a jump never lands on a blank section. Those
-        // scenes stay on the rail as a short stub, because the running order
-        // is information in itself: scene 6 is still the sixth scene even when
-        // the current filter has nothing to show in it.
-        // ============================================================
-        var railEl = document.getElementById("sceneRail");
-        var railTicks = document.getElementById("sceneRailTicks");
-        var railPrev = document.getElementById("sceneRailPrev");
-        var railNext = document.getElementById("sceneRailNext");
-        var railCurrent = null;
-        var railIdleTimer = null;
-
-        function sceneTitleOf(sec) {
-          var h = sec.querySelector(".scene-head h2");
-          return h ? h.textContent.trim() : "Scene";
-        }
-        // One builder for the tick's accessible name, used both when the rail
-        // is created and whenever the filters change what is reachable. Built
-        // in one place so the two cannot drift into different wording, and so
-        // a missing title cannot leave a dangling "Scene 5, ".
-        function railTickLabel(num, sec, empty) {
-          var title = sec ? sceneTitleOf(sec) : "";
-          return (
-            "Scene " +
-            num +
-            (title ? ", " + title : "") +
-            (empty ? " (nothing to show under the current filters)" : "")
-          );
-        }
-        function buildRail() {
-          if (!railTicks) return;
-          railTicks.innerHTML = "";
-          scenes.forEach(function (sec) {
-            var num = sec.getAttribute("data-scene");
-            var btn = document.createElement("button");
-            btn.type = "button";
-            btn.className = "sr-tick";
-            btn.setAttribute("data-scene", num);
-            // The scene name is carried by the aria-label alone. It used to
-            // also render as visible text for the current scene, but that made
-            // the rail as wide as the longest scene title and squeezed the
-            // dialogue; the Scenes sheet is the labelled route now.
-            btn.setAttribute("aria-label", railTickLabel(num, sec, false));
-            btn.innerHTML = '<span class="sr-dash" aria-hidden="true"></span>';
-            btn.addEventListener("click", function () {
-              goToScene(num);
-            });
-            railTicks.appendChild(btn);
-          });
-        }
-        function railTickEls() {
-          return Array.prototype.slice.call(
-            railTicks ? railTicks.querySelectorAll(".sr-tick") : [],
-          );
-        }
-        // A scene is reachable if the filters have left anything in it.
-        function sceneIsVisible(sec) {
-          return !sec.classList.contains("all-hidden");
-        }
-        function markRailCurrent(num) {
-          railCurrent = num;
-          railTickEls().forEach(function (t) {
-            var on = t.getAttribute("data-scene") === String(num);
-            t.classList.toggle("is-current", on);
-            if (on) t.setAttribute("aria-current", "true");
-            else t.removeAttribute("aria-current");
-          });
-          syncRailSteps();
-        }
-        // Dim the scenes the current filter has emptied, and disable a step
-        // button when there is nothing in that direction to step to.
-        //
-        // An emptied tick is genuinely disabled, not merely faded: the scene
-        // it points at is display:none, so a tap would scroll nowhere while
-        // still repainting the rail to claim you had arrived there. Disabling
-        // also takes it out of the tab order, so a keyboard user cannot land
-        // on a control that has nothing to do.
-        function syncRailAvailability() {
-          railTickEls().forEach(function (t) {
-            var sec = document.getElementById(
-              "scene-" + t.getAttribute("data-scene"),
-            );
-            var empty = !!sec && !sceneIsVisible(sec);
-            t.disabled = empty;
-            t.setAttribute(
-              "aria-label",
-              railTickLabel(t.getAttribute("data-scene"), sec, empty),
-            );
-          });
-          syncRailSteps();
-        }
-        function visibleScenes() {
-          return scenes.filter(sceneIsVisible);
-        }
-        function syncRailSteps() {
-          if (!railPrev || !railNext) return;
-          var list = visibleScenes();
-          var idx = -1;
-          for (var i = 0; i < list.length; i++) {
-            if (list[i].getAttribute("data-scene") === String(railCurrent)) {
-              idx = i;
-              break;
-            }
-          }
-          // With the current scene off the visible list (it was just filtered
-          // out), leave both enabled: either direction is a valid escape.
-          railPrev.disabled = list.length < 2 || idx === 0;
-          railNext.disabled =
-            list.length < 2 || (idx !== -1 && idx === list.length - 1);
-        }
-        function goToScene(num) {
-          var el = document.getElementById("scene-" + num);
-          // A scene the filters have emptied is display:none, so scrolling to
-          // it would do nothing while the rail repainted to say you had
-          // arrived. Refuse the jump rather than lie about where the reader is.
-          if (!el || !sceneIsVisible(el)) return;
-          el.scrollIntoView({
-            behavior: prefersReducedMotion() ? "auto" : "smooth",
-            block: "start",
-          });
-          markRailCurrent(num);
-          showRail();
-        }
-        function stepScene(delta) {
-          var list = visibleScenes();
-          if (!list.length) return;
-          var idx = -1;
-          for (var i = 0; i < list.length; i++) {
-            if (list[i].getAttribute("data-scene") === String(railCurrent)) {
-              idx = i;
-              break;
-            }
-          }
-          var target;
-          if (idx === -1) {
-            // current scene is filtered out: step to the nearest visible one
-            target = delta > 0 ? list[0] : list[list.length - 1];
-          } else {
-            var next = idx + delta;
-            if (next < 0 || next > list.length - 1) return;
-            target = list[next];
-          }
-          goToScene(target.getAttribute("data-scene"));
-        }
-        if (railPrev) {
-          railPrev.addEventListener("click", function () {
-            stepScene(-1);
-          });
-        }
-        if (railNext) {
-          railNext.addEventListener("click", function () {
-            stepScene(1);
-          });
-        }
-
-        // Visible once the reader is into the script, dimmed while they are
-        // still, back to full on the next scroll. Kept fully visible whenever
-        // it holds focus, so it never fades out from under the keyboard.
-        function showRail() {
-          if (!railEl) return;
-          railEl.classList.remove("is-idle");
-          window.clearTimeout(railIdleTimer);
-          railIdleTimer = window.setTimeout(function () {
-            if (!railEl.contains(document.activeElement)) {
-              railEl.classList.add("is-idle");
-            }
-          }, 1600);
-        }
-        function syncRailVisibility(y) {
-          if (!railEl) return;
-          // Focus pins it open. The rail is hidden with opacity rather than
-          // visibility precisely so it stays in the tab order (see the CSS),
-          // but a keyboard user tabbing to an invisible control would have no
-          // idea where they were: tabbing does not scroll, so the scroll
-          // handler that normally reveals the rail never runs.
-          if (railEl.contains(document.activeElement)) {
-            railEl.classList.add("is-shown");
-            return;
-          }
-          var firstScene = document.getElementById("scene-1");
-          var start = firstScene
-            ? firstScene.getBoundingClientRect().top +
-              y -
-              window.innerHeight * 0.6
-            : window.innerHeight * 0.8;
-          railEl.classList.toggle("is-shown", y > start);
-        }
-        if (railEl) {
-          // Reveal on focus, and never let the idle fade dim a focused control.
-          railEl.addEventListener("focusin", function () {
-            railEl.classList.add("is-shown");
-            railEl.classList.remove("is-idle");
-            window.clearTimeout(railIdleTimer);
-          });
-          railEl.addEventListener("focusout", function () {
-            // defer, so moving between two controls inside the rail does not
-            // flicker it closed and open again
-            window.setTimeout(function () {
-              if (!railEl.contains(document.activeElement)) {
-                syncRailVisibility(window.pageYOffset || 0);
-                showRail();
-              }
-            }, 0);
-          });
-        }
-        buildRail();
-        syncRailAvailability();
 
         // ---- scroll-reveal (fade-up + de-blur on entry) ----
         // Sections carrying .reveal-on-scroll animate in once as they enter the
@@ -7159,8 +6216,24 @@
         })();
 
         // ---- keyboard shortcuts ----
-        // Scene stepping lives in stepScene() with the rail, so [ and ] honour
-        // the same filters the rail buttons do.
+        function jumpScene(delta) {
+          var activeLink = document.querySelector(".nav-link.is-active");
+          var current = activeLink
+            ? parseInt(activeLink.getAttribute("data-scene"), 10)
+            : 0;
+          if (!current) {
+            for (var i = 0; i < scenes.length; i++) {
+              if (scenes[i].getBoundingClientRect().bottom > 0) {
+                current = parseInt(scenes[i].getAttribute("data-scene"), 10);
+                break;
+              }
+            }
+          }
+          if (!current) current = 1;
+          var target = Math.max(1, Math.min(scenes.length, current + delta));
+          var el = document.getElementById("scene-" + target);
+          if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
         document.addEventListener("keydown", function (e) {
           var tag = document.activeElement
             ? document.activeElement.tagName
@@ -7178,9 +6251,7 @@
             }
           } else if ((e.key === "[" || e.key === "]") && !inField) {
             e.preventDefault();
-            // same filter-aware stepping the rail buttons use, so the keyboard
-            // and the rail can never disagree about what "next scene" means
-            stepScene(e.key === "[" ? -1 : 1);
+            jumpScene(e.key === "[" ? -1 : 1);
           } else if ((e.key === "," || e.key === ".") && !inField) {
             if (!actorSelect.value) return;
             e.preventDefault();
@@ -7217,14 +6288,6 @@
           // second scroll listener
           if (typeof onChromeScroll === "function") onChromeScroll();
           if (typeof parallaxAmbient === "function") parallaxAmbient(y);
-          // the scene rail appears once the script starts and un-dims itself
-          // on any scroll, on the same frame as everything else. While it
-          // holds focus it is already pinned open, so restarting the idle
-          // timer every frame would be work with no effect.
-          if (typeof syncRailVisibility === "function") {
-            syncRailVisibility(y);
-            if (!railEl || !railEl.contains(document.activeElement)) showRail();
-          }
           // keep the cue counter honest as the reader scrolls by hand
           if (actorSelect.value) {
             var list = actorLines();
@@ -7624,10 +6687,6 @@
               : 0;
             root.style.setProperty("--bottombar-h", bh + "px");
           }
-          // The rail is not measured any more. It used to inset the reading
-          // column by its own width, which cost 15 to 21 percent of the screen
-          // for chrome that is only visible while scrolling. It now overlays
-          // the right margin and reserves nothing.
         }
         syncChromeMetrics();
         window.addEventListener("resize", syncChromeMetrics);
