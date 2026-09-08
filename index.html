@@ -5507,38 +5507,64 @@
             );
           }
         }
-        // No saved preference yet: pick by the clock. Light for daytime
-        // rehearsal (07:00 to 18:00), dark for evenings and backstage. A manual
-        // tap of the toggle is remembered permanently and from then on the
-        // clock never overrides it.
+        // Follow the phone. Most people already have dark mode set to their own
+        // schedule, or pinned on all day, and that decision should carry here
+        // rather than be second-guessed by a clock rule of ours.
+        //
+        // This replaced a 07:00 to 18:00 clock whose result was saved the first
+        // time anyone tapped the toggle. That made the toggle a one-way door:
+        // one tap and the automatic switching was off for good on that device,
+        // with nothing on screen to say so and no way back short of clearing
+        // site data. Reported as "day and night mode stopped working", which is
+        // exactly what it looked like.
         function systemPref() {
-          var h = new Date().getHours();
-          return h >= 18 || h < 7 ? "dark" : "light";
+          return window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+            ? "dark"
+            : "light";
         }
 
+        // A tap overrides for THIS visit only, so the venue's lighting can be
+        // answered without a lasting setting being created by accident. Nothing
+        // is persisted; the next visit follows the phone again.
+        var themeOverridden = false;
+
         function loadTheme() {
-          if (storage && storage.get) {
-            storage
-              .get("mhh-theme", false)
-              .then(function (res) {
-                applyTheme(res && res.value ? res.value : systemPref());
-              })
-              .catch(function () {
-                applyTheme(systemPref());
-              });
-          } else {
-            applyTheme(systemPref());
+          applyTheme(systemPref());
+          // Devices that used the old clock rule still carry the permanent
+          // choice it saved. Nothing reads it any more, so drop it rather than
+          // leave a dead key that a future reader might mistake for live state.
+          if (storage && storage.set) {
+            try {
+              window.localStorage.removeItem("mhh-theme");
+            } catch (e) {
+              /* private mode or storage disabled; nothing to clean up */
+            }
           }
         }
         loadTheme();
 
+        // Track the phone switching over while the page is open, which happens
+        // mid-rehearsal at dusk on any device set to "automatic". A tap this
+        // visit still wins: the reader has said what they want.
+        if (window.matchMedia) {
+          var darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+          var onSchemeChange = function () {
+            if (!themeOverridden) applyTheme(systemPref());
+          };
+          if (darkQuery.addEventListener) {
+            darkQuery.addEventListener("change", onSchemeChange);
+          } else if (darkQuery.addListener) {
+            // Safari before 14
+            darkQuery.addListener(onSchemeChange);
+          }
+        }
+
         themeBtn.addEventListener("click", function () {
           var next =
             root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+          themeOverridden = true;
           applyTheme(next);
-          if (storage && storage.set) {
-            storage.set("mhh-theme", next, false).catch(function () {});
-          }
         });
 
         // ---- text size ----
