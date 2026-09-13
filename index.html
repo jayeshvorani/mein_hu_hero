@@ -17,6 +17,26 @@
       content="Rehearsal companion for the Mein hu Hero stage skit. Pick your character and drill your lines."
     />
     <meta name="theme-color" content="#0d0907" id="themeColorMeta" />
+    <script>
+      // The first paint must already be in the right theme. <html> below is
+      // hardcoded to data-theme="dark" and the real theme logic only runs from
+      // the end-of-body script, so a phone set to light mode used to paint
+      // fully dark until the whole document parsed and applied. This mirrors
+      // systemPref()'s predicate exactly (dark match → dark, otherwise light)
+      // and keeps the status-bar colour in step the way applyTheme() does.
+      // It persists nothing and owns no toggle/override logic — all of that
+      // still lives in the main script, which re-applies the same result.
+      (function () {
+        var d = document.documentElement;
+        var light = !(
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches
+        );
+        d.setAttribute("data-theme", light ? "light" : "dark");
+        var m = document.getElementById("themeColorMeta");
+        if (m) m.setAttribute("content", light ? "#f4ece0" : "#0d0907");
+      })();
+    </script>
     <meta name="color-scheme" content="dark light" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta
@@ -596,6 +616,17 @@
       }
       .search-close {
         display: none;
+      }
+      /* "No lines match" notice: sits just under the sticky top bar so it is
+         in view wherever the reader is when the script area empties. The JS
+         keeps it hidden unless a query genuinely matches nothing. */
+      .search-no-results {
+        max-width: var(--maxw);
+        margin: 1rem auto 0;
+        padding: 0 1.5rem;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.9rem;
       }
 
       .topbar-controls {
@@ -1647,6 +1678,14 @@
       }
       .nav-link.nav-no-actor {
         opacity: 0.32;
+      }
+      /* A scene the filters have emptied: its link would otherwise be a
+         clickable no-op pointing at a display:none section. syncNavAvailability
+         marks it aria-disabled and out of the tab order; the CSS takes it out
+         of the pointer order too and dims it like nav-no-actor. */
+      .nav-link[aria-disabled="true"] {
+        opacity: 0.32;
+        pointer-events: none;
       }
       .nav-link.nav-has-actor::after {
         content: "";
@@ -3597,6 +3636,18 @@
         </div>
       </header>
 
+      <!-- Search "no results" state: a query that matched nothing used to
+           leave the script area blank with no explanation, so a non-technical
+           reader on stage would assume the tool had broken. role="status"
+           makes this one element both the visible notice and the polite live
+           region that reads it out (same pattern as #cueLive below). -->
+      <p
+        id="searchNoResults"
+        class="search-no-results"
+        role="status"
+        hidden
+      ></p>
+
       <section class="hero">
         <span class="eyebrow">Rehearsal Companion · 8 Scenes</span>
         <h1>
@@ -3608,12 +3659,23 @@
           scenes. Pick your character below to rehearse your lines, or read the
           whole thing through.
         </p>
-        <img
-          src="Apurva Aparna.png"
-          alt="Apurva and Aparna as Raj and Simran"
-          class="hero-cast-photo"
-          aria-hidden="true"
-        />
+        <!-- The photo is the hero's LCP candidate: fetchpriority raises its
+             request priority, and the intrinsic width/height reserve its box
+             before first paint. WebP first (155 KB vs 2.5 MB for the PNG);
+             the PNG stays as the fallback source for anything that cannot
+             decode WebP. -->
+        <picture>
+          <source type="image/webp" srcset="Apurva-Aparna.webp" />
+          <img
+            src="Apurva Aparna.png"
+            width="1672"
+            height="941"
+            fetchpriority="high"
+            alt="Apurva and Aparna as Raj and Simran"
+            class="hero-cast-photo"
+            aria-hidden="true"
+          />
+        </picture>
         <div class="picker">
           <p class="picker-prompt">Pick your character to start rehearsing</p>
           <div class="picker-grid" id="pickerGrid"></div>
@@ -3936,11 +3998,9 @@
                 <div class="speaker">Opening scene</div>
                 <div class="content">
                   <p>
-                    <span class="is-italic">Father</span
-                    ><span class="is-italic"> (Dharamchand)</span
-                    ><span class="is-italic">
-                      sitting and reading newspaper with his glasses on while
-                      Mum is in the kitchen.</span
+                    <span class="is-italic"
+                      >Father (Dharamchand) sitting and reading newspaper with
+                      his glasses on while Mum is in the kitchen.</span
                     >
                   </p>
                 </div>
@@ -4070,11 +4130,8 @@
                 <div class="speaker">Background</div>
                 <div class="content">
                   <p>
-                    <span class="c-music is-italic">(Kabhi k</span
-                    ><span class="c-music is-italic">h</span
-                    ><span class="c-music is-italic">ushi kabhi g</span
-                    ><span class="c-music is-italic">a</span
-                    ><span class="c-music is-italic">m music).</span
+                    <span class="c-music is-italic"
+                      >(Kabhi khushi kabhi gam music).</span
                     ><span class="c-music"> </span
                     ><button
                       type="button"
@@ -4084,27 +4141,22 @@
                     ></button>
                   </p>
                   <p>
-                    <span class="is-italic">(</span
-                    ><span class="is-italic"
-                      >Mother walks to the door and realises </span
-                    ><span class="is-italic">Raj</span
-                    ><span class="is-italic">
-                      has not arrived. She turns back disheartened and
-                      then</span
+                    <span class="is-italic"
+                      >(Mother walks to the door and realises Raj has not
+                      arrived. She turns back disheartened and then</span
                     >
-                    <span class="c-music is-italic">music changes and </span
-                    ><span class="c-music is-italic">on a happy note</span
+                    <span class="c-music is-italic"
+                      >music changes and on a happy note</span
                     ><button
                       type="button"
                       class="cue-play"
                       data-audio="Audio files/02 - Kabhi Khushi - Happy.mp3"
                       data-cue="Kabhi khushi kabhi gam, happy"
                     ></button>
-                    <span class="is-italic">Raj</span
-                    ><span class="is-italic">
-                      enters. Mother does aarti. He bends down to take Ashirwad
-                      of mother and father</span
-                    ><span class="is-italic">).</span>
+                    <span class="is-italic"
+                      >Raj enters. Mother does aarti. He bends down to take
+                      Ashirwad of mother and father).</span
+                    >
                   </p>
                 </div>
               </div>
@@ -4127,11 +4179,10 @@
                 <div class="speaker">Raj</div>
                 <div class="content">
                   <p>
-                    <span class="is-italic">(</span
-                    ><span class="is-italic"
-                      >Raj walks to Dadaji’s photo and </span
-                    ><span class="is-italic">keeps</span
-                    ><span class="is-italic"> his degree near the photo)</span>
+                    <span class="is-italic"
+                      >(Raj walks to Dadaji’s photo and keeps his degree near
+                      the photo)</span
+                    >
                   </p>
                   <p>
                     Dadaji aaj main vilayat se degree leke aayaa hun. Aapka
@@ -4198,13 +4249,10 @@
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
                   <p>
-                    <span class="is-italic">(</span
-                    ><span class="is-italic"
-                      >Food is served by Ramu. Mother walks to </span
-                    ><span class="is-italic">Raj</span
-                    ><span class="is-italic">
-                      with a bowl of gajar ka halwa and tries to feed him.</span
-                    ><span class="is-italic">)</span>
+                    <span class="is-italic"
+                      >(Food is served by Ramu. Mother walks to Raj with a bowl
+                      of gajar ka halwa and tries to feed him.)</span
+                    >
                   </p>
                 </div>
               </div>
@@ -4244,10 +4292,8 @@
                 <div class="speaker">Raj</div>
                 <div class="content">
                   <p>
-                    <span class="is-italic">(</span
-                    ><span class="is-italic">One hand over his</span
-                    ><span class="is-italic"> forehead.</span
-                    ><span class="is-italic">)</span> Scene 1 over.
+                    <span class="is-italic">(One hand over his forehead.)</span>
+                    Scene 1 over.
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
@@ -4312,8 +4358,7 @@
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
                   <p>
-                    <span class="is-italic">Office </span
-                    ><span class="is-italic">scene</span>
+                    <span class="is-italic">Office scene</span>
                   </p>
                 </div>
               </div>
@@ -4335,11 +4380,10 @@
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
                   <p>
-                    <span class="is-italic">Raj</span
-                    ><span class="is-italic"> gets up to walk towards the </span
-                    ><span class="is-italic">Shetji’s office </span
-                    ><span class="is-italic">door</span
-                    ><span class="is-italic">.</span>
+                    <span class="is-italic"
+                      >Raj gets up to walk towards the Shetji’s office
+                      door.</span
+                    >
                   </p>
                   <p>
                     <span class="is-italic"
@@ -4358,8 +4402,7 @@
                 <div class="content">
                   <p>
                     Kya kar rahe ho. Muzhe bulaayaa hai.
-                    <span class="is-italic">Aap mere baad jaanaa</span
-                    ><span class="is-italic">.</span>
+                    <span class="is-italic">Aap mere baad jaanaa.</span>
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
@@ -4389,12 +4432,9 @@
                     hat. Kahan kahan se aa jaate hain Amitabh.
                   </p>
                   <p>
-                    <span class="is-italic">Raj</span
-                    ><span class="is-italic"> with </span
-                    ><span class="is-italic">one </span
-                    ><span class="is-italic">hand </span
-                    ><span class="is-italic">over his fore</span
-                    ><span class="is-italic">head.</span>
+                    <span class="is-italic"
+                      >Raj with one hand over his forehead.</span
+                    >
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
@@ -4438,26 +4478,15 @@
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
                   <p>
-                    <span class="is-italic">Raj</span
-                    ><span class="is-italic"> shakes hand </span
-                    ><span class="is-italic">with Shetji </span
-                    ><span class="is-italic">and walks towards the door. </span
+                    <span class="is-italic"
+                      >Raj shakes hand with Shetji and walks towards the door.
+                      He collides with Simran. They look into each other’s eyes
+                      and go on staring at each other. </span
+                    ><span class="c-music is-italic"
+                      >(Haunting music of Dil to Pagal Hain). </span
                     ><span class="is-italic"
-                      >He collides with Simran. They look into each other’s
-                      eyes</span
-                    ><span class="is-italic">
-                      and go on staring at each other</span
-                    ><span class="is-italic">.</span
-                    ><span class="is-italic"> </span
-                    ><span class="c-music is-italic">(</span
-                    ><span class="c-music is-italic">Haunting m</span
-                    ><span class="c-music is-italic">usic of </span
-                    ><span class="c-music is-italic">Dil to Pagal Hain). </span
-                    ><span class="is-italic">Shetji coughs loudly. </span
-                    ><span class="is-italic">Raj</span
-                    ><span class="is-italic">
-                      then hastily leaves the office. Simran goes towards her
-                      dad.</span
+                      >Shetji coughs loudly. Raj then hastily leaves the office.
+                      Simran goes towards her dad.</span
                     >
                   </p>
                 </div>
@@ -4552,16 +4581,11 @@
                 <div class="content">
                   <p>Raj aur Simran aksar ek doosare se milne lage hain.</p>
                   <p>
-                    <span class="c-music">(Music tbd – Background mus</span
-                    ><span class="c-music">ic dhun of </span
-                    ><span class="c-music">“</span
-                    ><span class="c-music">Ek main aur ek tu</span
-                    ><span class="c-music">,</span
-                    ><span class="c-music"> dono mile is tarah</span
-                    ><span class="c-music">”</span
-                    ><span class="c-music"> </span>while narrator speaks
-                    and<span class="c-music"> </span>Raj &amp; Simran take entry
-                    into the park.)
+                    <span class="c-music"
+                      >(Music tbd – Background music dhun of “Ek main aur ek tu,
+                      dono mile is tarah” </span
+                    >while narrator speaks and<span class="c-music"> </span>Raj
+                    &amp; Simran take entry into the park.)
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
@@ -4573,9 +4597,8 @@
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
                   <p>
-                    <span class="is-italic"> </span
-                    ><span class="is-italic">Raj sits and </span
-                    ><span class="is-italic">Simran is dancing on ‘</span
+                    <span class="is-italic">
+                      Raj sits and Simran is dancing on ‘</span
                     ><span class="c-music is-italic">Tathya tathya ho’ </span
                     ><button
                       type="button"
@@ -4583,32 +4606,14 @@
                       data-audio="Audio files/04 - Ta thaiya.mp3"
                       data-cue="Tathya tathya ho"
                     ></button
-                    ><span class="is-italic">Raj</span
-                    ><span class="is-italic"> </span
-                    ><span class="is-italic">puts his </span
-                    ><span class="is-italic">hand on his head.</span
-                    ><span class="is-italic"> </span
-                    ><span class="is-italic">Simran pulls him aside</span
-                    ><span class="is-italic"> and </span
-                    ><span class="is-italic">scene </span
-                    ><span class="is-italic">is </span
-                    ><span class="is-italic">closed by showing </span
-                    ><span class="is-italic">t</span
-                    ><span class="is-italic">wo flowers cross over </span
-                    ><span class="is-italic">each other</span
-                    ><span class="is-italic">. </span
                     ><span class="is-italic"
-                      >(flower cross over upon exit of Raj and Simran instead of
-                      over their faces</span
-                    ><span class="is-italic">, so no queries by children</span
-                    ><span class="is-italic"
-                      >. Also as Simran takes Raj away </span
-                    ><span class="is-italic">person enters with flowers</span
-                    ><span class="is-italic">)</span
-                    ><span class="is-italic"> </span
-                    ><span class="is-italic">.</span
-                    ><span class="is-italic"> </span
-                    ><span class="is-italic"> </span>
+                      >Raj puts his hand on his head. Simran pulls him aside and
+                      scene is closed by showing two flowers cross over each
+                      other. (flower cross over upon exit of Raj and Simran
+                      instead of over their faces, so no queries by children.
+                      Also as Simran takes Raj away person enters with flowers)
+                      .
+                    </span>
                   </p>
                 </div>
               </div>
@@ -4742,11 +4747,9 @@
                   </p>
                   <p>Thehero. Ek baat to main bolna bhool hi gaya.</p>
                   <p>
-                    <span class="is-italic">(Deendayal look</span
-                    ><span class="is-italic">s</span
-                    ><span class="is-italic"> a bit </span
-                    ><span class="is-italic">worried/scared</span
-                    ><span class="is-italic">). </span>
+                    <span class="is-italic"
+                      >(Deendayal looks a bit worried/scared).
+                    </span>
                   </p>
                   <p>
                     Ghabrao naahi sambdhijee. Hamaree koi paison ki maange nahi
@@ -4816,8 +4819,7 @@
                     continuously and having a small talk with each other (just
                     30 seconds or so) Suddenly Dharmchand and SumitraDevi break
                     into a dance on
-                    <span class="c-music">(Le jayenge le jayenge</span
-                    ><span class="c-music"> </span
+                    <span class="c-music">(Le jayenge le jayenge </span
                     ><button
                       type="button"
                       class="cue-play"
@@ -4882,11 +4884,9 @@
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
                   <p>
-                    <span class="is-italic">Raj</span
-                    ><span class="is-italic"> comes home</span
-                    ><span class="is-italic"> from office</span
-                    ><span class="is-italic"> and loosens his tie</span
-                    ><span class="is-italic">.</span>
+                    <span class="is-italic"
+                      >Raj comes home from office and loosens his tie.</span
+                    >
                   </p>
                 </div>
               </div>
@@ -4941,20 +4941,9 @@
                 <div class="speaker">Bhairav Baba</div>
                 <div class="content">
                   <p>
-                    <span class="is-italic">Aap</span
-                    ><span class="is-italic"> ghabrao naahi maaji. Es </span
-                    ><span class="is-italic">naagino</span
-                    ><span class="is-italic"> ko </span
-                    ><span class="is-italic"
-                      >nachana mujhe achee tarah aatta hai. </span
-                    ><span class="is-italic">(</span
-                    ><span class="is-italic">He start</span
-                    ><span class="is-italic">s</span
-                    ><span class="is-italic"> playing his </span
-                    ><span class="is-italic">been</span
-                    ><span class="is-italic">)</span
-                    ><span class="is-italic">.</span
-                    ><span class="is-italic">
+                    <span class="is-italic"
+                      >Aap ghabrao naahi maaji. Es naagino ko nachana mujhe
+                      achee tarah aatta hai. (He starts playing his been).
                       Simran comes down from stairs and dances to the tune of </span
                     ><span class="c-music is-italic"
                       >‘Main nagin tu sapera’ </span
@@ -4969,11 +4958,9 @@
                     </span>
                   </p>
                   <p>
-                    <span class="is-italic">Raj </span
-                    ><span class="is-italic">puts</span
-                    ><span class="is-italic"> his hand on his </span
-                    ><span class="is-italic">fore</span
-                    ><span class="is-italic">head</span>.
+                    <span class="is-italic"
+                      >Raj puts his hand on his forehead</span
+                    >.
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
@@ -5131,10 +5118,9 @@
                 <div class="speaker">Raj</div>
                 <div class="content">
                   <p>
-                    <span class="is-italic">Puts his h</span
-                    ><span class="is-italic">and on his </span
-                    ><span class="is-italic">fore</span
-                    ><span class="is-italic">head.</span>
+                    <span class="is-italic"
+                      >Puts his hand on his forehead.</span
+                    >
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
@@ -5174,12 +5160,8 @@
                 <div class="content">
                   <p>
                     <span class="c-music"
-                      >(Sings the Roshni deta bajaj song – jab m</span
-                    ><span class="c-music">a</span
-                    ><span class="c-music">in chota bacha tha bade</span
-                    ><span class="c-music">e</span
-                    ><span class="c-music"> sharat karta tha…)</span
-                    ><span class="c-music"> </span
+                      >(Sings the Roshni deta bajaj song – jab main chota bacha
+                      tha badee sharat karta tha…) </span
                     ><button
                       type="button"
                       class="cue-play"
@@ -5207,13 +5189,10 @@
                 <div class="speaker" aria-hidden="true"></div>
                 <div class="content">
                   <p>
-                    <span class="is-italic">Simran</span
-                    ><span class="is-italic">,</span
-                    ><span class="is-italic"> Rocky</span
-                    ><span class="is-italic"> all ask </span
-                    ><span class="is-italic">Raj</span
-                    ><span class="is-italic"> to lie on the bed. </span
-                    ><span class="is-italic">They light a small lamp.</span>
+                    <span class="is-italic"
+                      >Simran, Rocky all ask Raj to lie on the bed. They light a
+                      small lamp.</span
+                    >
                   </p>
                 </div>
               </div>
@@ -5275,11 +5254,10 @@
                 <div class="speaker">Simran</div>
                 <div class="content">
                   <p>
-                    <span class="is-italic">(</span
-                    ><span class="is-italic">T</span
-                    ><span class="is-italic">rying to break her bangles</span
-                    ><span class="is-italic"> though fails)</span> Mujhe chod ke
-                    kyon chale gaye.
+                    <span class="is-italic"
+                      >(Trying to break her bangles though fails)</span
+                    >
+                    Mujhe chod ke kyon chale gaye.
                   </p>
                 </div>
                 <button type="button" class="reveal-btn">Tap to reveal</button>
@@ -5292,29 +5270,24 @@
                 <div class="speaker">Raj</div>
                 <div class="content">
                   <p>
-                    <span class="is-italic">(</span
-                    ><span class="is-italic"
-                      >Gets up and starts beating everyone with his stick</span
-                    ><span class="is-italic">)</span
-                    ><span class="is-italic">.</span> Chup karo saab log. Diya
-                    bujh gayaa. Mein abhi bhee zinda hoon.
+                    <span class="is-italic"
+                      >(Gets up and starts beating everyone with his
+                      stick).</span
+                    >
+                    Chup karo saab log. Diya bujh gayaa. Mein abhi bhee zinda
+                    hoon.
                   </p>
                   <p>
-                    <span class="is-italic">(</span
-                    ><span class="is-italic"
-                      >Raj’s hand starts to go to his forehead </span
-                    ><span class="is-italic"
-                      >though suddenly he shrugs and breaks into a dance)</span
+                    <span class="is-italic"
+                      >(Raj’s hand starts to go to his forehead though suddenly
+                      he shrugs and breaks into a dance)</span
                     >
                   </p>
                   <p>
                     <span class="c-music is-italic"
-                      >Can we have a song saying something like I am back or </span
-                    ><span class="c-music is-italic"
-                      >exhibiting some attitude saying don’t worry just live,
-                      have fun</span
-                    ><span class="c-music is-italic">
-                      and Raj invites family to dance).</span
+                      >Can we have a song saying something like I am back or
+                      exhibiting some attitude saying don’t worry just live,
+                      have fun and Raj invites family to dance).</span
                     >
                   </p>
                 </div>
@@ -5996,9 +5969,11 @@
             sec.classList.toggle("all-hidden", !any || actorAbsent);
           });
           // the rail dims scenes the filters have emptied, and disables a step
-          // button when there is nothing that way to step to
+          // button when there is nothing that way to step to; the sidebar
+          // links to those scenes are disabled the same way
           if (typeof syncRailAvailability === "function")
             syncRailAvailability();
+          if (typeof syncNavAvailability === "function") syncNavAvailability();
         }
         // Scroll a line to centre and give it a one-shot landing pulse, so
         // every programmatic jump (stepper, actor jump, search, scene jump)
@@ -6007,7 +5982,10 @@
         function landOn(el, block) {
           if (!el) return;
           el.scrollIntoView({
-            behavior: "smooth",
+            // Same guard as goToScene(): reduced-motion readers get an
+            // instant jump. The landing pulse itself is already suppressed
+            // by the CSS under reduced motion.
+            behavior: prefersReducedMotion() ? "auto" : "smooth",
             block: block || "center",
           });
           el.classList.remove("just-landed");
@@ -6091,6 +6069,7 @@
 
         // ---- search ----
         var input = document.getElementById("searchInput");
+        var searchNoResults = document.getElementById("searchNoResults");
 
         var markEls = [];
         function clearHighlights() {
@@ -6139,7 +6118,14 @@
           });
         }
 
-        input.addEventListener("input", function () {
+        // The filter/highlight pass walks every visible line and re-runs the
+        // full scene/cue refresh, so running it on every keystroke made the
+        // page stutter on low-end phones while typing. It is debounced
+        // instead; the field itself stays snappy because the close button's
+        // has-query class is driven by its own synchronous input listener
+        // (syncSearchClear, further down).
+        var searchTimer = null;
+        function runSearch() {
           var q = input.value.trim().toLowerCase();
           clearHighlights();
           lines.forEach(function (el) {
@@ -6150,7 +6136,10 @@
           refreshSceneVisibility();
           applyCueState();
           refreshCueStepper();
-          if (!q) return;
+          if (!q) {
+            searchNoResults.hidden = true;
+            return;
+          }
           var firstMatch = null;
           lines.forEach(function (el) {
             if (!isLineVisible(el)) return;
@@ -6161,7 +6150,24 @@
             highlightIn(el.querySelector(".cue-render .cue-tail"), q);
             if (!firstMatch) firstMatch = el;
           });
-          if (firstMatch) landOn(firstMatch, "center");
+          if (firstMatch) {
+            searchNoResults.hidden = true;
+            landOn(firstMatch, "center");
+          } else {
+            // Write the text while the notice is still hidden, then unhide:
+            // the live region announces the change once it lands in the
+            // accessibility tree, and the visible half tells the reader what
+            // to do next instead of staring at a blank page.
+            searchNoResults.textContent =
+              "No lines match “" +
+              input.value.trim() +
+              "” — try another word, or clear the search.";
+            searchNoResults.hidden = false;
+          }
+        }
+        input.addEventListener("input", function () {
+          if (searchTimer) window.clearTimeout(searchTimer);
+          searchTimer = window.setTimeout(runSearch, 140);
         });
 
         // ---- actor filter + practice mode + cue mode ----
@@ -6285,7 +6291,10 @@
           cueNext.disabled = disabled;
           if (list.length) {
             var cur = currentCueIndex(list);
-            setCueCount(cur + 1, list.length);
+            // cur is -1 when the viewport sits above all of the actor's
+            // lines; clamp it so the counter reads 1 / N and never
+            // announces "Line 0 of N".
+            setCueCount(Math.max(1, cur + 1), list.length);
           } else {
             setCueCount(0, 0);
           }
@@ -6580,6 +6589,18 @@
           .then(restoreSavedMode)
           .then(restoreRehearsalState);
 
+        // The sheet path (mirrorPracticeLike) and the pill paths below both
+        // need "send them to the character picker", so that lives in one
+        // place. Reduced-motion readers get an instant jump.
+        function scrollToPicker() {
+          var picker = document.querySelector(".picker");
+          if (picker)
+            picker.scrollIntoView({
+              behavior: prefersReducedMotion() ? "auto" : "smooth",
+              block: "center",
+            });
+        }
+
         function ensurePracticeModeOn() {
           if (document.body.classList.contains("practice-mode")) return;
           if (!actorSelect.value) {
@@ -6621,6 +6642,14 @@
         practiceToggle.addEventListener("click", function () {
           var turningOn = !document.body.classList.contains("practice-mode");
           if (turningOn) {
+            if (!actorSelect.value) {
+              // Same guard as the Options sheet path (mirrorPracticeLike):
+              // with "All" selected, the auto-assign would blur the first
+              // actor's lines while the status line that explains it sits
+              // off-screen. Send them to the picker instead of guessing.
+              scrollToPicker();
+              return;
+            }
             ensurePracticeModeOn();
           } else {
             document.body.classList.remove("practice-mode");
@@ -6643,6 +6672,12 @@
         cueToggle.addEventListener("click", function () {
           var turningOn = !document.body.classList.contains("cue-mode");
           if (turningOn) {
+            if (!actorSelect.value) {
+              // Cue mode blurs the picked actor's lines too, so it gets the
+              // same "don't guess a character" guard as the practice pill.
+              scrollToPicker();
+              return;
+            }
             ensurePracticeModeOn();
             setScope(false);
             scopeToggle.disabled = true;
@@ -6999,6 +7034,38 @@
           });
           syncRailSteps();
         }
+        // The sidebar gets the same treatment the rail ticks get: a scene the
+        // filters have emptied is display:none, so its link would be a
+        // clickable no-op that still looks and feels alive. Mark it
+        // aria-disabled, take it out of the tab order (the CSS also removes
+        // pointer events), and say why in the accessible name — reusing
+        // railTickLabel's wording so the two surfaces never disagree.
+        function syncNavAvailability() {
+          navLinks.forEach(function (link) {
+            var sec = document.getElementById(
+              "scene-" + link.getAttribute("data-scene"),
+            );
+            var empty = !!sec && !sceneIsVisible(sec);
+            if (empty) {
+              link.setAttribute("aria-disabled", "true");
+              link.setAttribute("tabindex", "-1");
+              var title = link.querySelector(".nav-title");
+              link.setAttribute(
+                "aria-label",
+                "Scene " +
+                  link.getAttribute("data-scene") +
+                  (title && title.textContent.trim()
+                    ? ", " + title.textContent.trim()
+                    : "") +
+                  " (nothing to show under the current filters)",
+              );
+            } else {
+              link.removeAttribute("aria-disabled");
+              link.removeAttribute("tabindex");
+              link.removeAttribute("aria-label");
+            }
+          });
+        }
         function visibleScenes() {
           return scenes.filter(sceneIsVisible);
         }
@@ -7115,6 +7182,7 @@
         }
         buildRail();
         syncRailAvailability();
+        syncNavAvailability();
 
         // ---- scroll-reveal (fade-up + de-blur on entry) ----
         // Sections carrying .reveal-on-scroll animate in once as they enter the
@@ -7174,9 +7242,28 @@
             document.querySelectorAll(".line-reveal"),
           );
           if (!lineEls.length) return;
+          // The stagger delay is only for the entrance wave. .line also
+          // transitions background and border-color (hover, has-music,
+          // is-cut), and a transition-delay left inline lingers on those for
+          // the whole session, so late lines in a scene lag on every hover.
+          // Clear it once the entrance has had time to run. It must NOT be
+          // cleared synchronously in the observer callback: both style
+          // changes would batch into one recalc and the delay would be
+          // stripped before the browser applied it, flattening the wave.
+          var entranceMs = 480; // --motion-3; keep in step with the CSS
+          function settleReveal(el) {
+            var d = parseInt(el.style.transitionDelay, 10) || 0;
+            window.setTimeout(
+              function () {
+                el.style.transitionDelay = "";
+              },
+              d + entranceMs + 120,
+            );
+          }
           if (reduce || !("IntersectionObserver" in window)) {
             lineEls.forEach(function (el) {
               el.classList.add("in-view");
+              settleReveal(el);
             });
             return;
           }
@@ -7186,6 +7273,7 @@
                 if (entry.isIntersecting) {
                   entry.target.classList.add("in-view");
                   o.unobserve(entry.target);
+                  settleReveal(entry.target);
                 }
               });
             },
@@ -7238,12 +7326,33 @@
           window.CSS &&
           CSS.supports &&
           CSS.supports("animation-timeline", "scroll()");
+        // The cue counter is the only per-frame LAYOUT READ in this handler
+        // (a getBoundingClientRect per line of the selected actor). It runs
+        // before any style/class writes of the frame, so it never forces a
+        // synchronous reflow, and it is skipped while the scroll position
+        // has not moved — the same y cannot change which line is "current".
+        // (Caching line offsets outright was considered but rejected: line
+        // heights change on text-size taps, cue-stub swaps, font loading and
+        // visibility changes, and a stale cache would silently drift the
+        // counter — a correctness risk the small savings do not justify.)
+        var lastCueY = -1;
         function onScrollFrame() {
           scrollTicking = false;
           var doc = document.documentElement;
           var max = doc.scrollHeight - window.innerHeight;
           var y = window.pageYOffset || doc.scrollTop || 0;
           var pct = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
+          // keep the cue counter honest as the reader scrolls by hand —
+          // first, while the layout state is still clean this frame
+          if (actorSelect.value && y !== lastCueY) {
+            lastCueY = y;
+            var list = actorLines();
+            if (list.length > 1) {
+              var cur = currentCueIndex(list);
+              // clamp -1 (viewport above every line) the same way
+              setCueCount(Math.max(1, cur + 1), list.length);
+            }
+          }
           // Only drive the bar from JS where the CSS scroll timeline is absent;
           // otherwise the two would write the same property every frame.
           if (!cssScrollTimeline) {
@@ -7262,14 +7371,6 @@
           if (typeof syncRailVisibility === "function") {
             syncRailVisibility(y);
             if (!railEl || !railEl.contains(document.activeElement)) showRail();
-          }
-          // keep the cue counter honest as the reader scrolls by hand
-          if (actorSelect.value) {
-            var list = actorLines();
-            if (list.length > 1) {
-              var cur = currentCueIndex(list);
-              setCueCount(cur + 1, list.length);
-            }
           }
         }
         window.addEventListener(

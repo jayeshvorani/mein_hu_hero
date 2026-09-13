@@ -12,7 +12,7 @@
  * deleted on activate, so a stale font subset can never linger.
  */
 
-var CACHE_VERSION = "mhh-v8";
+var CACHE_VERSION = "mhh-v9";
 
 // The cue audio lives in its own cache, on its own version counter.
 //
@@ -38,6 +38,7 @@ var PRECACHE = [
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-maskable-512.png",
+  "./Apurva-Aparna.webp",
   "./fonts/BricolageGrotesque-subset.woff2",
   "./fonts/HankenGrotesk-subset.woff2",
   "./fonts/HankenGrotesk-Italic-subset.woff2",
@@ -147,7 +148,7 @@ self.addEventListener("fetch", function (event) {
   // themselves.
   var isAudio = /\.mp3$/i.test(url.pathname);
   var cacheable =
-    isAudio || /\.(woff2|png|svg|webmanifest|css|js)$/i.test(url.pathname);
+    isAudio || /\.(woff2|png|svg|webp|webmanifest|css|js)$/i.test(url.pathname);
   var targetCache = isAudio ? AUDIO_CACHE : CACHE_VERSION;
 
   // ---- range requests ----
