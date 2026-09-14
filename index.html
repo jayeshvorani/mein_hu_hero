@@ -1804,6 +1804,28 @@
         margin-bottom: 3.6rem;
         scroll-margin-top: calc(var(--header-h) + 1.4rem);
       }
+      /* The auto-hide top bar is parked: a native anchor jump that lands
+         while it is offscreen must not reserve its height, or the scene
+         opens under a blank gap exactly as tall as the hidden header.
+         JS jumps (scrollToScene) apply the same split in their scroll math. */
+      html[data-topbar-hidden] section.scene {
+        scroll-margin-top: 1.4rem;
+      }
+      /* A scene that has not revealed yet sits 2.4rem below its final
+         position (the reveal's translateY), and native anchor jumps target
+         the transformed box. Without the extra margin the reveal would pull
+         the landing up by that amount after arrival -- clipping the stub
+         while the bar is hidden, tucking it under the bar while it is up.
+         The transform never exists under reduced motion, so no compensation
+         is due there. */
+      @media (prefers-reduced-motion: no-preference) {
+        section.scene:not(.in-view) {
+          scroll-margin-top: calc(var(--header-h) + 1.4rem + 2.4rem);
+        }
+        html[data-topbar-hidden] section.scene:not(.in-view) {
+          scroll-margin-top: calc(1.4rem + 2.4rem);
+        }
+      }
       /* the ticket-stub header, rebuilt as a glass stub */
       .scene-head {
         display: flex;
@@ -7066,6 +7088,32 @@
             }
           });
         }
+        // Every scene bookmark -- the sidebar links, the Scenes sheet rows,
+        // any future #scene-N anchor -- lands through one header-aware jump
+        // instead of the native anchor scroll, which reserves the full
+        // header height even when the auto-hide bar is parked and leaves a
+        // blank gap above the scene. Native navigation still works with JS
+        // off; the hash is kept in sync so back/forward lands on the same
+        // scene.
+        document.addEventListener("click", function (e) {
+          var a =
+            e.target && e.target.closest ? e.target.closest("a") : null;
+          if (!a) return;
+          var href = a.getAttribute("href") || "";
+          if (href.indexOf("#scene-") !== 0) return;
+          var sec = document.getElementById(href.slice(1));
+          if (!sec || !sceneIsVisible(sec)) return;
+          e.preventDefault();
+          scrollToScene(sec);
+          if (window.history && history.pushState) {
+            try {
+              history.pushState(null, "", a.getAttribute("href"));
+            } catch (err) {
+              /* file:// hosts may refuse a history write; the jump itself
+                 has already landed, so only the hash stays stale */
+            }
+          }
+        });
         function visibleScenes() {
           return scenes.filter(sceneIsVisible);
         }
@@ -7091,10 +7139,7 @@
           // it would do nothing while the rail repainted to say you had
           // arrived. Refuse the jump rather than lie about where the reader is.
           if (!el || !sceneIsVisible(el)) return;
-          el.scrollIntoView({
-            behavior: prefersReducedMotion() ? "auto" : "smooth",
-            block: "start",
-          });
+          scrollToScene(el);
           markRailCurrent(num);
           showRail();
         }
@@ -7431,6 +7476,52 @@
           if (hide === barHidden || !topbar) return;
           barHidden = hide;
           topbar.classList.toggle("is-hidden", hide);
+          // The scene scroll-margin follows this state (the
+          // html[data-topbar-hidden] rule), so the attribute and the class
+          // are set together and can never drift apart.
+          if (hide) root.setAttribute("data-topbar-hidden", "");
+          else root.removeAttribute("data-topbar-hidden");
+        }
+
+        // ---- scene landing ----
+        // A jump must land relative to the bar state that exists AT the
+        // landing, not at the click: the auto-hide keeps the bar parked for
+        // a whole downward move and brings it back for an upward one, while
+        // the old scrollIntoView landed on the CSS scroll-margin either way.
+        // A downward jump therefore opened the scene under a blank gap the
+        // height of the header it had just parked. Compute the landing the
+        // way onChromeScroll settles it -- the bar stays up when the landing
+        // is above HIDE_AFTER or the move goes up -- force that state before
+        // scrolling, and offset to match it.
+        function scrollToScene(el) {
+          if (!el) return;
+          var y = window.pageYOffset || 0;
+          // A scene that has not yet run its reveal animation sits 2.4rem
+          // (translateY) below its final layout position, and anchor-style
+          // scrolls target the transformed box. Landing on it means the
+          // reveal pulls the scene up by the offset AFTER arrival --
+          // clipping the stub when the bar is hidden, tucking it under the
+          // bar when it is up. Read the current translate off the computed
+          // matrix (zero under reduced motion, where the transform never
+          // exists) and aim at the final position instead.
+          var tm = /matrix\(([^)]+)\)/.exec(
+            getComputedStyle(el).transform,
+          );
+          var dy = tm ? parseFloat(tm[1].split(",")[5]) || 0 : 0;
+          var top = el.getBoundingClientRect().top + y - dy;
+          var barH = topbar
+            ? Math.round(topbar.getBoundingClientRect().height)
+            : 0;
+          // 1.4rem of breathing room, the same padding the CSS
+          // scroll-margin adds to the header height.
+          var PAD = 22.4;
+          var barUp = top - barH - PAD < HIDE_AFTER || top <= y;
+          var offset = barUp ? barH + PAD : PAD;
+          setBarHidden(!barUp);
+          window.scrollTo({
+            top: Math.max(0, top - offset),
+            behavior: prefersReducedMotion() ? "auto" : "smooth",
+          });
         }
 
         // ---- search ----
@@ -7751,8 +7842,12 @@
         function syncChromeMetrics() {
           if (topbar) {
             var h = Math.round(topbar.getBoundingClientRect().height);
-            // measure the resting height, not the hidden-offscreen height
-            if (h > 0 && !topbar.classList.contains("is-hidden")) {
+            // The is-hidden state is a translateY, which moves the bar
+            // offscreen without changing its box, so the height reads the
+            // same while parked. Measuring through the hidden state is what
+            // keeps --header-h honest when the viewport or the fonts change
+            // while the bar is offscreen, instead of holding a stale value.
+            if (h > 0) {
               root.style.setProperty("--header-h", h + "px");
             }
           }
