@@ -420,6 +420,99 @@ main {
 .scene-details .full {
   grid-column: 1 / -1;
 }
+/* scene details: on-stage ticks, props and set-change rows */
+.detail-group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.chk-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.5rem;
+}
+.chk {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 32px;
+  padding: 0.2rem 0.65rem 0.2rem 0.45rem;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 999px;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+.chk input {
+  margin: 0;
+  accent-color: var(--sindoor);
+}
+.chk.is-locked {
+  background: var(--bg-2);
+  color: var(--ink-dim);
+  cursor: default;
+}
+.detail-hint {
+  display: block;
+  margin: 0.35rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.detail-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.45rem;
+}
+.detail-row {
+  display: grid;
+  gap: 0.4rem;
+  align-items: start;
+}
+.prop-row {
+  grid-template-columns: minmax(9rem, 14rem) minmax(0, 1fr) 36px;
+}
+.step-row {
+  grid-template-columns: minmax(0, 1fr) minmax(9rem, 13rem) 36px;
+}
+.detail-row .select,
+.detail-row .text-input,
+.detail-row .textarea {
+  min-height: 40px;
+}
+.step-row .textarea {
+  resize: none;
+  overflow: hidden;
+}
+.add-select {
+  max-width: 16rem;
+  color: var(--ink-dim);
+}
+.entity-row {
+  grid-template-columns: minmax(10rem, 1fr) minmax(0, 1.4fr) 11rem 6.5rem;
+}
+.legend-edit-row {
+  grid-template-columns: 12rem minmax(8rem, 14rem) minmax(0, 1fr);
+  align-items: start;
+}
+.row.legend-edit-row > .cell {
+  justify-self: stretch;
+}
+.legend-edit-row .textarea {
+  field-sizing: content;
+  min-height: 2.6rem;
+}
+.show-field {
+  display: block;
+  margin-bottom: 0.9rem;
+}
+.photo-preview {
+  display: block;
+  width: min(420px, 100%);
+  height: auto;
+  border-radius: var(--radius);
+  margin-bottom: 0.9rem;
+}
 .field-label {
   display: block;
   font-family: var(--mono);
@@ -1036,7 +1129,11 @@ main {
     order: 3;
     width: 100%;
     margin-left: 0;
-    overflow-x: auto;
+    flex-wrap: wrap;
+    gap: 0.2rem;
+  }
+  .tab {
+    padding: 0.4rem 0.7rem;
   }
   /* the draft / published state stays visible, on its own line under
      the buttons */
@@ -1063,6 +1160,20 @@ main {
   }
 }
 @media (max-width: 760px) {
+  /* phones: the prop or step first with its delete button, then the
+     note or the person on the line below */
+  .prop-row,
+  .step-row {
+    grid-template-columns: minmax(0, 1fr) 36px;
+  }
+  .detail-row > :nth-child(2) {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .detail-row > .icon-btn {
+    grid-column: 2;
+    grid-row: 1;
+  }
   /* every section header puts its button on a line of its own, so the
      sections look alike whatever the length of their titles */
   .section-head {
@@ -1141,7 +1252,9 @@ main {
   }
   .actor-row,
   .char-row,
-  .sound-row {
+  .sound-row,
+  .entity-row,
+  .legend-edit-row {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 0.6rem 1rem;
     padding: 0.9rem 0.2rem;

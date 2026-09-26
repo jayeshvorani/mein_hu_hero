@@ -262,27 +262,6 @@
       (a ? " · " + a.name : c.actorId === EVERYONE ? "" : " · not cast yet")
     );
   }
-  // Scene "who is on stage" text is free text, so it does not follow a
-  // character by id. Renaming a character rewrites the old name there;
-  // removing one (newName "") takes it out and tidies the commas.
-  function renameInCast(sh, oldName, newName) {
-    oldName = (oldName || "").trim();
-    if (!oldName || oldName === newName) return;
-    var rx = new RegExp(
-      "\\b" + oldName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b",
-      "gi",
-    );
-    sh.scenes.forEach(function (sc) {
-      if (!sc.cast) return;
-      var v = sc.cast.replace(rx, newName);
-      if (!newName)
-        v = v
-          .replace(/\s*,(\s*,)+\s*/g, ", ")
-          .replace(/^\s*,\s*|\s*,\s*$/g, "")
-          .trim();
-      sc.cast = v;
-    });
-  }
   function usesOf(kind, id) {
     var found = [];
     eachItem(function (it, sc, si) {
@@ -604,6 +583,8 @@
       markCurrentScene();
     }
     else if (S.tab === "cast") renderCast();
+    else if (S.tab === "places") renderPlaces();
+    else if (S.tab === "show") renderShowTab();
     else renderSounds();
     $all(".tab").forEach(function (t) {
       t.setAttribute(
@@ -611,6 +592,7 @@
         t.getAttribute("data-tab") === S.tab ? "true" : "false",
       );
     });
+    $all("textarea", app).forEach(fitTextarea);
     if (key) {
       var again = app.querySelector('[data-key="' + key + '"]');
       if (again) {
@@ -627,6 +609,12 @@
     syncStatus();
   }
 
+  // Text boxes grow with their text, so nothing already written is hidden
+  // behind a scroll bar inside the box.
+  function fitTextarea(t) {
+    t.style.height = "auto";
+    t.style.height = t.scrollHeight + 2 + "px";
+  }
   function hintHtml() {
     if (readJson(HINT_KEY)) return "";
     return (
@@ -722,7 +710,7 @@
       '" aria-expanded="' +
       open +
       '">' +
-      (open ? "Hide cast, location &amp; props" : "Cast, location &amp; props") +
+      (open ? "Hide scene details" : "Scene details") +
       "</button>" +
       '<button type="button" class="icon-btn" data-act="scene-menu" data-scene="' +
       esc(sc.id) +
@@ -731,15 +719,7 @@
       ' options" aria-haspopup="menu" aria-expanded="false">' +
       ICONS.more +
       "</button></div>";
-    if (open) {
-      h +=
-        '<div class="scene-details">' +
-        detailField(sc, "cast", "Who is on stage (leave empty to list whoever speaks)", true) +
-        detailField(sc, "location", "Location", false) +
-        detailField(sc, "props", "Props", false) +
-        detailField(sc, "notes", "Set-up notes for the crew", true) +
-        "</div>";
-    }
+    if (open) h += sceneDetailsHtml(sc);
     h += '<div class="items" data-scene-id="' + esc(sc.id) + '">';
     sc.items.forEach(function (it) {
       h += cardHtml(it);
@@ -766,24 +746,213 @@
       "</div></section>";
     return h;
   }
-  function detailField(sc, field, label, full) {
+  // ----- scene details: on stage, location, props, set changes -----
+  // Each is a reference to a shared entity (character, location, prop,
+  // actor or crew member), so renaming one updates every scene.
+  function speakersIn(sc) {
+    var on = {};
+    sc.items.forEach(function (it) {
+      if (it.type === "line" && it.characterId) on[it.characterId] = true;
+    });
+    return on;
+  }
+  function optionList(list, selected, nameOf) {
+    return list
+      .map(function (x) {
+        return (
+          '<option value="' +
+          esc(x.id) +
+          '"' +
+          (x.id === selected ? " selected" : "") +
+          ">" +
+          esc(nameOf ? nameOf(x) : x.name) +
+          "</option>"
+        );
+      })
+      .join("");
+  }
+  // a set-change step can go to an actor or a crew member
+  function personOptions(selected) {
+    var sh = S.show;
     return (
-      '<label class="' +
-      (full ? "full" : "") +
-      '"><span class="field-label">' +
-      label +
-      '</span><textarea class="textarea" rows="2" data-field="scene-' +
-      field +
-      '" data-scene="' +
-      esc(sc.id) +
-      '" data-key="sd-' +
-      field +
-      "-" +
-      esc(sc.id) +
-      '">' +
-      esc(sc[field] || "") +
-      "</textarea></label>"
+      '<option value="">Not assigned</option>' +
+      (sh.actors.length
+        ? '<optgroup label="Actors">' + optionList(sh.actors, selected) + "</optgroup>"
+        : "") +
+      (sh.crew.length
+        ? '<optgroup label="Crew">' + optionList(sh.crew, selected) + "</optgroup>"
+        : "")
     );
+  }
+  function sceneDetailsHtml(sc) {
+    var id = esc(sc.id);
+    var sh = S.show;
+    var everyone = sc.onStage === "everyone";
+    var ticked = {};
+    if (!everyone)
+      sc.onStage.forEach(function (c) {
+        ticked[c] = true;
+      });
+    var speaks = speakersIn(sc);
+    var h = '<div class="scene-details">';
+
+    // on stage
+    h +=
+      '<fieldset class="full detail-group"><legend class="field-label">On stage</legend><div class="chk-row">' +
+      '<label class="chk"><input type="checkbox" data-field="scene-everyone" data-scene="' +
+      id +
+      '" data-key="se-' +
+      id +
+      '"' +
+      (everyone ? " checked" : "") +
+      " /> Whole company</label>";
+    if (!everyone)
+      sh.characters.forEach(function (c) {
+        var sp = !!speaks[c.id];
+        // the company's shared speaking part is covered by "Whole company"
+        if (c.actorId === EVERYONE && !sp) return;
+        h +=
+          '<label class="chk' +
+          (sp ? " is-locked" : "") +
+          '"' +
+          (sp ? ' title="Has a line in this scene, so always on stage"' : "") +
+          '><input type="checkbox" data-field="scene-onstage" data-scene="' +
+          id +
+          '" data-char="' +
+          esc(c.id) +
+          '" data-key="so-' +
+          id +
+          "-" +
+          esc(c.id) +
+          '"' +
+          (sp || ticked[c.id] ? " checked" : "") +
+          (sp ? " disabled" : "") +
+          " /> " +
+          esc(c.name) +
+          "</label>";
+      });
+    h +=
+      "</div>" +
+      (everyone
+        ? ""
+        : '<p class="detail-hint">Anyone with a line in this scene is ticked automatically.</p>') +
+      "</fieldset>";
+
+    // location
+    h +=
+      '<label><span class="field-label">Location</span><select class="select" data-field="scene-location-id" data-scene="' +
+      id +
+      '" data-key="sl-' +
+      id +
+      '"><option value="">No location</option>' +
+      optionList(sh.locations, sc.locationId) +
+      '<option value="__new">+ New location…</option></select></label>' +
+      '<label class="full"><span class="field-label">Location note for this scene</span><textarea class="textarea" rows="3" data-field="scene-location-note" data-scene="' +
+      id +
+      '" data-key="sln-' +
+      id +
+      '" placeholder="e.g. table placed just before the scene">' +
+      esc(sc.locationNote || "") +
+      "</textarea></label>";
+
+    // props
+    h += '<div class="full detail-group"><span class="field-label">Props</span><div class="detail-rows">';
+    sc.props.forEach(function (x, i) {
+      var pr = byId(sh.props, x.propId);
+      h +=
+        '<div class="detail-row prop-row"><select class="select" data-field="scene-prop" data-scene="' +
+        id +
+        '" data-index="' +
+        i +
+        '" data-key="sp-' +
+        id +
+        "-" +
+        i +
+        '" aria-label="Prop">' +
+        optionList(sh.props, x.propId) +
+        '<option value="__new">+ New prop…</option></select>' +
+        '<input class="text-input" data-field="scene-prop-note" data-scene="' +
+        id +
+        '" data-index="' +
+        i +
+        '" data-key="spn-' +
+        id +
+        "-" +
+        i +
+        '" value="' +
+        esc(x.note || "") +
+        '" placeholder="Note for this scene (optional)" aria-label="Note for ' +
+        esc(pr ? pr.name : "prop") +
+        '" /><button type="button" class="icon-btn danger" data-act="scene-prop-remove" data-scene="' +
+        id +
+        '" data-index="' +
+        i +
+        '" aria-label="Take ' +
+        esc(pr ? pr.name : "this prop") +
+        ' out of this scene">' +
+        ICONS.trash +
+        "</button></div>";
+    });
+    var inScene = {};
+    sc.props.forEach(function (x) {
+      inScene[x.propId] = true;
+    });
+    h +=
+      '</div><select class="select add-select" data-field="scene-prop-add" data-scene="' +
+      id +
+      '" data-key="spa-' +
+      id +
+      '" aria-label="Add a prop to this scene"><option value="">+ Add a prop…</option>' +
+      optionList(
+        sh.props.filter(function (p) {
+          return !inScene[p.id];
+        }),
+        "",
+      ) +
+      '<option value="__new">+ New prop…</option></select></div>';
+
+    // set changes
+    h +=
+      '<div class="full detail-group"><span class="field-label">Set changes before this scene</span><div class="detail-rows">';
+    sc.setChanges.forEach(function (x, i) {
+      h +=
+        '<div class="detail-row step-row"><textarea class="textarea" rows="1" data-field="setchange-text" data-scene="' +
+        id +
+        '" data-step="' +
+        esc(x.id) +
+        '" data-key="sct-' +
+        esc(x.id) +
+        '" placeholder="e.g. Remove cover from home chairs" aria-label="Set change ' +
+        (i + 1) +
+        '">' +
+        esc(x.text || "") +
+        '</textarea><select class="select" data-field="setchange-who" data-scene="' +
+        id +
+        '" data-step="' +
+        esc(x.id) +
+        '" data-key="scw-' +
+        esc(x.id) +
+        '" aria-label="Who does set change ' +
+        (i + 1) +
+        '">' +
+        personOptions(x.assigneeId) +
+        '</select><button type="button" class="icon-btn danger" data-act="setchange-remove" data-scene="' +
+        id +
+        '" data-step="' +
+        esc(x.id) +
+        '" aria-label="Delete set change ' +
+        (i + 1) +
+        '">' +
+        ICONS.trash +
+        "</button></div>";
+    });
+    h +=
+      '</div><button type="button" class="btn small" data-act="setchange-add" data-scene="' +
+      id +
+      '">' +
+      ICONS.plus +
+      "Add a step</button></div>";
+    return h + "</div>";
   }
 
   function cardHtml(it) {
@@ -1012,7 +1181,7 @@
   function renderCast() {
     var sh = S.show;
     var h =
-      '<h1 class="panel-title">Cast</h1><p class="panel-intro">Actors are the real people. Characters are who they play, and the character’s name is what appears beside each line on the site. Each line belongs to a character, so changing who plays a character updates every one of their lines.</p>';
+      '<h1 class="panel-title">Cast &amp; crew</h1><p class="panel-intro">Actors are the real people. Characters are who they play, and the character’s name is what appears beside each line on the site. Each line belongs to a character, so changing who plays a character updates every one of their lines.</p>';
 
     h +=
       '<section class="section"><div class="section-head"><h2>Actors</h2><p>' +
@@ -1114,7 +1283,254 @@
         '">Remove</button></div></div>';
     });
     h += "</div></section>";
+    h += crewSection();
     app.innerHTML = h;
+  }
+
+  // ----- places & props tab -----
+  function usedInScenes(test) {
+    var n = [];
+    S.show.scenes.forEach(function (sc, i) {
+      if (test(sc)) n.push(i + 1);
+    });
+    return n.length
+      ? (n.length === 1 ? "Scene " : "Scenes ") + n.join(", ")
+      : "Not used yet";
+  }
+  function entitySection(kind, title, intro, list, usedIn) {
+    var h =
+      '<section class="section"><div class="section-head"><h2>' +
+      title +
+      "</h2><p>" +
+      esc(intro) +
+      '</p><button type="button" class="btn small" data-act="add-' +
+      kind +
+      '">' +
+      ICONS.plus +
+      "Add " +
+      (kind === "location" ? "location" : "prop") +
+      '</button></div><div class="rows">';
+    if (!list.length) h += '<p class="empty">None yet.</p>';
+    else
+      h +=
+        '<div class="row entity-row row-head" aria-hidden="true"><span>Name</span><span>Description</span><span>Used in</span><span></span></div>';
+    list.forEach(function (x) {
+      h +=
+        '<div class="row entity-row">' +
+        cell(
+          "Name",
+          '<input class="text-input" data-field="' +
+            kind +
+            '-name" data-ent="' +
+            esc(x.id) +
+            '" data-key="' +
+            kind +
+            "n-" +
+            esc(x.id) +
+            '" value="' +
+            esc(x.name) +
+            '" />',
+        ) +
+        cell(
+          "Description",
+          '<input class="text-input" data-field="' +
+            kind +
+            '-desc" data-ent="' +
+            esc(x.id) +
+            '" data-key="' +
+            kind +
+            "d-" +
+            esc(x.id) +
+            '" value="' +
+            esc(x.description || "") +
+            '" placeholder="Optional" />',
+        ) +
+        info("Used in", '<span class="meta">' + esc(usedIn(x)) + "</span>") +
+        '<div class="cell cell-end"><button type="button" class="btn small danger" data-act="remove-' +
+        kind +
+        '" data-ent="' +
+        esc(x.id) +
+        '" aria-label="Remove ' +
+        esc(x.name) +
+        '">Remove</button></div></div>';
+    });
+    return h + "</div></section>";
+  }
+  function renderPlaces() {
+    var h =
+      '<h1 class="panel-title">Places &amp; props</h1><p class="panel-intro">Places and props are shared between scenes. Rename one here and every scene that uses it follows. Choose which ones a scene uses under <strong>Scene details</strong> on the Script tab.</p>';
+    h += entitySection(
+      "location",
+      "Locations",
+      plural(S.show.locations.length, "location"),
+      S.show.locations,
+      function (l) {
+        return usedInScenes(function (sc) {
+          return sc.locationId === l.id;
+        });
+      },
+    );
+    h += entitySection(
+      "prop",
+      "Props",
+      plural(S.show.props.length, "prop"),
+      S.show.props,
+      function (p) {
+        return usedInScenes(function (sc) {
+          return sc.props.some(function (x) {
+            return x.propId === p.id;
+          });
+        });
+      },
+    );
+    app.innerHTML = h;
+  }
+
+  // ----- show tab: the show's own words, and its photo -----
+  var LEGEND_STYLE = {
+    optional: "Optional line (yellow)",
+    song: "Song words (teal)",
+    sfx: "Sound effect words (magenta)",
+    songBadge: "Song badge",
+    sfxBadge: "Sound effect badge",
+    direction: "Stage direction (grey italic)",
+  };
+  function showField(key, label, value, opts) {
+    opts = opts || {};
+    var input = opts.long
+      ? '<textarea class="textarea" rows="3" data-field="show-' +
+        key +
+        '" data-key="sh-' +
+        key +
+        '">' +
+        esc(value || "") +
+        "</textarea>"
+      : '<input class="text-input" data-field="show-' +
+        key +
+        '" data-key="sh-' +
+        key +
+        '" value="' +
+        esc(value || "") +
+        '"' +
+        (opts.placeholder ? ' placeholder="' + esc(opts.placeholder) + '"' : "") +
+        " />";
+    return (
+      '<label class="field show-field"><span class="field-label">' +
+      label +
+      "</span>" +
+      input +
+      (opts.hint ? '<span class="detail-hint">' + opts.hint + "</span>" : "") +
+      "</label>"
+    );
+  }
+  function renderShowTab() {
+    var sm = S.show.show;
+    var ph = sm.photo || {};
+    var h =
+      '<h1 class="panel-title">Show</h1><p class="panel-intro">The words and photo at the top of the site, the “How this script is marked up” guide and the footer.</p>';
+    h +=
+      '<section class="section"><div class="section-head"><h2>Title and introduction</h2></div>' +
+      showField("title", "Title, first line", sm.title, { placeholder: "e.g. Mein hu" }) +
+      showField("titleAccent", "Title, coloured second line", sm.titleAccent, { placeholder: "e.g. Hero" }) +
+      showField("eyebrow", "Small label above the title", sm.eyebrow, {
+        hint: "The number of scenes is added after it automatically.",
+      }) +
+      showField("tagline", "Introduction", sm.tagline, { long: true }) +
+      showField("pickerPrompt", "Prompt above the character cards", sm.pickerPrompt) +
+      showField("footer", "Footer", sm.footer) +
+      "</section>";
+    h +=
+      '<section class="section"><div class="section-head"><h2>Photo</h2><button type="button" class="btn small" data-act="upload-photo">' +
+      ICONS.plus +
+      (ph.file ? "Replace photo" : "Upload a photo") +
+      "</button></div>" +
+      (ph.file
+        ? '<img class="photo-preview" src="' +
+          esc(encodeURI(ph.file)) +
+          '" alt="" />' +
+          showField("photoAlt", "Describe the photo (for screen readers)", ph.alt)
+        : '<p class="empty">No photo.</p>') +
+      "</section>";
+    h +=
+      '<section class="section"><div class="section-head"><h2>How this script is marked up</h2><p>The guide on the site. The look of each sample is fixed; the words are yours. Put words between ** and ** to make them bold.</p></div><div class="rows">';
+    S.show.legend.forEach(function (row, i) {
+      h +=
+        '<div class="row legend-edit-row">' +
+        info(
+          "Look",
+          '<span class="meta">' + esc(LEGEND_STYLE[row.style] || row.style) + "</span>",
+        ) +
+        cell(
+          "Sample",
+          '<input class="text-input" data-field="legend-sample" data-index="' +
+            i +
+            '" data-key="lgs-' +
+            i +
+            '" value="' +
+            esc(row.sample || "") +
+            '" />',
+        ) +
+        cell(
+          "Meaning",
+          '<textarea class="textarea" rows="2" data-field="legend-meaning" data-index="' +
+            i +
+            '" data-key="lgm-' +
+            i +
+            '">' +
+            esc(row.meaning || "") +
+            "</textarea>",
+        ) +
+        "</div>";
+    });
+    h += "</div></section>";
+    app.innerHTML = h;
+  }
+
+  // ----- crew (on the Cast tab) -----
+  function crewSection() {
+    var sh = S.show;
+    var h =
+      '<section class="section"><div class="section-head"><h2>Crew</h2><p>' +
+      plural(sh.crew.length, "crew member") +
+      '</p><button type="button" class="btn small" data-act="add-crew">' +
+      ICONS.plus +
+      'Add crew member</button></div><div class="rows">';
+    if (!sh.crew.length)
+      h +=
+        '<p class="empty">No crew yet. Add stage hands, the sound operator and so on, then give them set changes in each scene.</p>';
+    else
+      h +=
+        '<div class="row actor-row row-head" aria-hidden="true"><span>Name</span><span>Role</span><span></span></div>';
+    sh.crew.forEach(function (m) {
+      h +=
+        '<div class="row actor-row">' +
+        cell(
+          "Name",
+          '<input class="text-input" data-field="crew-name" data-ent="' +
+            esc(m.id) +
+            '" data-key="crn-' +
+            esc(m.id) +
+            '" value="' +
+            esc(m.name) +
+            '" />',
+        ) +
+        cell(
+          "Role",
+          '<input class="text-input" data-field="crew-role" data-ent="' +
+            esc(m.id) +
+            '" data-key="crr-' +
+            esc(m.id) +
+            '" value="' +
+            esc(m.role || "") +
+            '" placeholder="e.g. Stage hand" />',
+        ) +
+        '<div class="cell cell-end"><button type="button" class="btn small danger" data-act="remove-crew" data-ent="' +
+        esc(m.id) +
+        '" aria-label="Remove ' +
+        esc(m.name) +
+        '">Remove</button></div></div>';
+    });
+    return h + "</div></section>";
   }
 
   // ----- sounds tab -----
@@ -1247,17 +1663,11 @@
       var snap = fieldSnap;
       fieldSnap = null;
       if (snap !== JSON.stringify(S.show)) {
-        if (t.getAttribute("data-field") === "char-name") {
-          var cid = t.getAttribute("data-char");
-          var before = byId(JSON.parse(snap).characters, cid);
-          var now = byId(S.show.characters, cid);
-          if (before && now) renameInCast(S.show, before.name, now.name.trim());
-        }
         pushUndo(snap, fieldLabel);
         saveDraftNow();
         // names show up elsewhere (dropdowns, scene list): refresh those
         if (
-          /actor-name|char-name|track-title|scene-title/.test(
+          /actor-name|char-name|track-title|scene-title|location-name|prop-name|crew-name/.test(
             t.getAttribute("data-field") || "",
           )
         ) {
@@ -1276,6 +1686,7 @@
     ) {
       applyField(t);
       saveDraft();
+      if (t.tagName === "TEXTAREA") fitTextarea(t);
     }
   });
   function labelForField(t) {
@@ -1284,10 +1695,17 @@
     return (
       {
         "scene-title": "Renamed scene",
-        "scene-cast": "Edited who is on stage",
-        "scene-location": "Edited location",
-        "scene-props": "Edited props",
-        "scene-notes": "Edited set-up notes",
+        "scene-location-note": "Edited location note",
+        "scene-prop-note": "Edited prop note",
+        "setchange-text": "Edited set change",
+        "location-name": "Renamed location",
+        "location-desc": "Edited location description",
+        "prop-name": "Renamed prop",
+        "prop-desc": "Edited prop description",
+        "crew-name": "Renamed crew member",
+        "crew-role": "Edited crew role",
+        "legend-sample": "Edited guide sample",
+        "legend-meaning": "Edited guide wording",
         note: "Edited note",
         label: "Edited heading",
         "actor-name": "Renamed actor",
@@ -1310,10 +1728,26 @@
     var sc = byId(sh.scenes, t.getAttribute("data-scene"));
     var it = findItem(t.getAttribute("data-item"));
     if (f === "scene-title" && sc) sc.title = v;
-    else if (f === "scene-cast" && sc) sc.cast = v;
-    else if (f === "scene-location" && sc) sc.location = v;
-    else if (f === "scene-props" && sc) sc.props = v;
-    else if (f === "scene-notes" && sc) sc.notes = v;
+    else if (f === "scene-location-note" && sc) sc.locationNote = v;
+    else if (f === "scene-prop-note" && sc)
+      sc.props[+t.getAttribute("data-index")].note = v;
+    else if (f === "setchange-text" && sc)
+      byId(sc.setChanges, t.getAttribute("data-step")).text = v;
+    else if (/^(location|prop)-(name|desc)$/.test(f)) {
+      var ent = byId(
+        f.indexOf("location") === 0 ? sh.locations : sh.props,
+        t.getAttribute("data-ent"),
+      );
+      if (ent) ent[/name$/.test(f) ? "name" : "description"] = v;
+    } else if (f === "crew-name" || f === "crew-role") {
+      var m = byId(sh.crew, t.getAttribute("data-ent"));
+      if (m) m[f === "crew-name" ? "name" : "role"] = v;
+    } else if (f === "show-photoAlt") sh.show.photo.alt = v;
+    else if (f && f.indexOf("show-") === 0) sh.show[f.slice(5)] = v;
+    else if (f === "legend-sample" || f === "legend-meaning")
+      sh.legend[+t.getAttribute("data-index")][
+        f === "legend-sample" ? "sample" : "meaning"
+      ] = v;
     else if (f === "note" && it) it.item.note = v.trim() ? v : "";
     else if (f === "label" && it) it.item.label = v;
     else if (f === "actor-name") {
@@ -1698,6 +2132,59 @@
       change("Chose " + KIND_LABEL[it.type].toLowerCase(), function () {
         it[it.type === "song" ? "songId" : "sfxId"] = t.value;
       });
+    } else if (f === "scene-everyone" || f === "scene-onstage") {
+      var scId = t.getAttribute("data-scene");
+      change("Changed who is on stage", function (sh) {
+        var sc = byId(sh.scenes, scId);
+        if (f === "scene-everyone") sc.onStage = t.checked ? "everyone" : [];
+        else {
+          var ch = t.getAttribute("data-char");
+          if (!Array.isArray(sc.onStage)) sc.onStage = [];
+          sc.onStage = sc.onStage.filter(function (x) {
+            return x !== ch;
+          });
+          if (t.checked) sc.onStage.push(ch);
+        }
+      });
+      return;
+    } else if (f === "scene-location-id") {
+      var sid = t.getAttribute("data-scene");
+      var setLoc = function (locId) {
+        change("Changed location", function (sh) {
+          byId(sh.scenes, sid).locationId = locId;
+        });
+      };
+      if (t.value === "__new")
+        newLocationFlow().then(function (id) {
+          if (id) setLoc(id);
+          else render();
+        });
+      else setLoc(t.value);
+      return;
+    } else if (f === "scene-prop" || f === "scene-prop-add") {
+      var psid = t.getAttribute("data-scene");
+      var idx = +t.getAttribute("data-index");
+      var setProp = function (propId) {
+        change(f === "scene-prop" ? "Changed prop" : "Added prop to scene", function (sh) {
+          var sc = byId(sh.scenes, psid);
+          if (f === "scene-prop") sc.props[idx].propId = propId;
+          else sc.props.push({ propId: propId, note: "" });
+        });
+      };
+      if (t.value === "__new")
+        newPropFlow().then(function (id) {
+          if (id) setProp(id);
+          else render();
+        });
+      else if (t.value) setProp(t.value);
+      return;
+    } else if (f === "setchange-who") {
+      var wsid = t.getAttribute("data-scene");
+      var step = t.getAttribute("data-step");
+      change("Assigned set change", function (sh) {
+        byId(byId(sh.scenes, wsid).setChanges, step).assigneeId = t.value;
+      });
+      return;
     } else if (f === "char-actor") {
       var cid = t.getAttribute("data-char");
       change("Recast character", function (sh) {
@@ -1854,6 +2341,48 @@
         break;
       case "remove-character":
         removeCharacter(b.getAttribute("data-char"));
+        break;
+      case "add-crew":
+        addCrew();
+        break;
+      case "remove-crew":
+        removeCrew(b.getAttribute("data-ent"));
+        break;
+      case "add-location":
+        newLocationFlow();
+        break;
+      case "remove-location":
+        removeLocation(b.getAttribute("data-ent"));
+        break;
+      case "add-prop":
+        newPropFlow();
+        break;
+      case "remove-prop":
+        removeProp(b.getAttribute("data-ent"));
+        break;
+      case "upload-photo":
+        uploadPhotoFlow();
+        break;
+      case "scene-prop-remove":
+        change("Took prop out of scene", function (sh) {
+          byId(sh.scenes, sceneId).props.splice(+b.getAttribute("data-index"), 1);
+        });
+        break;
+      case "setchange-add":
+        var step = { id: uid("sc"), text: "", assigneeId: "" };
+        change("Added set change", function (sh) {
+          byId(sh.scenes, sceneId).setChanges.push(step);
+        });
+        var inp = app.querySelector('[data-key="sct-' + step.id + '"]');
+        if (inp) inp.focus();
+        break;
+      case "setchange-remove":
+        change("Deleted set change", function (sh) {
+          var sc = byId(sh.scenes, sceneId);
+          sc.setChanges = sc.setChanges.filter(function (x) {
+            return x.id !== b.getAttribute("data-step");
+          });
+        });
         break;
     }
   }
@@ -2073,9 +2602,11 @@
     var sc = {
       id: uid("scene"),
       title: "New scene",
-      location: "",
-      props: "",
-      notes: "",
+      onStage: [],
+      locationId: "",
+      locationNote: "",
+      props: [],
+      setChanges: [],
       items: [],
     };
     change("Added scene", function (sh) {
@@ -2114,6 +2645,7 @@
           s.characters.forEach(function (c) {
             if (c.actorId === actorId) c.actorId = replacement || null;
           });
+          unassign(s, actorId);
           s.actors.splice(s.actors.indexOf(byId(s.actors, actorId)), 1);
         },
         { toast: a.name + " removed." },
@@ -2217,7 +2749,12 @@
               });
             });
           }
-          renameInCast(s, c.name, "");
+          s.scenes.forEach(function (sc) {
+            if (Array.isArray(sc.onStage))
+              sc.onStage = sc.onStage.filter(function (x) {
+                return x !== charId;
+              });
+          });
           s.characters.splice(
             s.characters.indexOf(byId(s.characters, charId)),
             1,
@@ -2264,6 +2801,237 @@
   }
 
   // ----- sound flows -----
+  // ----- adding and removing shared entities -----
+  function nameDialog(title, label, placeholder) {
+    var body = el(
+      '<label class="field"><span class="field-label">' +
+        esc(label) +
+        '</span><input class="text-input" id="ndName" placeholder="' +
+        esc(placeholder) +
+        '" /></label><p class="field-error" id="ndErr" hidden>Please give it a name.</p>',
+    );
+    return ask({
+      title: title,
+      body: body,
+      buttons: [
+        { label: "Cancel", value: null },
+        {
+          label: "Add",
+          value: "ok",
+          primary: true,
+          validate: function () {
+            var ok = !!$("#ndName", body).value.trim();
+            $("#ndErr", body).hidden = ok;
+            return ok;
+          },
+        },
+      ],
+    }).then(function (v) {
+      return v === "ok" ? $("#ndName", body).value.trim() : null;
+    });
+  }
+  // Each resolves with the new entity's id, or null if cancelled.
+  function newLocationFlow() {
+    return nameDialog("New location", "Name", "e.g. Temple courtyard").then(function (name) {
+      if (!name) return null;
+      var l = { id: uid("loc"), name: name, description: "" };
+      change("Added location", function (s) {
+        s.locations.push(l);
+      });
+      return l.id;
+    });
+  }
+  function newPropFlow() {
+    return nameDialog("New prop", "Name", "e.g. Walking stick").then(function (name) {
+      if (!name) return null;
+      var p = { id: uid("prop"), name: name, description: "" };
+      change("Added prop", function (s) {
+        s.props.push(p);
+      });
+      return p.id;
+    });
+  }
+  function addCrew() {
+    var m = { id: uid("crew"), name: "New crew member", role: "" };
+    change("Added crew member", function (s) {
+      s.crew.push(m);
+    });
+    var t = app.querySelector('[data-key="crn-' + m.id + '"]');
+    if (t) {
+      t.focus();
+      t.select();
+    }
+  }
+  function removeLocation(locId) {
+    var sh = S.show;
+    var l = byId(sh.locations, locId);
+    var n = sh.scenes.filter(function (sc) {
+      return sc.locationId === locId;
+    }).length;
+    var go = function (to) {
+      change(
+        "Removed location",
+        function (s) {
+          s.scenes.forEach(function (sc) {
+            if (sc.locationId === locId) sc.locationId = to || "";
+          });
+          s.locations.splice(s.locations.indexOf(byId(s.locations, locId)), 1);
+        },
+        { toast: "“" + l.name + "” removed." },
+      );
+    };
+    if (!n) return go("");
+    var body = el(
+      "<p>" +
+        esc(plural(n, "scene")) +
+        " use <strong>" +
+        esc(l.name) +
+        '</strong>. Which location should they use instead?</p><label class="field"><span class="field-label">Instead</span><select class="select" id="rlTo"><option value="">No location</option>' +
+        optionList(
+          sh.locations.filter(function (x) {
+            return x.id !== locId;
+          }),
+          "",
+        ) +
+        "</select></label>",
+    );
+    ask({
+      title: "Remove “" + l.name + "”?",
+      body: body,
+      buttons: [
+        { label: "Cancel", value: null },
+        { label: "Remove “" + l.name + "”", value: "ok", danger: true, primary: true },
+      ],
+    }).then(function (v) {
+      if (v === "ok") go($("#rlTo", body).value);
+    });
+  }
+  function removeProp(propId) {
+    var sh = S.show;
+    var p = byId(sh.props, propId);
+    var n = sh.scenes.filter(function (sc) {
+      return sc.props.some(function (x) {
+        return x.propId === propId;
+      });
+    }).length;
+    var go = function () {
+      change(
+        "Removed prop",
+        function (s) {
+          s.scenes.forEach(function (sc) {
+            sc.props = sc.props.filter(function (x) {
+              return x.propId !== propId;
+            });
+          });
+          s.props.splice(s.props.indexOf(byId(s.props, propId)), 1);
+        },
+        { toast: "“" + p.name + "” removed." },
+      );
+    };
+    if (!n) return go();
+    ask({
+      title: "Remove “" + p.name + "”?",
+      body:
+        "<p>It is used in " +
+        esc(plural(n, "scene")) +
+        ". Removing it also takes it out of those scenes. You can undo this afterwards.</p>",
+      buttons: [
+        { label: "Cancel", value: null },
+        { label: "Remove “" + p.name + "”", value: "ok", danger: true, primary: true },
+      ],
+    }).then(function (v) {
+      if (v === "ok") go();
+    });
+  }
+  // steps given to someone who is removed become unassigned
+  function unassign(s, personId) {
+    s.scenes.forEach(function (sc) {
+      sc.setChanges.forEach(function (x) {
+        if (x.assigneeId === personId) x.assigneeId = "";
+      });
+    });
+  }
+  function stepsFor(personId) {
+    var n = 0;
+    S.show.scenes.forEach(function (sc) {
+      sc.setChanges.forEach(function (x) {
+        if (x.assigneeId === personId) n++;
+      });
+    });
+    return n;
+  }
+  function removeCrew(crewId) {
+    var m = byId(S.show.crew, crewId);
+    var n = stepsFor(crewId);
+    var go = function () {
+      change(
+        "Removed crew member",
+        function (s) {
+          unassign(s, crewId);
+          s.crew.splice(s.crew.indexOf(byId(s.crew, crewId)), 1);
+        },
+        { toast: m.name + " removed." },
+      );
+    };
+    if (!n) return go();
+    ask({
+      title: "Remove " + m.name + "?",
+      body:
+        "<p>" +
+        esc(m.name) +
+        " has " +
+        esc(plural(n, "set change")) +
+        ". They will become unassigned. You can undo this afterwards.</p>",
+      buttons: [
+        { label: "Cancel", value: null },
+        { label: "Remove " + m.name, value: "ok", danger: true, primary: true },
+      ],
+    }).then(function (v) {
+      if (v === "ok") go();
+    });
+  }
+  function uploadPhotoFlow() {
+    if (!connected()) {
+      openSettings("Connect to GitHub first, so the photo can be stored with the site.");
+      return;
+    }
+    pickFile("image/jpeg,image/png,image/webp").then(function (file) {
+      if (!file) return;
+      if (!/^image\/(jpeg|png|webp)$/.test(file.type)) {
+        toast("Please choose a JPEG, PNG or WebP photo.", false, true);
+        return;
+      }
+      var size = window.createImageBitmap
+        ? createImageBitmap(file).then(
+            function (b) {
+              return { width: b.width, height: b.height };
+            },
+            function () {
+              return {};
+            },
+          )
+        : Promise.resolve({});
+      size.then(function (dim) {
+        uploadFile("photo", file).then(
+          function (path) {
+            change("Replaced photo", function (s) {
+              var alt = (s.show.photo && s.show.photo.alt) || "";
+              s.show.photo = { file: path, alt: alt };
+              if (dim.width) {
+                s.show.photo.width = dim.width;
+                s.show.photo.height = dim.height;
+              }
+            });
+            toast("Photo uploaded. Describe it below, then Publish.", false);
+          },
+          function (err) {
+            toast("Upload failed. " + explain(err), false, true);
+          },
+        );
+      });
+    });
+  }
+
   function removeTrack(kind, trackId) {
     var list = kind === "song" ? S.show.songs : S.show.sfx;
     var t = byId(list, trackId);
@@ -2548,9 +3316,10 @@
 
   // Upload an MP3 into the repository. Resolves with the new track id.
   var fileInput = document.getElementById("fileInput");
-  function pickFile() {
+  function pickFile(accept) {
     return new Promise(function (resolve) {
       fileInput.value = "";
+      fileInput.accept = accept || ".mp3,audio/mpeg";
       var onChange = function () {
         fileInput.removeEventListener("change", onChange);
         resolve(
@@ -2562,6 +3331,7 @@
     });
   }
   function uploadFile(kind, file) {
+    if (kind === "photo") return putFile(file, "images/", "Add photo");
     // Stored as .mp3 and served as audio/mpeg, and MP3 is what every phone
     // at rehearsal plays, so nothing else is accepted.
     if (!/\.mp3$/i.test(file.name) && file.type !== "audio/mpeg") {
@@ -2578,17 +3348,21 @@
         ),
       );
     }
-    var folder = kind === "song" ? "Audio files/songs/" : "Audio files/sfx/";
-    var path =
-      folder + slug(file.name) + "-" + Date.now().toString(36) + ".mp3";
+    return putFile(
+      file,
+      kind === "song" ? "Audio files/songs/" : "Audio files/sfx/",
+      kind === "song" ? "Add song" : "Add sound effect",
+      ".mp3",
+    );
+  }
+  // Stores a file in the repository under a name that is never reused.
+  function putFile(file, folder, what, ext) {
+    ext = ext || (/\.[a-z0-9]+$/i.exec(file.name) || [""])[0].toLowerCase();
+    var path = folder + slug(file.name) + "-" + Date.now().toString(36) + ext;
     toast("Uploading “" + file.name + "”…", false);
     return file.arrayBuffer().then(function (buf) {
       return gh("PUT", "/contents/" + encodePath(path), {
-        message:
-          "Add " +
-          (kind === "song" ? "song" : "sound effect") +
-          ": " +
-          file.name,
+        message: what + ": " + file.name,
         content: b64FromBytes(new Uint8Array(buf)),
         branch: settings().branch || "main",
       }).then(function () {
@@ -2921,12 +3695,32 @@
   function normalise(show) {
     show = show || {};
     show.format = show.format || 1;
-    ["actors", "characters", "songs", "sfx", "scenes"].forEach(function (k) {
+    [
+      "legend",
+      "actors",
+      "characters",
+      "crew",
+      "locations",
+      "props",
+      "songs",
+      "sfx",
+      "scenes",
+    ].forEach(function (k) {
       if (!Array.isArray(show[k])) show[k] = [];
     });
+    if (!show.show || typeof show.show !== "object") show.show = {};
+    if (!show.show.photo) show.show.photo = {};
     show.scenes.forEach(function (sc) {
       if (!sc.id) sc.id = uid("scene");
       if (!Array.isArray(sc.items)) sc.items = [];
+      if (sc.onStage !== "everyone" && !Array.isArray(sc.onStage)) sc.onStage = [];
+      if (typeof sc.locationId !== "string") sc.locationId = "";
+      if (typeof sc.locationNote !== "string") sc.locationNote = "";
+      if (!Array.isArray(sc.props)) sc.props = [];
+      if (!Array.isArray(sc.setChanges)) sc.setChanges = [];
+      sc.setChanges.forEach(function (x) {
+        if (!x.id) x.id = uid("sc");
+      });
       sc.items.forEach(function (it) {
         if (!it.id) it.id = uid("i");
       });
@@ -2939,6 +3733,17 @@
     S.baseJson = JSON.stringify(published);
     S.baseSha = sha;
     S.show = published;
+    // A draft saved by the previous version of the editor has the old
+    // layout of scene details; it cannot be merged, so it is set aside.
+    if (draft && draft.show && (draft.show.format || 1) !== published.format) {
+      setTimeout(function () {
+        toast(
+          "The editor has been updated. An unpublished draft from before the update was set aside.",
+          false,
+        );
+      }, 300);
+      draft = null;
+    }
     if (draft && draft.show) {
       S.show = normalise(draft.show);
       if (draft.baseJson && draft.baseJson !== S.baseJson) {

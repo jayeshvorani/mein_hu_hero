@@ -11,10 +11,10 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
-    <title>Mein hu Hero · Rehearsal Companion</title>
+    <title>Rehearsal Companion</title>
     <meta
       name="description"
-      content="Rehearsal companion for the Mein hu Hero stage skit. Pick your character and drill your lines."
+      content="Rehearsal companion for a stage skit. Pick your character and drill your lines."
     />
     <meta name="theme-color" content="#0d0907" id="themeColorMeta" />
     <script>
@@ -1729,7 +1729,8 @@
           padding-right: calc(44px + env(safe-area-inset-right, 0px));
         }
       }
-      section.front > h2 {
+      section.front > h2,
+      section.front .checklist > summary h2 {
         font-family: "JetBrains Mono", monospace;
         font-size: 0.72rem;
         font-weight: 600;
@@ -1949,12 +1950,6 @@
       }
       .meta-value {
         color: var(--ink-dim);
-      }
-      .meta-note {
-        margin: 0.3rem 0 0;
-        font-size: 0.85rem;
-        font-style: italic;
-        color: var(--muted);
       }
 
       /* dialogue */
@@ -2183,6 +2178,75 @@
       }
       .cue-row .content p > .is-italic {
         flex-basis: 100%;
+      }
+      /* scene details built from entities */
+      .meta-value .meta-main {
+        font-weight: 600;
+      }
+      .meta-sub {
+        color: var(--muted);
+      }
+      .meta-who {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .meta-who::before {
+        content: "· ";
+      }
+      .meta-list {
+        margin: 0;
+        padding-left: 1.1rem;
+      }
+      .meta-list li + li {
+        margin-top: 0.2rem;
+      }
+      .checklist > summary {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        min-height: 44px;
+        cursor: pointer;
+        list-style: none;
+      }
+      .checklist > summary::-webkit-details-marker {
+        display: none;
+      }
+      .checklist > summary::before {
+        content: "";
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 0.3rem 0 0.3rem 0.45rem;
+        border-color: transparent transparent transparent var(--muted);
+        transition: transform var(--motion-1) var(--ease);
+      }
+      .checklist[open] > summary::before {
+        transform: rotate(90deg);
+      }
+      .checklist > summary h2 {
+        display: inline;
+        margin: 0 !important;
+      }
+      .checklist-head {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.66rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        margin: 1.4rem 0 0.6rem;
+      }
+      .checklist-scene {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.66rem;
+        letter-spacing: 0.04em;
+        color: var(--muted);
+        margin: 1rem 0 0.4rem;
+      }
+      #crewTableShell {
+        margin-top: 1rem;
       }
       .script-status {
         padding: 3rem 1rem;
@@ -3642,7 +3706,7 @@
               d="M12 2.6l2.6 6.1 6.6.6-5 4.4 1.5 6.5-5.7-3.5-5.7 3.5 1.5-6.5-5-4.4 6.6-.6z"
             />
           </svg>
-          <span class="brand-name">Mein hu Hero</span>
+          <span class="brand-name" id="brandName"></span>
         </span>
 
         <div class="search-wrap" id="searchWrap">
@@ -3794,37 +3858,14 @@
       ></p>
 
       <section class="hero">
-        <span class="eyebrow"
-          >Rehearsal Companion · <span id="sceneCount">8</span> Scenes</span
-        >
-        <h1>
-          Mein hu<br />
-          <span class="hero-accent" data-text="Hero">Hero</span>
-        </h1>
-        <p class="tagline">
-          A fun stage skit inspired by classic Bollywood traditions and iconic
-          scenes. Pick your character below to rehearse your lines, or read the
-          whole thing through.
-        </p>
-        <!-- The photo is the hero's LCP candidate: fetchpriority raises its
-             request priority, and the intrinsic width/height reserve its box
-             before first paint. WebP first (155 KB vs 2.5 MB for the PNG);
-             the PNG stays as the fallback source for anything that cannot
-             decode WebP. -->
-        <picture>
-          <source type="image/webp" srcset="Apurva-Aparna.webp" />
-          <img
-            src="Apurva Aparna.png"
-            width="1672"
-            height="941"
-            fetchpriority="high"
-            alt="Apurva and Aparna as Raj and Simran"
-            class="hero-cast-photo"
-            aria-hidden="true"
-          />
-        </picture>
+        <!-- Title, tagline and photo come from show.json ("show"), filled in
+             by renderShow(). -->
+        <span class="eyebrow" id="heroEyebrow"></span>
+        <h1 id="heroTitle"></h1>
+        <p class="tagline" id="heroTagline"></p>
+        <picture id="heroPhoto" hidden></picture>
         <div class="picker">
-          <p class="picker-prompt">Pick your character to start rehearsing</p>
+          <p class="picker-prompt" id="pickerPrompt"></p>
           <div class="picker-grid" id="pickerGrid"></div>
         </div>
       </section>
@@ -3930,89 +3971,32 @@
                 <tbody id="castTableBody"></tbody>
               </table>
             </div>
+            <div class="table-shell" id="crewTableShell" hidden>
+              <table class="cast-table">
+                <thead>
+                  <tr>
+                    <th>Crew</th>
+                    <th>Role</th>
+                  </tr>
+                </thead>
+                <tbody id="crewTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Props and set changes for the whole show, from show.json.
+               Closed by default so it never pushes the script down. -->
+          <section class="front reveal-on-scroll" id="crew-checklist" hidden>
+            <details class="checklist">
+              <summary><h2>Crew checklist</h2></summary>
+              <div id="checklistBody"></div>
+            </details>
           </section>
 
           <section class="front reveal-on-scroll" id="legend">
             <h2>How This Script Is Marked Up</h2>
-            <div class="legend-row">
-              <div class="legend-sample">
-                <span class="legend-swatch legend-gold">Optional line</span>
-              </div>
-              <div class="legend-meaning">
-                Highlighted sections in yellow can be deleted if the play
-                becomes very lengthy.
-              </div>
-            </div>
-            <div class="legend-row">
-              <div class="legend-sample">
-                <span class="legend-swatch c-music">Song</span>
-              </div>
-              <div class="legend-meaning">
-                A song, or words describing music. The play button beside a
-                song plays the track.
-              </div>
-            </div>
-            <div class="legend-row">
-              <div class="legend-sample">
-                <span class="legend-swatch c-sfx">Sound effect</span>
-              </div>
-              <div class="legend-meaning">
-                A sound effect (SFX), with its own play button.
-              </div>
-            </div>
-            <div class="legend-row">
-              <div class="legend-sample">
-                <span class="legend-swatch music-flag">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    aria-hidden="true"
-                  >
-                    <path d="M9 18V5l12-2v13" />
-                    <circle cx="6" cy="18" r="3" />
-                    <circle cx="18" cy="16" r="3" />
-                  </svg>
-                  <span>Song</span>
-                </span>
-              </div>
-              <div class="legend-meaning">
-                A note badge marks every line with a song, for the sound
-                operator.
-              </div>
-            </div>
-            <div class="legend-row">
-              <div class="legend-sample">
-                <span class="legend-swatch music-flag is-sfx">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    aria-hidden="true"
-                  >
-                    <path d="M11 5 6 9H3v6h3l5 4z" /><path d="M15.5 8.5a5 5 0 0 1 0 7" /><path d="M18.5 5.5a9 9 0 0 1 0 13" />
-                  </svg>
-                  <span>SFX</span>
-                </span>
-              </div>
-              <div class="legend-meaning">
-                A speaker badge marks every sound effect. Turn on
-                <strong>Sound cues only</strong> to see just the songs and
-                sound effects, for the sound operator.
-              </div>
-            </div>
-            <div class="legend-row">
-              <div class="legend-sample">
-                <span class="legend-swatch is-italic">(stage direction)</span>
-              </div>
-              <div class="legend-meaning">
-                What happens on stage. Directions are labelled
-                <strong>Stage direction</strong>, in grey italics with a dashed
-                edge.
-              </div>
-            </div>
+            <!-- rows come from show.json ("legend") -->
+            <div id="legendRows"></div>
           </section>
 
           <!-- The scenes are rendered from show.json by renderShow() at the
@@ -4072,7 +4056,7 @@
       </nav>
 
       <footer class="page-footer">
-        Mein hu Hero · rehearsal companion ·
+        <span id="footerText"></span> ·
         <a class="footer-link" href="editor.html">Script editor</a>
         <div class="shortcut-hint">
           Keyboard: <strong>/</strong> search · <strong>Esc</strong> clear ·
@@ -6666,6 +6650,93 @@
           };
         }
 
+        // Title, tagline, photo, legend and footer: the show's own words,
+        // from show.json "show" and "legend".
+        var NOTE_SVG =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
+        var SPEAKER_SVG =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+        function renderFront(show, sceneCount) {
+          var info = show.show || {};
+          var title = (info.title || "").trim();
+          var accent = (info.titleAccent || "").trim();
+          var eyebrow = (info.eyebrow || "").trim();
+          document.getElementById("heroEyebrow").textContent =
+            (eyebrow ? eyebrow + " · " : "") +
+            sceneCount +
+            (sceneCount === 1 ? " Scene" : " Scenes");
+          document.getElementById("heroTitle").innerHTML =
+            esc(title) +
+            (title && accent ? "<br />" : "") +
+            (accent
+              ? '<span class="hero-accent" data-text="' +
+                esc(accent) +
+                '">' +
+                esc(accent) +
+                "</span>"
+              : "");
+          document.getElementById("heroTagline").textContent = info.tagline || "";
+          var pic = document.getElementById("heroPhoto");
+          var ph = info.photo || {};
+          if (ph.file) {
+            pic.innerHTML =
+              (ph.fallback
+                ? '<source type="image/webp" srcset="' + esc(ph.file) + '" />'
+                : "") +
+              '<img src="' +
+              esc(ph.fallback || ph.file) +
+              '"' +
+              (ph.width ? ' width="' + Number(ph.width) + '"' : "") +
+              (ph.height ? ' height="' + Number(ph.height) + '"' : "") +
+              ' fetchpriority="high" alt="' +
+              esc(ph.alt || "") +
+              '" class="hero-cast-photo"' +
+              (ph.alt ? "" : ' aria-hidden="true"') +
+              " />";
+            pic.hidden = false;
+          }
+          document.getElementById("pickerPrompt").textContent =
+            info.pickerPrompt || "";
+          var full = [title, accent].filter(Boolean).join(" ");
+          document.getElementById("footerText").textContent =
+            info.footer || full;
+          document.getElementById("brandName").textContent = full;
+          if (full) document.title = full + (eyebrow ? " · " + eyebrow : "");
+
+          // legend: the sample's look comes from its style, the words from data
+          var SAMPLE = {
+            optional: ["legend-swatch legend-gold", ""],
+            song: ["legend-swatch c-music", ""],
+            sfx: ["legend-swatch c-sfx", ""],
+            songBadge: ["legend-swatch music-flag", NOTE_SVG],
+            sfxBadge: ["legend-swatch music-flag is-sfx", SPEAKER_SVG],
+            direction: ["legend-swatch is-italic", ""],
+          };
+          document.getElementById("legendRows").innerHTML = (show.legend || [])
+            .map(function (row) {
+              var look = SAMPLE[row.style] || ["legend-swatch", ""];
+              var text = look[1]
+                ? look[1] + "<span>" + esc(row.sample) + "</span>"
+                : esc(row.sample);
+              // **words** in a meaning are shown bold
+              var meaning = esc(row.meaning || "").replace(
+                /\*\*(.+?)\*\*/g,
+                "<strong>$1</strong>",
+              );
+              return (
+                '<div class="legend-row"><div class="legend-sample"><span class="' +
+                look[0] +
+                '">' +
+                text +
+                '</span></div><div class="legend-meaning">' +
+                meaning +
+                "</div></div>"
+              );
+            })
+            .join("");
+          document.getElementById("legend").hidden = !(show.legend || []).length;
+        }
+
         function renderShow(show) {
           var chars = {};
           var actors = {};
@@ -6702,6 +6773,24 @@
             o.textContent = a.name + " · " + names.join(", ");
             select.appendChild(o);
           });
+
+          var crew = {};
+          (show.crew || []).forEach(function (m) {
+            crew[m.id] = m;
+          });
+          var locations = {};
+          (show.locations || []).forEach(function (l) {
+            locations[l.id] = l;
+          });
+          var props = {};
+          (show.props || []).forEach(function (pr) {
+            props[pr.id] = pr;
+          });
+          // a set-change step can be given to an actor or a crew member
+          function personName(id) {
+            var who = actors[id] || crew[id];
+            return who ? who.name : "";
+          }
 
           // Cast & Crew table
           var tbody = document.getElementById("castTableBody");
@@ -6747,9 +6836,7 @@
               })
               .join(""),
           );
-          document.getElementById("sceneCount").textContent = String(
-            scenesData.length,
-          );
+          renderFront(show, scenesData.length);
 
           function cueRow(item) {
             var isSfx = item.type === "sfx";
@@ -6827,13 +6914,79 @@
             );
           }
 
+          // value is markup here, built from escaped parts below
           function metaItem(label, value) {
             return value
               ? '<div class="meta-item"><span class="meta-label">' +
                   label +
-                  '</span><span class="meta-value">' +
-                  esc(value) +
-                  "</span></div>"
+                  '</span><div class="meta-value">' +
+                  value +
+                  "</div></div>"
+              : "";
+          }
+          function noteHtml(note) {
+            return note
+              ? ' <span class="meta-sub">' + esc(note) + "</span>"
+              : "";
+          }
+          // Who is on stage: the ticked characters plus anyone with a line,
+          // in cast-list order; "everyone" for the whole company.
+          function castOf(sc) {
+            if (sc.onStage === "everyone") return "Whole company";
+            var on = {};
+            (sc.onStage || []).forEach(function (id) {
+              on[id] = true;
+            });
+            (sc.items || []).forEach(function (it) {
+              if (it.type === "line") on[it.characterId] = true;
+            });
+            return (show.characters || [])
+              .filter(function (c) {
+                return on[c.id];
+              })
+              .map(function (c) {
+                return esc(c.name);
+              })
+              .join(", ");
+          }
+          function locationOf(sc) {
+            var l = locations[sc.locationId];
+            if (!l && !sc.locationNote) return "";
+            return (
+              (l ? '<span class="meta-main">' + esc(l.name) + "</span>" : "") +
+              noteHtml(sc.locationNote)
+            );
+          }
+          function propsOf(sc) {
+            var rows = (sc.props || [])
+              .filter(function (x) {
+                return props[x.propId];
+              })
+              .map(function (x) {
+                return (
+                  "<li>" + esc(props[x.propId].name) + noteHtml(x.note) + "</li>"
+                );
+              });
+            return rows.length
+              ? '<ul class="meta-list">' + rows.join("") + "</ul>"
+              : "";
+          }
+          function setChangesOf(sc) {
+            var rows = (sc.setChanges || [])
+              .filter(function (x) {
+                return (x.text || "").trim();
+              })
+              .map(function (x) {
+                var who = personName(x.assigneeId);
+                return (
+                  "<li>" +
+                  esc(x.text) +
+                  (who ? ' <span class="meta-who">' + esc(who) + "</span>" : "") +
+                  "</li>"
+                );
+              });
+            return rows.length
+              ? '<ol class="meta-list">' + rows.join("") + "</ol>"
               : "";
           }
 
@@ -6841,28 +6994,11 @@
             .map(function (sc, i) {
               var n = i + 1;
               var items = sc.items || [];
-              // Fallback CAST: whoever speaks in the scene, in cast order
-              var inScene = {};
-              items.forEach(function (it) {
-                if (it.type === "line") inScene[it.characterId] = true;
-              });
-              var cast = (show.characters || [])
-                .filter(function (c) {
-                  return inScene[c.id];
-                })
-                .map(function (c) {
-                  return c.name;
-                })
-                .join(", ");
-              // An explicit "who is on stage" wins: people can be on stage
-              // without a line (scene 3 is Raj and Simran dancing).
               var meta =
-                metaItem("CAST", (sc.cast || "").trim() || cast) +
-                metaItem("LOCATION", sc.location) +
-                metaItem("PROPS", sc.props) +
-                (sc.notes
-                  ? '<p class="meta-note">' + esc(sc.notes) + "</p>"
-                  : "");
+                metaItem("CAST", castOf(sc)) +
+                metaItem("LOCATION", locationOf(sc)) +
+                metaItem("PROPS", propsOf(sc)) +
+                metaItem("SET CHANGES", setChangesOf(sc));
               return (
                 '<section class="scene reveal-on-scroll" id="scene-' +
                 n +
@@ -6883,6 +7019,68 @@
           var status = document.getElementById("scriptStatus");
           status.insertAdjacentHTML("beforebegin", html);
           status.remove();
+
+          // Crew table, beside the cast table
+          var crewRows = (show.crew || []).map(function (m) {
+            return (
+              '<tr><td class="c-char">' +
+              esc(m.name) +
+              "</td><td>" +
+              esc(m.role || "") +
+              "</td></tr>"
+            );
+          });
+          document.getElementById("crewTableBody").innerHTML = crewRows.join("");
+          document.getElementById("crewTableShell").hidden = !crewRows.length;
+
+          // Crew checklist: every prop with the scenes that need it, and
+          // every set change in running order.
+          var propScenes = {};
+          scenesData.forEach(function (sc, i) {
+            (sc.props || []).forEach(function (x) {
+              if (!props[x.propId]) return;
+              (propScenes[x.propId] = propScenes[x.propId] || []).push(
+                "Scene " + (i + 1) + (x.note ? ": " + x.note : ""),
+              );
+            });
+          });
+          var propRows = (show.props || [])
+            .filter(function (pr) {
+              return propScenes[pr.id];
+            })
+            .map(function (pr) {
+              return (
+                "<tr><td>" +
+                esc(pr.name) +
+                (pr.description ? noteHtml(pr.description) : "") +
+                "</td><td>" +
+                esc(propScenes[pr.id].join("; ")) +
+                "</td></tr>"
+              );
+            });
+          var stepBlocks = scenesData
+            .map(function (sc, i) {
+              var list = setChangesOf(sc);
+              return list
+                ? '<h3 class="checklist-scene">Before scene ' +
+                    two(i + 1) +
+                    " · " +
+                    esc(sc.title) +
+                    "</h3>" +
+                    list
+                : "";
+            })
+            .join("");
+          var body = "";
+          if (propRows.length)
+            body +=
+              '<h3 class="checklist-head">Props</h3><div class="table-shell"><table class="cast-table"><thead><tr><th>Prop</th><th>Needed in</th></tr></thead><tbody>' +
+              propRows.join("") +
+              "</tbody></table></div>";
+          if (stepBlocks)
+            body += '<h3 class="checklist-head">Set changes</h3>' + stepBlocks;
+          document.getElementById("checklistBody").innerHTML = body;
+          document.getElementById("crew-checklist").hidden = !body;
         }
 
         function fail() {
@@ -6900,11 +7098,12 @@
               ? "Preview from the script editor. It matches the published script."
               : "Preview of unpublished edits. The cast cannot see these yet.";
             document.body.insertBefore(b, document.body.firstChild);
+          }
+          renderShow(show);
+          if (isDraft)
             document.title =
               (isDraft.unchanged ? "Preview · " : "Preview (unpublished) · ") +
               document.title;
-          }
-          renderShow(show);
           window.mhhBoot();
           // The browser tried to honour a #scene-N link before the scene
           // existed; honour it now.
@@ -6917,7 +7116,7 @@
         if (/[?&]draft\b/.test(location.search)) {
           try {
             var d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
-            if (d && d.show) {
+            if (d && d.show && d.show.format >= 2) {
               start(d.show, {
                 unchanged: !!d.baseJson && JSON.stringify(d.show) === d.baseJson,
               });

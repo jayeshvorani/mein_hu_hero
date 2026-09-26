@@ -1,5 +1,52 @@
 {
- "format": 1,
+ "format": 2,
+ "show": {
+  "title": "Mein hu",
+  "titleAccent": "Hero",
+  "eyebrow": "Rehearsal Companion",
+  "tagline": "A fun stage skit inspired by classic Bollywood traditions and iconic scenes. Pick your character below to rehearse your lines, or read the whole thing through.",
+  "photo": {
+   "file": "Apurva-Aparna.webp",
+   "fallback": "Apurva Aparna.png",
+   "alt": "Apurva and Aparna as Raj and Simran",
+   "width": 1672,
+   "height": 941
+  },
+  "pickerPrompt": "Pick your character to start rehearsing",
+  "footer": "Mein hu Hero · rehearsal companion"
+ },
+ "legend": [
+  {
+   "style": "optional",
+   "sample": "Optional line",
+   "meaning": "Highlighted sections in yellow can be deleted if the play becomes very lengthy."
+  },
+  {
+   "style": "song",
+   "sample": "Song",
+   "meaning": "A song, or words describing music. The play button beside a song plays the track."
+  },
+  {
+   "style": "sfx",
+   "sample": "Sound effect",
+   "meaning": "A sound effect (SFX), with its own play button."
+  },
+  {
+   "style": "songBadge",
+   "sample": "Song",
+   "meaning": "A note badge marks every line with a song, for the sound operator."
+  },
+  {
+   "style": "sfxBadge",
+   "sample": "SFX",
+   "meaning": "A speaker badge marks every sound effect. Turn on **Sound cues only** to see just the songs and sound effects, for the sound operator."
+  },
+  {
+   "style": "direction",
+   "sample": "(stage direction)",
+   "meaning": "What happens on stage. Directions are labelled **Stage direction**, in grey italics with a dashed edge."
+  }
+ ],
  "actors": [
   {
    "id": "Madhuri",
@@ -118,6 +165,136 @@
    "actorId": "everyone"
   }
  ],
+ "crew": [],
+ "locations": [
+  {
+   "id": "home",
+   "name": "Drawing room at home",
+   "description": ""
+  },
+  {
+   "id": "office",
+   "name": "Office space",
+   "description": ""
+  },
+  {
+   "id": "park",
+   "name": "Park",
+   "description": ""
+  },
+  {
+   "id": "wedding",
+   "name": "Wedding reception",
+   "description": ""
+  }
+ ],
+ "props": [
+  {
+   "id": "five-chairs",
+   "name": "Five chairs",
+   "description": ""
+  },
+  {
+   "id": "sheet",
+   "name": "Light colored sheet",
+   "description": ""
+  },
+  {
+   "id": "dadaji-photo",
+   "name": "Dadaji’s photo",
+   "description": ""
+  },
+  {
+   "id": "degree",
+   "name": "Degree",
+   "description": ""
+  },
+  {
+   "id": "napkin",
+   "name": "Napkin",
+   "description": ""
+  },
+  {
+   "id": "aarati-thali",
+   "name": "Aarati thali",
+   "description": ""
+  },
+  {
+   "id": "food-plate",
+   "name": "Food plate",
+   "description": ""
+  },
+  {
+   "id": "office-table",
+   "name": "Office table",
+   "description": ""
+  },
+  {
+   "id": "vase",
+   "name": "Vase with flowers",
+   "description": ""
+  },
+  {
+   "id": "roses",
+   "name": "Roses",
+   "description": ""
+  },
+  {
+   "id": "red-covers",
+   "name": "Red cover for chairs",
+   "description": ""
+  },
+  {
+   "id": "petals",
+   "name": "Petals",
+   "description": ""
+  },
+  {
+   "id": "scarves",
+   "name": "Scarves",
+   "description": ""
+  },
+  {
+   "id": "briefcase",
+   "name": "Briefcase",
+   "description": ""
+  },
+  {
+   "id": "tie",
+   "name": "Tie",
+   "description": ""
+  },
+  {
+   "id": "pungi",
+   "name": "Pungi",
+   "description": ""
+  },
+  {
+   "id": "saffron-shawl",
+   "name": "Saffron shawl",
+   "description": ""
+  },
+  {
+   "id": "result-sheet",
+   "name": "Result sheet",
+   "description": ""
+  },
+  {
+   "id": "cap-jacket",
+   "name": "Cap/jacket",
+   "description": ""
+  },
+  {
+   "id": "small-lamp",
+   "name": "Small lamp",
+   "description": ""
+  },
+  {
+   "id": "walking-stick",
+   "name": "Walking stick",
+   "description": ""
+  }
+ ],
  "songs": [
   {
    "id": "song-01",
@@ -158,11 +335,6 @@
    "id": "song-08",
    "title": "Ek dusre se karte hain pyaar hum",
    "file": "Audio files/08 - Ek Dusre se.mp3"
-  },
-  {
-   "id": "song-muibomub84e2",
-   "title": "Tujhe Deka",
-   "file": "Audio files/songs/tujhe-deka-muibokha.mp3"
   }
  ],
  "sfx": [],
@@ -170,17 +342,13 @@
   {
    "id": "scene-1",
    "title": "Homecoming",
-   "cast": "Dharamchand, Sumitradevi, Ramu kaka, Raj",
-   "location": "Drawing room at home",
-   "props": "Five chairs, Light colored (neutral sheet to cover three chairs), Dadaji’s photo, degree (Rolled paper can be tied with a ribbon), napkin for Ramu kaka, aarati thali, food plate (tbd) with a bowl for gajar halwaa.",
-   "notes": "",
    "items": [
     {
      "id": "i1",
      "type": "line",
      "characterId": "narrator",
      "note": "",
-     "text": "<p>Namaste. Aaj hum milane jaa rahe hain ek aajebo garib naujavan Raj se. Naam to suna he hoga! Raj Hindi filmo se tang aa chuka hai. Nahi nahi; use filmo se koi shikaayat nahee, vah to kabhi kabhi ek do picture bhee dekh letaa hai. Use problem hain filmi fans se jo uske Jeevan mein bohut hein. Hamaare is natak ka naam hai</p><p>‘Mein Hu Hero’.</p><p>Aao dekhen Raj Malhotra ke ghar mein kya scene hain.</p><p>Milate hain unke pitaa Dharamchand aur mataji Sumitra devi se.</p>"
+     "text": "<p>Namaste. Aaj hum milane jaa rahe hain ek aajebo garib naujavan Raj se. Naam to suna he hoga! Raj Hindi filmo se tang aa chuka hai. Nahi nahi; use filmo se koi shikaayat nahee, vah to kabhi kabhi ek do picture bhee dekh letaa hai. Use problem hain filmi fans se jo uske Jeevan mein bohut hein. Hamaare is natak ka naam hai</p><p>‘Mein Hu Hero’.</p><p>Aao dekhen Raj Malhotra ke ghar mein kya scene hain.</p><p>Milate hain unke pitaa Dharamchand aur mataji Sumitradevi se.</p>"
     },
     {
      "id": "i2",
@@ -286,14 +454,16 @@
      "type": "line",
      "characterId": "dharamchand",
      "note": "",
-     "text": "<p>Jao aur pehle dada ji ka Ashirwad le lo.</p>"
+     "text": "<p>Jao aur pehle dada ji ka Ashirwad le lo.</p>",
+     "optional": true
     },
     {
      "id": "i14",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p><i>(Raj walks to Dadaji’s photo and keeps his degree near the photo)</i></p><p>Dadaji aaj main vilayat se degree leke aayaa hun. Aapka sapna maine puraa kiya hain. Muze aashirwad deejiye.</p>"
+     "text": "<p><i>(Raj walks to Dadaji’s photo and keeps his degree near the photo)</i></p><p>Dadaji aaj main vilayat se degree leke aayaa hun. Aapka sapna maine puraa kiya hain. Muze aashirwad deejiye.</p>",
+     "optional": true
     },
     {
      "id": "i15",
@@ -350,15 +520,50 @@
      "note": "",
      "text": "<p><i>(One hand over his forehead.)</i> Scene 1 over.</p>"
     }
-   ]
+   ],
+   "onStage": [
+    "dharamchand",
+    "sumitradevi",
+    "ramu",
+    "raj"
+   ],
+   "locationId": "home",
+   "locationNote": "",
+   "props": [
+    {
+     "propId": "five-chairs",
+     "note": ""
+    },
+    {
+     "propId": "sheet",
+     "note": "neutral sheet to cover three chairs"
+    },
+    {
+     "propId": "dadaji-photo",
+     "note": ""
+    },
+    {
+     "propId": "degree",
+     "note": "Rolled paper can be tied with a ribbon"
+    },
+    {
+     "propId": "napkin",
+     "note": "for Ramu kaka"
+    },
+    {
+     "propId": "aarati-thali",
+     "note": ""
+    },
+    {
+     "propId": "food-plate",
+     "note": "(tbd) with a bowl for gajar halwaa"
+    }
+   ],
+   "setChanges": []
   },
   {
    "id": "scene-2",
    "title": "The Job Interview",
-   "cast": "Office receptionist, Raj, Man in office, Deendayaal (Simran’s father), Simran",
-   "location": "Office space (Place a table in front of the chair). This chair should be on one side of the three home chairs. Chair to be places from the beginning and table to be placed just before the scene. Receptionist chair on the other side of home chairs, opposite to office chair. This will also be placed from beginning.",
-   "props": "office table, vase with flowers",
-   "notes": "(After scene 1 remove cover from home chairs. Place a table in front of office chair. Receptionist chair can have a vase next to it though not necessary. Raj and man in office sit on two of the three chairs that were home earlier.)",
    "items": [
     {
      "id": "i23",
@@ -431,19 +636,7 @@
      "id": "i33",
      "type": "direction",
      "label": "",
-     "text": "<p><i>Raj shakes hand with Shetji and walks towards the door. He collides with Simran. </i><mark><i>They look into each other’s eyes and go on staring at each other.</i></mark></p>"
-    },
-    {
-     "id": "i-muibo4re920z",
-     "type": "song",
-     "songId": "song-muibomub84e2",
-     "note": ""
-    },
-    {
-     "id": "i-muibp0vvq6af",
-     "type": "direction",
-     "label": "",
-     "text": "<p>Shetji coughs loudly. Raj then hastily leaves the office. Simran goes towards her dad.</p>"
+     "text": "<p><i>Raj shakes hand with Shetji and walks towards the door. He collides with Simran. They look into each other’s eyes and go on staring at each other. </i><mark><i>(Haunting music of Dil to Pagal Hain). </i></mark><i>Shetji coughs loudly. Raj then hastily leaves the office. Simran goes towards her dad.</i></p>"
     },
     {
      "id": "i34",
@@ -473,50 +666,100 @@
      "note": "Simran’s father",
      "text": "<p>Ok beta. Jo tumhe pasand hain usee se tumhari shaadi hogee.</p>"
     }
+   ],
+   "onStage": [
+    "receptionist",
+    "raj",
+    "man-office",
+    "deendayal",
+    "simran"
+   ],
+   "locationId": "office",
+   "locationNote": "Place a table in front of the chair. This chair should be on one side of the three home chairs. Chair to be places from the beginning and table to be placed just before the scene. Receptionist chair on the other side of home chairs, opposite to office chair. This will also be placed from beginning.",
+   "props": [
+    {
+     "propId": "office-table",
+     "note": ""
+    },
+    {
+     "propId": "vase",
+     "note": ""
+    }
+   ],
+   "setChanges": [
+    {
+     "id": "scene-2-sc1",
+     "text": "After scene 1 remove cover from home chairs.",
+     "assigneeId": ""
+    },
+    {
+     "id": "scene-2-sc2",
+     "text": "Place a table in front of office chair.",
+     "assigneeId": ""
+    },
+    {
+     "id": "scene-2-sc3",
+     "text": "Receptionist chair can have a vase next to it though not necessary.",
+     "assigneeId": ""
+    },
+    {
+     "id": "scene-2-sc4",
+     "text": "Raj and man in office sit on two of the three chairs that were home earlier.",
+     "assigneeId": ""
+    }
    ]
   },
   {
    "id": "scene-3",
    "title": "The Park",
-   "cast": "Raj, Simran",
-   "location": "Park (Place vases or plant pots besides the chair). This chair is same a s receptionist chair.",
-   "props": "vases with flowers/Plant pots. 2 roses.",
-   "notes": "(After scene 2 place vases/plant pots beside the chair)",
    "items": [
     {
      "id": "i38",
      "type": "line",
      "characterId": "narrator",
      "note": "",
-     "text": "<p>Raj aur Simran aksar ek doosare se milne lage hain.</p>"
-    },
-    {
-     "id": "i-muibvyt2zdjr",
-     "type": "direction",
-     "label": "",
-     "text": "<p>...while narrator speaks and Raj &amp; Simran take entry into the park.)</p>"
-    },
-    {
-     "id": "i39-s1",
-     "type": "song",
-     "songId": "song-04",
-     "note": ""
+     "text": "<p>Raj aur Simran aksar ek doosare se milne lage hain.</p><p><mark>(Music tbd – Background music dhun of “Ek main aur ek tu, dono mile is tarah” </mark>while narrator speaks and Raj &amp; Simran take entry into the park.)</p>"
     },
     {
      "id": "i39",
      "type": "direction",
      "label": "",
      "text": "<p><i> Raj sits and Simran is dancing on ‘</i><mark><i>Tathya tathya ho’ </i></mark><i>Raj puts his hand on his head. Simran pulls him aside and scene is closed by showing two flowers cross over each other. (flower cross over upon exit of Raj and Simran instead of over their faces, so no queries by children. Also as Simran takes Raj away person enters with flowers) . </i></p>"
+    },
+    {
+     "id": "i39-s1",
+     "type": "song",
+     "songId": "song-04",
+     "note": ""
+    }
+   ],
+   "onStage": [
+    "raj",
+    "simran"
+   ],
+   "locationId": "park",
+   "locationNote": "Place vases or plant pots besides the chair. This chair is same a s receptionist chair.",
+   "props": [
+    {
+     "propId": "vase",
+     "note": "vases with flowers/Plant pots"
+    },
+    {
+     "propId": "roses",
+     "note": "2 roses"
+    }
+   ],
+   "setChanges": [
+    {
+     "id": "scene-3-sc1",
+     "text": "After scene 2 place vases/plant pots beside the chair.",
+     "assigneeId": ""
     }
    ]
   },
   {
    "id": "scene-4",
    "title": "Fixing the Match",
-   "cast": "Raj, Dharamchand, Sumitradevi, Deendayaal, Simran",
-   "location": "drawing room (",
-   "props": "Nothing needed",
-   "notes": "(After scene 3 place back covers on central chairs. Office chair can move next to park space chair so Simran and dad can sit there and Raj and parents in central 3 chairs.)",
    "items": [
     {
      "id": "i40",
@@ -580,15 +823,33 @@
      "label": "",
      "text": "<p>Everyone starts laughing. Raj puts his hand on his forehead.</p>"
     }
+   ],
+   "onStage": [
+    "raj",
+    "dharamchand",
+    "sumitradevi",
+    "deendayal",
+    "simran"
+   ],
+   "locationId": "home",
+   "locationNote": "",
+   "props": [],
+   "setChanges": [
+    {
+     "id": "scene-4-sc1",
+     "text": "After scene 3 place back covers on central chairs.",
+     "assigneeId": ""
+    },
+    {
+     "id": "scene-4-sc2",
+     "text": "Office chair can move next to park space chair so Simran and dad can sit there and Raj and parents in central 3 chairs.",
+     "assigneeId": ""
+    }
    ]
   },
   {
    "id": "scene-5",
    "title": "The Wedding",
-   "cast": "All",
-   "location": "all 5 chairs. Central chairs to have red cover, can possibly have petals.",
-   "props": "Red cover for chairs, petals, scarves for Dulha Dulhan and possibly others as well",
-   "notes": "Raj and Simran can have some nice scarves on their dress. All can choose to have scarves not a must.",
    "items": [
     {
      "id": "i49",
@@ -602,15 +863,29 @@
      "songId": "song-05",
      "note": ""
     }
-   ]
+   ],
+   "onStage": "everyone",
+   "locationId": "wedding",
+   "locationNote": "All 5 chairs. Central chairs to have red cover, can possibly have petals.",
+   "props": [
+    {
+     "propId": "red-covers",
+     "note": ""
+    },
+    {
+     "propId": "petals",
+     "note": ""
+    },
+    {
+     "propId": "scarves",
+     "note": "for Dulha Dulhan and possibly others as well. Raj and Simran can have some nice scarves on their dress. All can choose to have scarves not a must."
+    }
+   ],
+   "setChanges": []
   },
   {
    "id": "scene-6",
    "title": "The Naagin Scare",
-   "cast": "Raj, Symitradevi, Bhairav baba",
-   "location": "",
-   "props": "Briefcase, tie, pungi, saffron shawl for baba",
-   "notes": "Location Home same as scene 1 so should have same set up as scene 1.",
    "items": [
     {
      "id": "i50",
@@ -659,15 +934,43 @@
      "songId": "song-06",
      "note": ""
     }
+   ],
+   "onStage": [
+    "raj",
+    "sumitradevi",
+    "bhairav"
+   ],
+   "locationId": "home",
+   "locationNote": "",
+   "props": [
+    {
+     "propId": "briefcase",
+     "note": ""
+    },
+    {
+     "propId": "tie",
+     "note": ""
+    },
+    {
+     "propId": "pungi",
+     "note": ""
+    },
+    {
+     "propId": "saffron-shawl",
+     "note": "for baba"
+    }
+   ],
+   "setChanges": [
+    {
+     "id": "scene-6-sc1",
+     "text": "Location Home same as scene 1 so should have same set up as scene 1.",
+     "assigneeId": ""
+    }
    ]
   },
   {
    "id": "scene-7",
    "title": "Rocky’s Report Card",
-   "cast": "Raj, Rocky, Sumitradevi",
-   "location": "Home same scene 1 and 6.",
-   "props": "Result sheet, Dadaji’s photo, cap/jacket - a prop to show young Rocky, since in later scene he needs to look old.",
-   "notes": "",
    "items": [
     {
      "id": "i56",
@@ -709,14 +1012,16 @@
      "type": "line",
      "characterId": "rocky",
      "note": "",
-     "text": "<p>Dad, kya main Bade Dadaji ki photo ke saamne ye marksheet rakhun?</p>"
+     "text": "<p>Dad, kya main Bade Dadaji ki photo ke saamne ye marksheet rakhun?</p>",
+     "optional": true
     },
     {
      "id": "i62",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Ek khayega merese. <i>(Action like zapad khayega)</i></p>"
+     "text": "<p>Ek khayega merese. <i>(Action like zapad khayega)</i></p>",
+     "optional": true
     },
     {
      "id": "i63",
@@ -732,15 +1037,33 @@
      "note": "",
      "text": "<p><i>Puts his hand on his forehead.</i></p>"
     }
-   ]
+   ],
+   "onStage": [
+    "raj",
+    "rocky",
+    "sumitradevi"
+   ],
+   "locationId": "home",
+   "locationNote": "",
+   "props": [
+    {
+     "propId": "result-sheet",
+     "note": ""
+    },
+    {
+     "propId": "dadaji-photo",
+     "note": ""
+    },
+    {
+     "propId": "cap-jacket",
+     "note": "a prop to show young Rocky, since in later scene he needs to look old."
+    }
+   ],
+   "setChanges": []
   },
   {
    "id": "scene-8",
    "title": "The Finale",
-   "cast": "Raj, Rocky, Simran",
-   "location": "Home same as scene 1, 6, 7",
-   "props": "small lamp, walking stick",
-   "notes": "",
    "items": [
     {
      "id": "i65",
@@ -829,7 +1152,25 @@
      "songId": "song-08",
      "note": ""
     }
-   ]
+   ],
+   "onStage": [
+    "raj",
+    "rocky",
+    "simran"
+   ],
+   "locationId": "home",
+   "locationNote": "",
+   "props": [
+    {
+     "propId": "small-lamp",
+     "note": ""
+    },
+    {
+     "propId": "walking-stick",
+     "note": ""
+    }
+   ],
+   "setChanges": []
   }
  ]
 }

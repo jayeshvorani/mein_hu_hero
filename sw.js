@@ -159,7 +159,7 @@ self.addEventListener("fetch", function (event) {
   // themselves.
   var isAudio = /\.mp3$/i.test(url.pathname);
   var cacheable =
-    isAudio || /\.(woff2|png|svg|webp|webmanifest|css|js)$/i.test(url.pathname);
+    isAudio || /\.(woff2|png|jpe?g|svg|webp|webmanifest|css|js)$/i.test(url.pathname);
   var targetCache = isAudio ? AUDIO_CACHE : CACHE_VERSION;
 
   // ---- range requests ----
