@@ -1,0 +1,816 @@
+{
+ "format": 1,
+ "actors": [
+  {
+   "id": "Madhuri",
+   "name": "Madhuri"
+  },
+  {
+   "id": "Apurva",
+   "name": "Apurva"
+  },
+  {
+   "id": "Rajesh",
+   "name": "Rajesh"
+  },
+  {
+   "id": "Harsh",
+   "name": "Harsh"
+  },
+  {
+   "id": "Aparna",
+   "name": "Aparna"
+  },
+  {
+   "id": "Shailendra",
+   "name": "Shailendra"
+  },
+  {
+   "id": "Aneeta",
+   "name": "Aneeta"
+  },
+  {
+   "id": "Maneesh",
+   "name": "Maneesh"
+  },
+  {
+   "id": "Jayant",
+   "name": "Jayant"
+  }
+ ],
+ "characters": [
+  {
+   "id": "narrator",
+   "name": "Narrator",
+   "role": "Sutradhar",
+   "actorId": "Madhuri"
+  },
+  {
+   "id": "raj",
+   "name": "Raj",
+   "role": "Raj Malhotra, main protagonist",
+   "actorId": "Apurva"
+  },
+  {
+   "id": "dharamchand",
+   "name": "Dharamchand",
+   "role": "Father",
+   "actorId": "Rajesh"
+  },
+  {
+   "id": "sumitradevi",
+   "name": "Sumitradevi",
+   "role": "Mother",
+   "actorId": "Harsh"
+  },
+  {
+   "id": "simran",
+   "name": "Simran",
+   "role": "Girlfriend, later wife",
+   "actorId": "Aparna"
+  },
+  {
+   "id": "deendayal",
+   "name": "Deendayal",
+   "role": "Father-in-law",
+   "actorId": "Shailendra"
+  },
+  {
+   "id": "sharda",
+   "name": "Sharda Devi",
+   "role": "Mother-in-law",
+   "actorId": "Aneeta"
+  },
+  {
+   "id": "ramu",
+   "name": "Ramu Kaka",
+   "role": "Nauker",
+   "actorId": "Maneesh"
+  },
+  {
+   "id": "rocky",
+   "name": "Rocky",
+   "role": "Son",
+   "actorId": "Jayant"
+  },
+  {
+   "id": "receptionist",
+   "name": "Office Receptionist",
+   "role": "",
+   "actorId": "Aneeta"
+  },
+  {
+   "id": "man-office",
+   "name": "Man in office",
+   "role": "",
+   "actorId": "Maneesh"
+  },
+  {
+   "id": "bhairav",
+   "name": "Bhairav Baba",
+   "role": "Snake charmer",
+   "actorId": "Maneesh"
+  },
+  {
+   "id": "everyone",
+   "name": "Everyone",
+   "role": "Wedding scene and finale",
+   "actorId": "everyone"
+  }
+ ],
+ "songs": [
+  {
+   "id": "song-01",
+   "title": "Kabhi khushi kabhi gam, sad",
+   "file": "Audio files/01 - Kabhi Khushi - Sad.mp3"
+  },
+  {
+   "id": "song-02",
+   "title": "Kabhi khushi kabhi gam, happy",
+   "file": "Audio files/02 - Kabhi Khushi - Happy.mp3"
+  },
+  {
+   "id": "song-03",
+   "title": "Are re are re",
+   "file": "Audio files/03 - Are re are re.mp3"
+  },
+  {
+   "id": "song-04",
+   "title": "Tathya tathya ho",
+   "file": "Audio files/04 - Ta thaiya.mp3"
+  },
+  {
+   "id": "song-05",
+   "title": "Le jayenge le jayenge",
+   "file": "Audio files/05 - Le jayegne.mp3"
+  },
+  {
+   "id": "song-06",
+   "title": "Main nagin tu sapera",
+   "file": "Audio files/06 - Mein Nagin.mp3"
+  },
+  {
+   "id": "song-07",
+   "title": "Jab main chota bacha tha",
+   "file": "Audio files/07 - Jab mein chota baccha.mp3"
+  },
+  {
+   "id": "song-08",
+   "title": "Ek dusre se karte hain pyaar hum",
+   "file": "Audio files/08 - Ek Dusre se.mp3"
+  }
+ ],
+ "sfx": [],
+ "scenes": [
+  {
+   "id": "scene-1",
+   "title": "Homecoming",
+   "cast": "Dharamchand, Sumitradevi, Ramu kaka, Raj",
+   "location": "Drawing room at home",
+   "props": "Five chairs, Light colored (neutral sheet to cover three chairs), Dadaji’s photo, degree (Rolled paper can be tied with a ribbon), napkin for Ramu kaka, aarati thali, food plate (tbd) with a bowl for gajar halwaa.",
+   "notes": "",
+   "items": [
+    {
+     "id": "i1",
+     "type": "line",
+     "characterId": "narrator",
+     "note": "",
+     "text": "<p>Namaste. Aaj hum milane jaa rahe hain ek aajebo garib naujavan Raj se. Naam to suna he hoga! Raj Hindi filmo se tang aa chuka hai. Nahi nahi; use filmo se koi shikaayat nahee, vah to kabhi kabhi ek do picture bhee dekh letaa hai. Use problem hain filmi fans se jo uske Jeevan mein bohut hein. Hamaare is natak ka naam hai</p><p>‘Mein Hu Hero’.</p><p>Aao dekhen Raj Malhotra ke ghar mein kya scene hain.</p><p>Milate hain unke pitaa Dharamchand aur mataji Sumitradevi se.</p>"
+    },
+    {
+     "id": "i2",
+     "type": "direction",
+     "label": "Opening scene",
+     "text": "<p><i>Father (Dharamchand) sitting and reading newspaper with his glasses on while Mum is in the kitchen.</i></p>"
+    },
+    {
+     "id": "i3",
+     "type": "line",
+     "characterId": "dharamchand",
+     "note": "",
+     "text": "<p><i>(Keeps newspaper aside) </i></p><p>Arre Bhagwaan, suntee ho! (Loud voice)</p>"
+    },
+    {
+     "id": "i4",
+     "type": "line",
+     "characterId": "sumitradevi",
+     "note": "",
+     "text": "<p><i>(Comes from the kitchen wiping her hands on the sari) </i></p><p>Kya hai Raj ke papa.</p>"
+    },
+    {
+     "id": "i5",
+     "type": "line",
+     "characterId": "dharamchand",
+     "note": "",
+     "text": "<p>Subahase rasoi mein kya kar rahee ho</p>"
+    },
+    {
+     "id": "i6",
+     "type": "line",
+     "characterId": "sumitradevi",
+     "note": "",
+     "text": "<p>Aaj hamara beta Raj aa raha hain na (vilaayat se). Uski taiyari kar rahi thee.</p>"
+    },
+    {
+     "id": "i7",
+     "type": "line",
+     "characterId": "dharamchand",
+     "note": "",
+     "text": "<p>Han. Aaj 3 saal baad apna beta vilayat se degree lekar aa rahaa hain. Woh bhi first class first number lekar. Baap dadaonka naam roshan kiya hain. Aakhir beta kiska hain.</p>"
+    },
+    {
+     "id": "i8",
+     "type": "line",
+     "characterId": "sumitradevi",
+     "note": "",
+     "text": "<p>Haan, aap ka he hain. Par aap use lene naahi gaye airport?</p>"
+    },
+    {
+     "id": "i9",
+     "type": "line",
+     "characterId": "dharamchand",
+     "note": "",
+     "text": "<p>Usane bola tha ki driver ke saath gaadi bhijva do, vo khud aa jaye ga. Aataa he hoga.</p>"
+    },
+    {
+     "id": "i10",
+     "type": "line",
+     "characterId": "sumitradevi",
+     "note": "",
+     "text": "<p>Ramu, kaha mar gaya (Loud voice). Aarti ki thali taiyaar rakhna</p>"
+    },
+    {
+     "id": "i11",
+     "type": "line",
+     "characterId": "ramu",
+     "note": "",
+     "text": "<p>Tayar hai maaji. Ye lijeeye.</p>"
+    },
+    {
+     "id": "i12",
+     "type": "direction",
+     "label": "Background",
+     "text": "<p><mark><i>(Kabhi khushi kabhi gam music).</i></mark></p>"
+    },
+    {
+     "id": "i12-s1",
+     "type": "song",
+     "songId": "song-01",
+     "note": ""
+    },
+    {
+     "id": "i12b",
+     "type": "direction",
+     "label": "",
+     "text": "<p><i>(Mother walks to the door and realises Raj has not arrived. She turns back disheartened and then</i> <mark><i>music changes and on a happy note)</i></mark></p>"
+    },
+    {
+     "id": "i12-s2",
+     "type": "song",
+     "songId": "song-02",
+     "note": ""
+    },
+    {
+     "id": "i12c",
+     "type": "direction",
+     "label": "",
+     "text": "<p><i>(Raj enters. Mother does aarti. He bends down to take Ashirwad of mother and father).</i></p>"
+    },
+    {
+     "id": "i13",
+     "type": "line",
+     "characterId": "dharamchand",
+     "note": "",
+     "text": "<p>Jao aur pehle dada ji ka Ashirwad le lo.</p>",
+     "optional": true
+    },
+    {
+     "id": "i14",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p><i>(Raj walks to Dadaji’s photo and keeps his degree near the photo)</i></p><p>Dadaji aaj main vilayat se degree leke aayaa hun. Aapka sapna maine puraa kiya hain. Muze aashirwad deejiye.</p>",
+     "optional": true
+    },
+    {
+     "id": "i15",
+     "type": "line",
+     "characterId": "dharamchand",
+     "note": "",
+     "text": "<p>Raj beta, tu ab kya karnaa chaahega?</p>"
+    },
+    {
+     "id": "i16",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p>Maine ek company mein job ke liye apply kiya tha. Aaj hi interview ke liye jaana hai.</p>"
+    },
+    {
+     "id": "i17",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p><i>(Turns to mum)</i></p><p>Maa, mujhe bahut bhook lagee hai. Kuch khane ko do na</p>"
+    },
+    {
+     "id": "i18",
+     "type": "line",
+     "characterId": "sumitradevi",
+     "note": "",
+     "text": "<p>Ha latee hun. Ramu, kahan mar gayaa (Loud voice). Khaanaa le aao.</p>"
+    },
+    {
+     "id": "i19",
+     "type": "direction",
+     "label": "",
+     "text": "<p><i>(Food is served by Ramu. Mother walks to Raj with a bowl of gajar ka halwa and tries to feed him.)</i></p>"
+    },
+    {
+     "id": "i20",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p>Ye kya Maa? Gajar ka halwaa? Aap bhool gayee kya mujhe gajar pasand nahee hain.</p>"
+    },
+    {
+     "id": "i21",
+     "type": "line",
+     "characterId": "sumitradevi",
+     "note": "",
+     "text": "<p>Par beta har picture mein - jab beta bohut deeno ke baad ghar lautata hein, to maa gajar ka halwa he banate hain.</p>"
+    },
+    {
+     "id": "i22",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p><i>(One hand over his forehead.)</i> Scene 1 over.</p>"
+    }
+   ]
+  },
+  {
+   "id": "scene-2",
+   "title": "The Job Interview",
+   "cast": "Office receptionist, Raj, Man in office, Deendayaal (Simran’s father), Simran",
+   "location": "Office space (Place a table in front of the chair). This chair should be on one side of the three home chairs. Chair to be places from the beginning and table to be placed just before the scene. Receptionist chair on the other side of home chairs, opposite to office chair. This will also be placed from beginning.",
+   "props": "office table, vase with flowers",
+   "notes": "(After scene 1 remove cover from home chairs. Place a table in front of office chair. Receptionist chair can have a vase next to it though not necessary. Raj and man in office sit on two of the three chairs that were home earlier.)",
+   "items": [
+    {
+     "id": "i23",
+     "type": "line",
+     "characterId": "narrator",
+     "note": "",
+     "text": "<p>Raj apne interview ke liye Deendayal shetji ke office pahoch gaya hai. Chaliye dekhate hain udhar kya hota hain.</p>"
+    },
+    {
+     "id": "i24",
+     "type": "direction",
+     "label": "",
+     "text": "<p><i>Office scene</i></p>"
+    },
+    {
+     "id": "i25",
+     "type": "line",
+     "characterId": "receptionist",
+     "note": "",
+     "text": "<p>Raj Malhotra, aap ko Shetji ne andar bulaayaa hai</p>"
+    },
+    {
+     "id": "i26",
+     "type": "direction",
+     "label": "",
+     "text": "<p><i>Raj gets up to walk towards the Shetji’s office door.</i></p><p><i>A man who is sitting in the office for interview comes and stands in front of him.</i></p>"
+    },
+    {
+     "id": "i27",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p>Kya kar rahe ho. Muzhe bulaayaa hai. <i>Aap mere baad jaanaa.</i></p>"
+    },
+    {
+     "id": "i28",
+     "type": "line",
+     "characterId": "man-office",
+     "note": "",
+     "text": "<p>Hum jahan khade hote hain vahee se line shuru hotee hain.</p>"
+    },
+    {
+     "id": "i29",
+     "type": "line",
+     "characterId": "receptionist",
+     "note": "",
+     "text": "<p><i>(pushes the man aside)</i> Chal hat. Kahan kahan se aa jaate hain Amitabh.</p><p><i>Raj with one hand over his forehead.</i></p>"
+    },
+    {
+     "id": "i30",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Inside Shetji’s office</p>"
+    },
+    {
+     "id": "i31",
+     "type": "line",
+     "characterId": "deendayal",
+     "note": "Simran’s father",
+     "text": "<p>(Raj enters the office. Receptionist and man in office can walk out of the stage so focus will shift to office space) Aao barkhudar. Tum vilaayat se first class first leke aaye ho. Ye manager ka job tumhara hain. Bahar jaakar munimjee se apna appointment letter le lo. Kab join karna chaho ge.</p>"
+    },
+    {
+     "id": "i32",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p>Shukriya Shethji. Kal se hee join karunga.</p>"
+    },
+    {
+     "id": "i33",
+     "type": "direction",
+     "label": "",
+     "text": "<p><i>Raj shakes hand with Shetji and walks towards the door. He collides with Simran. They look into each other’s eyes and go on staring at each other. </i><mark><i>(Haunting music of Dil to Pagal Hain). </i></mark><i>Shetji coughs loudly. Raj then hastily leaves the office. Simran goes towards her dad.</i></p>"
+    },
+    {
+     "id": "i34",
+     "type": "line",
+     "characterId": "simran",
+     "note": "",
+     "text": "<p>Ye kaun tha Papa.</p>"
+    },
+    {
+     "id": "i35",
+     "type": "line",
+     "characterId": "deendayal",
+     "note": "Simran’s father",
+     "text": "<p>Voh Raj hain. Bahut honhaar naujawan hain, vilayat se first class first lekar aayaa hain, Kal se office join karega.</p>"
+    },
+    {
+     "id": "i36",
+     "type": "line",
+     "characterId": "simran",
+     "note": "",
+     "text": "<p>Papa main shaadi esee se karungi.</p>"
+    },
+    {
+     "id": "i37",
+     "type": "line",
+     "characterId": "deendayal",
+     "note": "Simran’s father",
+     "text": "<p>Ok beta. Jo tumhe pasand hain usee se tumhari shaadi hogee.</p>"
+    }
+   ]
+  },
+  {
+   "id": "scene-3",
+   "title": "The Park",
+   "cast": "Raj, Simran",
+   "location": "Park (Place vases or plant pots besides the chair). This chair is same a s receptionist chair.",
+   "props": "vases with flowers/Plant pots. 2 roses.",
+   "notes": "(After scene 2 place vases/plant pots beside the chair)",
+   "items": [
+    {
+     "id": "i38",
+     "type": "line",
+     "characterId": "narrator",
+     "note": "",
+     "text": "<p>Raj aur Simran aksar ek doosare se milne lage hain.</p><p><mark>(Music tbd – Background music dhun of “Ek main aur ek tu, dono mile is tarah” </mark>while narrator speaks and Raj &amp; Simran take entry into the park.)</p>"
+    },
+    {
+     "id": "i39",
+     "type": "direction",
+     "label": "",
+     "text": "<p><i> Raj sits and Simran is dancing on ‘</i><mark><i>Tathya tathya ho’ </i></mark><i>Raj puts his hand on his head. Simran pulls him aside and scene is closed by showing two flowers cross over each other. (flower cross over upon exit of Raj and Simran instead of over their faces, so no queries by children. Also as Simran takes Raj away person enters with flowers) . </i></p>"
+    },
+    {
+     "id": "i39-s1",
+     "type": "song",
+     "songId": "song-04",
+     "note": ""
+    }
+   ]
+  },
+  {
+   "id": "scene-4",
+   "title": "Fixing the Match",
+   "cast": "Raj, Dharamchand, Sumitradevi, Deendayaal, Simran",
+   "location": "drawing room (",
+   "props": "Nothing needed",
+   "notes": "(After scene 3 place back covers on central chairs. Office chair can move next to park space chair so Simran and dad can sit there and Raj and parents in central 3 chairs.)",
+   "items": [
+    {
+     "id": "i40",
+     "type": "line",
+     "characterId": "narrator",
+     "note": "",
+     "text": "<p>Deendayal, Sharda Devi aur Simran shaadi ki baat pakki karne Raj ke ghar gaye.</p>"
+    },
+    {
+     "id": "i41",
+     "type": "line",
+     "characterId": "sumitradevi",
+     "note": "",
+     "text": "<p>Ramu kahan mar gaya. Mehmaan aa gaye. Chai nashta le aanaa</p>"
+    },
+    {
+     "id": "i42",
+     "type": "line",
+     "characterId": "ramu",
+     "note": "",
+     "text": "<p>Ji maaji abhi laya.</p>"
+    },
+    {
+     "id": "i43",
+     "type": "line",
+     "characterId": "dharamchand",
+     "note": "",
+     "text": "<p>Aaaiye aaiye. Baithiye.</p>"
+    },
+    {
+     "id": "i44",
+     "type": "line",
+     "characterId": "simran",
+     "note": "",
+     "text": "<p>(Seeks blessing from Sumitradevi)</p>"
+    },
+    {
+     "id": "i45",
+     "type": "line",
+     "characterId": "sumitradevi",
+     "note": "",
+     "text": "<p>Kitni sundar bahu dhundee hain hamaare Raj ne. Kitni sanskari bhi hain. Main diya lekar dundne jaate tab bhi aise sundar bahu nahee milatee.</p><p>(Simran sharmatee hai aur Raj ko aankh maaratee hai).</p>"
+    },
+    {
+     "id": "i46",
+     "type": "line",
+     "characterId": "deendayal",
+     "note": "",
+     "text": "<p>Hum ye shaadi dhoom dhaam se manaaenge.</p>"
+    },
+    {
+     "id": "i47",
+     "type": "line",
+     "characterId": "dharamchand",
+     "note": "",
+     "text": "<p><i>(Sumitradevi nudges Dharmachand)</i></p><p>Thehero. Ek baat to main bolna bhool hi gaya.</p><p><i>(Deendayal looks a bit worried/scared). </i></p><p>Ghabrao naahi sambdhijee. Hamaree koi paison ki maange nahi hain. Lekin (big pause) ham chahate hain ki baraateeyon ka Swagat paan Parag se kiya jaaye.</p>"
+    },
+    {
+     "id": "i48",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Everyone starts laughing. Raj puts his hand on his forehead.</p>"
+    }
+   ]
+  },
+  {
+   "id": "scene-5",
+   "title": "The Wedding",
+   "cast": "All",
+   "location": "all 5 chairs. Central chairs to have red cover, can possibly have petals.",
+   "props": "Red cover for chairs, petals, scarves for Dulha Dulhan and possibly others as well",
+   "notes": "Raj and Simran can have some nice scarves on their dress. All can choose to have scarves not a must.",
+   "items": [
+    {
+     "id": "i49",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Wedding Scene. Raj and Simran on stage sitting on their chairs. All the previous characters are attending the wedding reception. Here we can have people coming in continuously and having a small talk with each other (just 30 seconds or so) Suddenly Dharmchand and SumitraDevi break into a dance on <mark>(Le jayenge le jayenge </mark>– everyone attending the reception joins and dances in a circle). Simran also gets up. Raj tries to hold her back but she also joins in.</p><p>Raj puts his hand on his forehead.</p>"
+    },
+    {
+     "id": "i49-s1",
+     "type": "song",
+     "songId": "song-05",
+     "note": ""
+    }
+   ]
+  },
+  {
+   "id": "scene-6",
+   "title": "The Naagin Scare",
+   "cast": "Raj, Symitradevi, Bhairav baba",
+   "location": "",
+   "props": "Briefcase, tie, pungi, saffron shawl for baba",
+   "notes": "Location Home same as scene 1 so should have same set up as scene 1.",
+   "items": [
+    {
+     "id": "i50",
+     "type": "line",
+     "characterId": "narrator",
+     "note": "",
+     "text": "<p>Aise he haste khelte Raj ki Zindagi beet rahee hai. Idhar ghar vaale aur bhi filmi ho jaa rahe the. Is beech Sreedevi ki naagin picture release ho gayee. Iskaa Raj ke ghar mein kya asar hua, yeh dekhte hain.</p>"
+    },
+    {
+     "id": "i51",
+     "type": "direction",
+     "label": "",
+     "text": "<p><i>Raj comes home from office and loosens his tie.</i></p>"
+    },
+    {
+     "id": "i52",
+     "type": "line",
+     "characterId": "sumitradevi",
+     "note": "",
+     "text": "<p>Aaj hamaare ghar ek bahot bade baba aa rahen hai. <i>(Bhairav baba arrives)</i> Bhairav Baba ki Jai. Lagataa hai aaap ko pehle bhi kabhi dekha hain.</p>"
+    },
+    {
+     "id": "i53",
+     "type": "line",
+     "characterId": "bhairav",
+     "note": "",
+     "text": "<p>Mumkin hai kyun ki is skit me mera double role hai. Shaayad aapko main Amitabh ke jaisa lag rahaa hoon.</p>"
+    },
+    {
+     "id": "i54",
+     "type": "line",
+     "characterId": "sumitradevi",
+     "note": "",
+     "text": "<p>Baba muze lagataa hai meri bahu, Simran, ek naagin hain.</p>"
+    },
+    {
+     "id": "i55",
+     "type": "line",
+     "characterId": "bhairav",
+     "note": "",
+     "text": "<p><i>Aap ghabrao naahi maaji. Es naagino ko nachana mujhe achee tarah aatta hai. (He starts playing his been). Simran comes down from stairs and dances to the tune of </i><mark><i>‘Main nagin tu sapera’ </i></mark><i>with tongue out and hissing like a snake. </i></p><p><i>Raj puts his hand on his forehead</i>.</p>"
+    },
+    {
+     "id": "i55-s1",
+     "type": "song",
+     "songId": "song-06",
+     "note": ""
+    }
+   ]
+  },
+  {
+   "id": "scene-7",
+   "title": "Rocky’s Report Card",
+   "cast": "Raj, Rocky, Sumitradevi",
+   "location": "Home same scene 1 and 6.",
+   "props": "Result sheet, Dadaji’s photo, cap/jacket - a prop to show young Rocky, since in later scene he needs to look old.",
+   "notes": "",
+   "items": [
+    {
+     "id": "i56",
+     "type": "line",
+     "characterId": "narrator",
+     "note": "",
+     "text": "<p>Ghabrao naahi. Simran sach muchki naagin naahi the. Picture cinema theatre se jaate he, Raj ke ghar se bhi ye naagin ka bhoot utar gaya. Aur Sumitra devie bhi khush thi kyonki ek nanaha Raj ghar mein aa gayaa tha. Naam rakha Rocky. Yeh Rocky bhi kuch kam filmi naahi tha. Aao dekhte hain Rocky ki ek Jhalak.</p>"
+    },
+    {
+     "id": "i57",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p>Rocky, kaha se aa rahe ho. Tumhaara result aaaya kya?</p>"
+    },
+    {
+     "id": "i58",
+     "type": "line",
+     "characterId": "rocky",
+     "note": "",
+     "text": "<p>Hey Dad! Chill. Result lene hi gaya tha. Ye dekhiye meri mark sheet <i>(presenting it proudly)</i></p>"
+    },
+    {
+     "id": "i59",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p>Ye kya. Sab mein fail. Heart fail ho jaaye ga mera.</p>"
+    },
+    {
+     "id": "i60",
+     "type": "line",
+     "characterId": "rocky",
+     "note": "",
+     "text": "<p>Chill Dad. Just say ‘All is Well’ ‘All is Well’. <i>(Mimic Aamir khan in Three idiots).</i></p>"
+    },
+    {
+     "id": "i61",
+     "type": "line",
+     "characterId": "rocky",
+     "note": "",
+     "text": "<p>Dad, kya main Bade Dadaji ki photo ke saamne ye marksheet rakhun?</p>",
+     "optional": true
+    },
+    {
+     "id": "i62",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p>Ek khayega merese. <i>(Action like zapad khayega)</i></p>",
+     "optional": true
+    },
+    {
+     "id": "i63",
+     "type": "line",
+     "characterId": "sumitradevi",
+     "note": "",
+     "text": "<p><i>(Comes out from the kitchen – repeat kust like in scene 1)</i> Rocky beta - main tere liye gajar ka halwa lekar aate hun.</p>"
+    },
+    {
+     "id": "i64",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p><i>Puts his hand on his forehead.</i></p>"
+    }
+   ]
+  },
+  {
+   "id": "scene-8",
+   "title": "The Finale",
+   "cast": "Raj, Rocky, Simran",
+   "location": "Home same as scene 1, 6, 7",
+   "props": "small lamp, walking stick",
+   "notes": "",
+   "items": [
+    {
+     "id": "i65",
+     "type": "line",
+     "characterId": "raj",
+     "note": "Old",
+     "text": "<p><mark>(Sings the Roshni deta bajaj song – jab main chota bacha tha badee sharat karta tha…) </mark><i>Raj starts coughing</i>.</p>"
+    },
+    {
+     "id": "i65-s1",
+     "type": "song",
+     "songId": "song-07",
+     "note": ""
+    },
+    {
+     "id": "i66",
+     "type": "line",
+     "characterId": "rocky",
+     "note": "now grown up",
+     "text": "<p>Dad. Aap ko letna chaliye.</p>"
+    },
+    {
+     "id": "i67",
+     "type": "direction",
+     "label": "",
+     "text": "<p><i>Simran, Rocky all ask Raj to lie on the bed. They light a small lamp.</i></p>"
+    },
+    {
+     "id": "i68",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p>Ye kis liye? Electricity chalee gayi kya?</p>"
+    },
+    {
+     "id": "i69",
+     "type": "line",
+     "characterId": "simran",
+     "note": "",
+     "text": "<p>Nahhi Sassur ji. Is samay par aisa hi karte hain.</p>"
+    },
+    {
+     "id": "i70",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p>Aisa samay? <i>(Confused)</i></p>"
+    },
+    {
+     "id": "i71",
+     "type": "direction",
+     "label": "",
+     "text": "<p><i>Light on the lamp flickers and goes off</i></p>"
+    },
+    {
+     "id": "i72",
+     "type": "line",
+     "characterId": "everyone",
+     "note": "",
+     "text": "<p>Naaaahhhi.</p>"
+    },
+    {
+     "id": "i73",
+     "type": "line",
+     "characterId": "simran",
+     "note": "",
+     "text": "<p><i>(Trying to break her bangles though fails)</i> Mujhe chod ke kyon chale gaye.</p>"
+    },
+    {
+     "id": "i74",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p><i>(Gets up and starts beating everyone with his stick).</i> Chup karo saab log. Diya bujh gayaa. Mein abhi bhee zinda hoon.</p><p><i>(Raj’s hand starts to go to his forehead though suddenly he shrugs and breaks into a dance)</i></p><p><mark><i>Can we have a song saying something like I am back or exhibiting some attitude saying don’t worry just live, have fun and Raj invites family to dance).</i></mark></p>"
+    },
+    {
+     "id": "i75",
+     "type": "line",
+     "characterId": "everyone",
+     "note": "",
+     "text": "<p>Dances on <mark>Ek dusre se karte hain pyaar hum.</mark></p><p>We ask the whole audience to join in this dance.</p><p>The End.</p>"
+    },
+    {
+     "id": "i75-s1",
+     "type": "song",
+     "songId": "song-08",
+     "note": ""
+    }
+   ]
+  }
+ ]
+}

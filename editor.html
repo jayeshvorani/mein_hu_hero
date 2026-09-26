@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <!-- The editor is for the organisers, not the audience: keep it out of
+         search results. Nothing on the public site links here. -->
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Script editor · Mein hu Hero</title>
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="editor.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-title">Mein hu Hero</span>
+        <span class="brand-sub">Script editor</span>
+      </div>
+
+      <nav class="tabs" aria-label="Editor sections">
+        <button
+          type="button"
+          class="tab"
+          data-tab="script"
+          aria-pressed="true"
+        >
+          Script
+        </button>
+        <button
+          type="button"
+          class="tab"
+          data-tab="cast"
+          aria-pressed="false"
+        >
+          Cast
+        </button>
+        <button
+          type="button"
+          class="tab"
+          data-tab="sounds"
+          aria-pressed="false"
+        >
+          Songs &amp; sound effects
+        </button>
+      </nav>
+
+      <div class="actions">
+        <span
+          class="status"
+          id="status"
+          role="status"
+          aria-live="polite"
+        ></span>
+        <button
+          type="button"
+          class="btn icon"
+          id="undoBtn"
+          title="Undo (Ctrl+Z)"
+          aria-label="Undo"
+          disabled
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 14 4 9l5-5" />
+            <path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="btn icon"
+          id="redoBtn"
+          title="Redo (Ctrl+Shift+Z)"
+          aria-label="Redo"
+          disabled
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m15 14 5-5-5-5" />
+            <path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          id="previewBtn"
+          title="Open the site with your unpublished changes, in a new tab"
+        >
+          Preview
+        </button>
+        <button
+          type="button"
+          class="btn primary"
+          id="publishBtn"
+          title="Send your changes to the live site"
+        >
+          Publish
+        </button>
+        <button
+          type="button"
+          class="btn icon"
+          id="menuBtn"
+          aria-label="More"
+          title="More"
+          aria-haspopup="menu"
+          aria-expanded="false"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="5" cy="12" r="1.6" />
+            <circle cx="12" cy="12" r="1.6" />
+            <circle cx="19" cy="12" r="1.6" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="app">
+      <p class="loading" id="loading">Loading the script…</p>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden>
+      <span class="toast-text" id="toastText"></span>
+      <button type="button" class="toast-btn" id="toastBtn" hidden>Undo</button>
+    </div>
+
+    <dialog class="dialog" id="dialog">
+      <form method="dialog" class="dialog-form" id="dialogForm">
+        <h2 class="dialog-title" id="dialogTitle"></h2>
+        <div class="dialog-body" id="dialogBody"></div>
+        <div class="dialog-buttons" id="dialogButtons"></div>
+      </form>
+    </dialog>
+
+    <input
+      type="file"
+      id="fileInput"
+      accept=".mp3,audio/mpeg"
+      hidden
+    />
+
+    <script src="editor.js"></script>
+  </body>
+</html>

@@ -12,7 +12,7 @@
  * deleted on activate, so a stale font subset can never linger.
  */
 
-var CACHE_VERSION = "mhh-v9";
+var CACHE_VERSION = "mhh-v10";
 
 // The cue audio lives in its own cache, on its own version counter.
 //
@@ -32,6 +32,7 @@ var AUDIO_CACHE = "mhh-audio-v1";
 var PRECACHE = [
   "./",
   "./index.html",
+  "./show.json",
   "./manifest.webmanifest",
   "./icons/icon.svg",
   "./icons/icon-180.png",
@@ -96,6 +97,11 @@ self.addEventListener("fetch", function (event) {
   // never touch anything outside our own origin
   if (url.origin !== self.location.origin) return;
 
+  // The script editor is left entirely to the network. It is useless
+  // offline (it publishes to GitHub), and caching editor.js / editor.css
+  // cache-first would pin every editor to the first version it ever loaded.
+  if (/\/editor\.(html|js|css)$/.test(url.pathname)) return;
+
   // Navigations: network first so an update lands, cache as the safety net.
   //
   // Keyed and read the same way as every other asset: stored under the path
@@ -104,7 +110,11 @@ self.addEventListener("fetch", function (event) {
   // shared link, a launcher appending its own parameter) wrote an entry that
   // a later plain-URL visit could not find, so the page fell through to the
   // "./index.html" fallback or, offline, to nothing at all.
-  if (req.mode === "navigate") {
+  // show.json is the script itself, edited through editor.html, so it is
+  // treated exactly like the page: network first so a published edit lands,
+  // cache as the safety net at a venue with no signal.
+  var isScript = /\/show\.json$/.test(url.pathname);
+  if (req.mode === "navigate" || isScript) {
     event.respondWith(
       fetch(req)
         .then(function (res) {
@@ -125,7 +135,8 @@ self.addEventListener("fetch", function (event) {
         .catch(function () {
           return caches.open(CACHE_VERSION).then(function (c) {
             return c.match(req, { ignoreSearch: true }).then(function (hit) {
-              return hit || c.match("./index.html");
+              if (hit || isScript) return hit;
+              return c.match("./index.html");
             });
           });
         }),
@@ -144,7 +155,7 @@ self.addEventListener("fetch", function (event) {
   // one, and it is deliberately NOT in PRECACHE: at 8.8 MB the files are
   // several times the weight of everything else the page ships, and only the
   // sound operator ever plays them. They are pulled down by the page itself
-  // when "Music cues only" is switched on, which is the operator identifying
+  // when "Sound cues only" is switched on, which is the operator identifying
   // themselves.
   var isAudio = /\.mp3$/i.test(url.pathname);
   var cacheable =

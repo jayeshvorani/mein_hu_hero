@@ -24,7 +24,7 @@
       // fully dark until the whole document parsed and applied. This mirrors
       // systemPref()'s predicate exactly (dark match → dark, otherwise light)
       // and keeps the status-bar colour in step the way applyTheme() does.
-      // It persists nothing and owns no toggle/override logic, all of that
+      // It persists nothing and owns no toggle/override logic — all of that
       // still lives in the main script, which re-applies the same result.
       (function () {
         var d = document.documentElement;
@@ -150,7 +150,6 @@
 
         /* meaning colours, kept from the original markup */
         --c-music: var(--teal);
-        --c-sfx: var(--magenta);
         --gold-bg: color-mix(in srgb, var(--marigold) 12%, transparent);
         --gold-border: color-mix(in srgb, var(--marigold) 40%, transparent);
         --gold-ink: #ffdf9e;
@@ -1252,10 +1251,6 @@
       }
       .hero h1 .hero-accent {
         position: relative;
-        /* inline-block, so the box the sheen layer is pinned to is the
-           word's own 0.9 line box; as a plain inline box it was the taller
-           font box, and the sheen's copy of the word sat visibly offset */
-        display: inline-block;
         color: transparent;
         background: linear-gradient(
           105deg,
@@ -1272,7 +1267,6 @@
         content: attr(data-text);
         position: absolute;
         inset: 0;
-        line-height: inherit;
         color: transparent;
         background: linear-gradient(
           105deg,
@@ -1417,11 +1411,9 @@
         line-height: 1.15;
         color: var(--ink);
       }
-      /* ink-dim, not muted: the card is translucent over the hero photo,
-         and muted text dropped below AA wherever it crossed a bright face */
       .cast-card .cc-actor {
         font-size: 0.82rem;
-        color: var(--ink-dim);
+        color: var(--muted);
       }
       .cast-card .cc-count {
         font-family: "JetBrains Mono", monospace;
@@ -1714,21 +1706,6 @@
       section.front {
         margin-bottom: 3rem;
       }
-      /* Where the scene rail shows, keep front-matter text out from under
-         it, the way the script cards' own padding does. */
-      @media (max-width: 900px) {
-        section.front {
-          padding-right: 0.9rem;
-        }
-      }
-      /* Tablets have the width to spare, so the script column stops short
-         of the rail (36px) with a small gap instead of running under it.
-         Phones keep the Round 6 overlay, which lands on card padding. */
-      @media (min-width: 641px) and (max-width: 900px) {
-        .app {
-          padding-right: calc(44px + env(safe-area-inset-right, 0px));
-        }
-      }
       section.front > h2 {
         font-family: "JetBrains Mono", monospace;
         font-size: 0.72rem;
@@ -1802,12 +1779,6 @@
         align-items: center;
         padding: 0.65rem 0;
         border-bottom: 1px solid var(--hairline);
-      }
-      @media (max-width: 520px) {
-        .legend-row {
-          grid-template-columns: 1fr;
-          gap: 0.35rem;
-        }
       }
       .legend-row:last-child {
         border-bottom: none;
@@ -2012,14 +1983,6 @@
         font-style: italic;
         color: var(--ink-dim);
       }
-      /* Music words that are also stage business stay teal: the colour is
-         what tells the sound operator it is a cue. */
-      .c-music.is-italic {
-        color: var(--c-music);
-      }
-      .c-sfx.is-italic {
-        color: var(--c-sfx);
-      }
       .is-bold {
         font-weight: 700;
       }
@@ -2125,83 +2088,6 @@
       .legend-swatch.music-flag {
         position: static;
       }
-      /* Sound effects: same badge and button shapes as music, in magenta so
-         the operator can tell a song from an effect at a glance. */
-      .c-sfx {
-        color: var(--c-sfx);
-      }
-      .music-flag.is-sfx {
-        color: var(--c-sfx);
-        background: color-mix(in srgb, var(--magenta) 14%, transparent);
-        border-color: color-mix(in srgb, var(--magenta) 40%, transparent);
-      }
-      .line.has-music.is-sfx {
-        border-left-color: var(--c-sfx);
-      }
-      .cue-play.is-sfx {
-        border-color: color-mix(in srgb, var(--magenta) 55%, transparent);
-        background: color-mix(in srgb, var(--magenta) 16%, transparent);
-        color: var(--c-sfx);
-      }
-      @media (hover: hover) {
-        .cue-play.is-sfx:hover:not(.is-unavailable) {
-          background: color-mix(in srgb, var(--magenta) 30%, transparent);
-          border-color: var(--c-sfx);
-        }
-      }
-      .cue-play.is-sfx[aria-pressed="true"] {
-        background: var(--c-sfx);
-        border-color: var(--c-sfx);
-        color: var(--accent-contrast);
-      }
-      /* Song and SFX rows. Play button first, then the title, which wraps beside it rather
-         than pushing the button onto a line of its own; a note always takes
-         the line below. Songs and SFX rows therefore look alike at every
-         width, however long the title. */
-      /* On phones the badge sits on the speaker line above, so a cue row's
-         title may use the full width. */
-      @media (max-width: 640px) {
-        .line.cue-row.has-music .content {
-          padding-right: 0;
-        }
-      }
-      .cue-row .content p {
-        margin: 0;
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 0.2rem 0.5rem;
-      }
-      .cue-row .content p > .cue-play {
-        order: -1;
-        margin: 0;
-      }
-      .cue-row .content p > .c-music,
-      .cue-row .content p > .c-sfx {
-        flex: 1 1 0;
-        min-width: 0;
-      }
-      .cue-row .content p > .is-italic {
-        flex-basis: 100%;
-      }
-      .script-status {
-        padding: 3rem 1rem;
-        text-align: center;
-        color: var(--muted);
-      }
-      /* In normal flow at the very top, so it never covers the sticky top
-         bar; the tab title carries the same warning once scrolled past. */
-      .draft-banner {
-        margin: 0;
-        padding: 0.5rem 1rem;
-        text-align: center;
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.75rem;
-        letter-spacing: 0.04em;
-        padding-top: calc(0.5rem + env(safe-area-inset-top, 0px));
-        background: var(--mark-bg);
-        color: var(--mark-fg);
-      }
 
       /* Progress while the cue audio is being pulled down, in the Options
          sheet directly under the toggle that triggers it. */
@@ -2214,13 +2100,16 @@
         color: var(--muted);
       }
       .music-prefetch-note.is-ready {
-        color: var(--ink);
+        color: var(--c-music);
       }
 
       /* ---------- cue play buttons ----------
-         Each song and sound-effect row in show.json renders as its own line
-         with one of these beside the track title, so the sound operator plays
-         the right track without leaving the script.
+         An inline control sitting immediately after the cue text it plays, so
+         the sound operator triggers the right track without leaving the line
+         they are reading. Inline rather than pinned to the corner of the line
+         because two cues can live in one line (scene 1 carries the sad music
+         and the switch to happy), and a corner marker cannot say which is
+         which.
 
          The glyph is drawn in CSS rather than shipped as an SVG so the button
          can be a single small element in the markup, and so the play and stop
@@ -3581,9 +3470,9 @@
           aria-pressed="false"
         >
           <span class="st-body">
-            <span class="st-title">Sound cues only</span>
+            <span class="st-title">Music cues only</span>
             <span class="st-note"
-              >Just the songs and sound effects, for the sound operator</span
+              >Just the lines with a music cue, for the sound operator</span
             >
           </span>
           <span class="st-switch" aria-hidden="true"></span>
@@ -3650,7 +3539,7 @@
           <input
             type="search"
             id="searchInput"
-            placeholder="Search the script ( / )"
+            placeholder="Search a line or character… ( / )"
             aria-label="Search dialogue"
           />
           <button
@@ -3716,7 +3605,7 @@
             id="musicOnlyToggle"
             type="button"
             aria-pressed="false"
-            title="Show only the songs and sound effects, for the sound operator"
+            title="Show only the lines with a music cue, for the sound operator"
           >
             <svg
               class="pill-ico"
@@ -3730,7 +3619,7 @@
               <circle cx="6" cy="18" r="3" />
               <circle cx="16" cy="16" r="3" />
             </svg>
-            <span class="pill-text">Sound cues only</span>
+            <span class="pill-text">Music cues only</span>
           </button>
 
           <button
@@ -3782,9 +3671,7 @@
       ></p>
 
       <section class="hero">
-        <span class="eyebrow"
-          >Rehearsal Companion · <span id="sceneCount">8</span> Scenes</span
-        >
+        <span class="eyebrow">Rehearsal Companion · 8 Scenes</span>
         <h1>
           Mein hu<br />
           <span class="hero-accent" data-text="Hero">Hero</span>
@@ -3823,6 +3710,19 @@
             <label class="cast-bar-label" for="actorSelect">Viewing as</label>
             <select id="actorSelect">
               <option value="">All</option>
+              <option value="Madhuri">Madhuri · Sutradhar</option>
+              <option value="Apurva">Apurva · Raj Malhotra</option>
+              <option value="Rajesh">Rajesh · Dharamchand</option>
+              <option value="Harsh">Harsh · Sumitradevi</option>
+              <option value="Aparna">Aparna · Simran</option>
+              <option value="Shailendra">Shailendra · Deendayal</option>
+              <option value="Aneeta">
+                Aneeta · Sharda Devi, Office Receptionist
+              </option>
+              <option value="Maneesh">
+                Maneesh · Ramu Kaka, Man in office, Bhairav Baba
+              </option>
+              <option value="Jayant">Jayant · Rocky</option>
             </select>
             <button
               class="pill"
@@ -3901,6 +3801,31 @@
       <div class="app">
         <nav class="scene-nav" aria-label="Scene navigation">
           <span class="nav-section-label">Scenes</span>
+          <a class="nav-link" href="#scene-1" data-scene="1"
+            ><span class="nav-num">01</span
+            ><span class="nav-title">Homecoming</span></a
+          ><a class="nav-link" href="#scene-2" data-scene="2"
+            ><span class="nav-num">02</span
+            ><span class="nav-title">The Job Interview</span></a
+          ><a class="nav-link" href="#scene-3" data-scene="3"
+            ><span class="nav-num">03</span
+            ><span class="nav-title">The Park</span></a
+          ><a class="nav-link" href="#scene-4" data-scene="4"
+            ><span class="nav-num">04</span
+            ><span class="nav-title">Fixing the Match</span></a
+          ><a class="nav-link" href="#scene-5" data-scene="5"
+            ><span class="nav-num">05</span
+            ><span class="nav-title">The Wedding</span></a
+          ><a class="nav-link" href="#scene-6" data-scene="6"
+            ><span class="nav-num">06</span
+            ><span class="nav-title">The Naagin Scare</span></a
+          ><a class="nav-link" href="#scene-7" data-scene="7"
+            ><span class="nav-num">07</span
+            ><span class="nav-title">Rocky’s Report Card</span></a
+          ><a class="nav-link" href="#scene-8" data-scene="8"
+            ><span class="nav-num">08</span
+            ><span class="nav-title">The Finale</span></a
+          >
         </nav>
 
         <main>
@@ -3915,7 +3840,73 @@
                     <th>Actor</th>
                   </tr>
                 </thead>
-                <tbody id="castTableBody"></tbody>
+                <tbody>
+                  <tr>
+                    <td class="c-char">Sutradhar</td>
+                    <td>Narrator</td>
+                    <td>Madhuri</td>
+                  </tr>
+                  <tr>
+                    <td class="c-char">Raj Malhotra</td>
+                    <td>Main protagonist</td>
+                    <td>Apurva</td>
+                  </tr>
+                  <tr>
+                    <td class="c-char">Dharamchand</td>
+                    <td>Father</td>
+                    <td>Rajesh</td>
+                  </tr>
+                  <tr>
+                    <td class="c-char">Sumitradevi</td>
+                    <td>Mother</td>
+                    <td>Harsh</td>
+                  </tr>
+                  <tr>
+                    <td class="c-char">Simran</td>
+                    <td>Girlfriend/Wife</td>
+                    <td>Aparna</td>
+                  </tr>
+                  <tr>
+                    <td class="c-char">Deendayal</td>
+                    <td>Father-In-Law</td>
+                    <td>Shailendra</td>
+                  </tr>
+                  <tr>
+                    <td class="c-char">Sharda Devi</td>
+                    <td>Mother-In-Law</td>
+                    <td>Aneeta (Double role)</td>
+                  </tr>
+                  <tr>
+                    <td class="c-char">Ramu Kaka</td>
+                    <td>Nauker</td>
+                    <td>Maneesh</td>
+                  </tr>
+                  <tr>
+                    <td class="c-char">Rocky</td>
+                    <td>Son</td>
+                    <td>Jayant</td>
+                  </tr>
+                  <tr>
+                    <td class="c-char">No name</td>
+                    <td>Office Receptionist</td>
+                    <td>Aneeta (Double role)</td>
+                  </tr>
+                  <tr>
+                    <td class="c-char">No name</td>
+                    <td>Man in office</td>
+                    <td>Maneesh</td>
+                  </tr>
+                  <tr>
+                    <td class="c-char">Bhairav Baba</td>
+                    <td>Snake Charmer</td>
+                    <td>Maneesh</td>
+                  </tr>
+                  <tr>
+                    <td class="c-char">All others</td>
+                    <td>In wedding scene and last scene</td>
+                    <td>All</td>
+                  </tr>
+                </tbody>
               </table>
             </div>
           </section>
@@ -3933,20 +3924,9 @@
             </div>
             <div class="legend-row">
               <div class="legend-sample">
-                <span class="legend-swatch c-music">Song</span>
+                <span class="legend-swatch c-music">Music cue</span>
               </div>
-              <div class="legend-meaning">
-                A song, or words describing music. The play button beside a
-                song plays the track.
-              </div>
-            </div>
-            <div class="legend-row">
-              <div class="legend-sample">
-                <span class="legend-swatch c-sfx">Sound effect</span>
-              </div>
-              <div class="legend-meaning">
-                A sound effect (SFX), with its own play button.
-              </div>
+              <div class="legend-meaning">Music piece</div>
             </div>
             <div class="legend-row">
               <div class="legend-sample">
@@ -3962,49 +3942,1402 @@
                     <circle cx="6" cy="18" r="3" />
                     <circle cx="18" cy="16" r="3" />
                   </svg>
-                  <span>Song</span>
+                  <span>Music</span>
                 </span>
               </div>
               <div class="legend-meaning">
-                A note badge marks every line with a song, for the sound
-                operator.
+                A note badge marks every line with a music cue, for the sound
+                operator. Turn on <strong>Music cues only</strong> to see just
+                these lines.
               </div>
             </div>
             <div class="legend-row">
               <div class="legend-sample">
-                <span class="legend-swatch music-flag is-sfx">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    aria-hidden="true"
-                  >
-                    <path d="M11 5 6 9H3v6h3l5 4z" /><path d="M15.5 8.5a5 5 0 0 1 0 7" /><path d="M18.5 5.5a9 9 0 0 1 0 13" />
-                  </svg>
-                  <span>SFX</span>
-                </span>
+                <span class="legend-swatch is-italic">(stage action)</span>
               </div>
-              <div class="legend-meaning">
-                A speaker badge marks every sound effect. Turn on
-                <strong>Sound cues only</strong> to see just the songs and
-                sound effects, for the sound operator.
-              </div>
-            </div>
-            <div class="legend-row">
-              <div class="legend-sample">
-                <span class="legend-swatch is-italic">(stage direction)</span>
-              </div>
-              <div class="legend-meaning">What happens on stage.</div>
+              <div class="legend-meaning">Scene/action descriptions</div>
             </div>
           </section>
 
-          <!-- The scenes are rendered from show.json by renderShow() at the
-               end of this file. show.json is the master copy of the script and
-               is edited through editor.html, never by hand here. -->
-          <p class="script-status" id="scriptStatus" role="status">
-            Loading the script…
-          </p>
+          <section class="scene reveal-on-scroll" id="scene-1" data-scene="1">
+            <div class="scene-head">
+              <span class="scene-num"
+                ><span class="sn-label">Scene</span
+                ><span class="sn-digits">01</span></span
+              >
+              <h2>Homecoming</h2>
+            </div>
+            <div class="meta-box">
+              <div class="meta-item">
+                <span class="meta-label">CAST</span
+                ><span class="meta-value"
+                  >Dharamchand, Sumitradevi, Ramu kaka, Raj</span
+                >
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">LOCATION</span
+                ><span class="meta-value">Drawing room at home</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">PROPERTY</span
+                ><span class="meta-value"
+                  >Five chairs, Light colored (neutral sheet to cover three
+                  chairs), Dadaji’s photo, degree (Rolled paper can be tied with
+                  a ribbon), napkin for Ramu kaka, aarati thali, food plate
+                  (tbd) with a bowl for gajar halwaa.</span
+                >
+              </div>
+            </div>
+            <div class="dialogue">
+              <div
+                class="line"
+                data-search="narrator namaste. aaj hum milane jaa rahe hain ek aajebo garib naujavan raj se. naam to suna he hoga! raj hindi filmo se tang aa chuka hai. nahi nahi; use filmo se koi shikaayat nahee, vah to kabhi kabhi ek do picture bhee dekh letaa hai. use problem hain filmi fans se jo uske jeevan mein bohut hein. hamaare is natak ka naam hai ‘mein hu hero’. aao dekhen raj malhotra ke ghar mein kya scene hain. milate hain unke pitaa dharamchand aur mataji sumitradevi se."
+                data-actor="Madhuri"
+              >
+                <div class="speaker">Narrator</div>
+                <div class="content">
+                  <p>
+                    Namaste. Aaj hum milane jaa rahe hain ek aajebo garib
+                    naujavan Raj se. Naam to suna he hoga! Raj Hindi filmo se
+                    tang aa chuka hai. Nahi nahi; use filmo se koi shikaayat
+                    nahee, vah to kabhi kabhi ek do picture bhee dekh letaa hai.
+                    Use problem hain filmi fans se jo uske Jeevan mein bohut
+                    hein. Hamaare is natak ka naam hai
+                  </p>
+                  <p>‘Mein Hu Hero’.</p>
+                  <p>Aao dekhen Raj Malhotra ke ghar mein kya scene hain.</p>
+                  <p>
+                    Milate hain unke pitaa Dharamchand aur mataji Sumitradevi
+                    se.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="opening scene father (dharamchand) sitting and reading newspaper with his glasses on while mum is in the kitchen."
+              >
+                <div class="speaker">Opening scene</div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic"
+                      >Father (Dharamchand) sitting and reading newspaper with
+                      his glasses on while Mum is in the kitchen.</span
+                    >
+                  </p>
+                </div>
+              </div>
+              <div
+                class="line"
+                data-search="father (dharamchand) (keeps newspaper aside) arre bhagwaan, suntee ho! (loud voice)"
+                data-actor="Rajesh"
+              >
+                <div class="speaker">Father (Dharamchand)</div>
+                <div class="content">
+                  <p><span class="is-italic">(Keeps newspaper aside) </span></p>
+                  <p>Arre Bhagwaan, suntee ho! (Loud voice)</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="mother (sumitradevi) (comes from the kitchen wiping her hands on the sari) kya hai raj ke papa."
+                data-actor="Harsh"
+              >
+                <div class="speaker">Mother (Sumitradevi)</div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic"
+                      >(Comes from the kitchen wiping her hands on the sari)
+                    </span>
+                  </p>
+                  <p>Kya hai Raj ke papa.</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="father (dharamchand) subahase rasoi mein kya kar rahee ho"
+                data-actor="Rajesh"
+              >
+                <div class="speaker">Father (Dharamchand)</div>
+                <div class="content">
+                  <p>Subahase rasoi mein kya kar rahee ho</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="mother (sumitradevi) aaj hamara beta raj aa raha hain na (vilaayat se). uski taiyari kar rahi thee."
+                data-actor="Harsh"
+              >
+                <div class="speaker">Mother (Sumitradevi)</div>
+                <div class="content">
+                  <p>
+                    Aaj hamara beta Raj aa raha hain na (vilaayat se). Uski
+                    taiyari kar rahi thee.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="father (dharamchand) han. aaj 3 saal baad apna beta vilayat se degree lekar aa rahaa hain. woh bhi first class first number lekar. baap dadaonka naam roshan kiya hain. aakhir beta kiska hain."
+                data-actor="Rajesh"
+              >
+                <div class="speaker">Father (Dharamchand)</div>
+                <div class="content">
+                  <p>
+                    Han. Aaj 3 saal baad apna beta vilayat se degree lekar aa
+                    rahaa hain. Woh bhi first class first number lekar. Baap
+                    dadaonka naam roshan kiya hain. Aakhir beta kiska hain.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="mother (sumitradevi) haan, aap ka he hain. par aap use lene naahi gaye airport?"
+                data-actor="Harsh"
+              >
+                <div class="speaker">Mother (Sumitradevi)</div>
+                <div class="content">
+                  <p>
+                    Haan, aap ka he hain. Par aap use lene naahi gaye airport?
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="father (dharamchand) usane bola tha ki driver ke saath gaadi bhijva do, vo khud aa jaye ga. aataa he hoga."
+                data-actor="Rajesh"
+              >
+                <div class="speaker">Father (Dharamchand)</div>
+                <div class="content">
+                  <p>
+                    Usane bola tha ki driver ke saath gaadi bhijva do, vo khud
+                    aa jaye ga. Aataa he hoga.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="mother (sumitradevi) ramu, kaha mar gaya (loud voice). aarti ki thali taiyaar rakhna"
+                data-actor="Harsh"
+              >
+                <div class="speaker">Mother (Sumitradevi)</div>
+                <div class="content">
+                  <p>
+                    Ramu, kaha mar gaya (Loud voice). Aarti ki thali taiyaar
+                    rakhna
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="ramu tayar hai maaji. ye lijeeye."
+                data-actor="Maneesh"
+              >
+                <div class="speaker">Ramu</div>
+                <div class="content"><p>Tayar hai maaji. Ye lijeeye.</p></div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="background (kabhi khushi kabhi gam music). (mother walks to the door and realises raj has not arrived. she turns back disheartened and then music changes and on a happy note raj enters. mother does aarti. he bends down to take ashirwad of mother and father)."
+              >
+                <div class="speaker">Background</div>
+                <div class="content">
+                  <p>
+                    <span class="c-music is-italic"
+                      >(Kabhi khushi kabhi gam music).</span
+                    ><span class="c-music"> </span
+                    ><button
+                      type="button"
+                      class="cue-play"
+                      data-audio="Audio files/01 - Kabhi Khushi - Sad.mp3"
+                      data-cue="Kabhi khushi kabhi gam, sad"
+                    ></button>
+                  </p>
+                  <p>
+                    <span class="is-italic"
+                      >(Mother walks to the door and realises Raj has not
+                      arrived. She turns back disheartened and then</span
+                    >
+                    <span class="c-music is-italic"
+                      >music changes and on a happy note</span
+                    ><button
+                      type="button"
+                      class="cue-play"
+                      data-audio="Audio files/02 - Kabhi Khushi - Happy.mp3"
+                      data-cue="Kabhi khushi kabhi gam, happy"
+                    ></button>
+                    <span class="is-italic"
+                      >Raj enters. Mother does aarti. He bends down to take
+                      Ashirwad of mother and father).</span
+                    >
+                  </p>
+                </div>
+              </div>
+              <div
+                class="line is-cut"
+                data-search="father (dharamchand) jao aur pehle dada ji ka ashirwad le lo."
+                data-actor="Rajesh"
+              >
+                <div class="speaker">Father (Dharamchand)</div>
+                <div class="content">
+                  <p>Jao aur pehle dada ji ka Ashirwad le lo.</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line is-cut"
+                data-search="raj (raj walks to dadaji’s photo and keeps his degree near the photo) dadaji aaj main vilayat se degree leke aayaa hun. aapka sapna maine puraa kiya hain. muze aashirwad deejiye."
+                data-actor="Apurva"
+              >
+                <div class="speaker">Raj</div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic"
+                      >(Raj walks to Dadaji’s photo and keeps his degree near
+                      the photo)</span
+                    >
+                  </p>
+                  <p>
+                    Dadaji aaj main vilayat se degree leke aayaa hun. Aapka
+                    sapna maine puraa kiya hain. Muze aashirwad deejiye.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="father (dharamchand) raj beta, tu ab kya karnaa chaahega?"
+                data-actor="Rajesh"
+              >
+                <div class="speaker">Father (Dharamchand)</div>
+                <div class="content">
+                  <p>Raj beta, tu ab kya karnaa chaahega?</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="raj maine ek company mein job ke liye apply kiya tha. aaj hi interview ke liye jaana hai."
+                data-actor="Apurva"
+              >
+                <div class="speaker">Raj</div>
+                <div class="content">
+                  <p>
+                    Maine ek company mein job ke liye apply kiya tha. Aaj hi
+                    interview ke liye jaana hai.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="raj (turns to mum) maa, mujhe bahut bhook lagee hai. kuch khane ko do na"
+                data-actor="Apurva"
+              >
+                <div class="speaker">Raj</div>
+                <div class="content">
+                  <p><span class="is-italic">(Turns to mum)</span></p>
+                  <p>Maa, mujhe bahut bhook lagee hai. Kuch khane ko do na</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="mother (sumitradevi) ha latee hun. ramu, kahan mar gayaa (loud voice). khaanaa le aao."
+                data-actor="Harsh"
+              >
+                <div class="speaker">Mother (Sumitradevi)</div>
+                <div class="content">
+                  <p>
+                    Ha latee hun. Ramu, kahan mar gayaa (Loud voice). Khaanaa le
+                    aao.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line no-speaker"
+                data-search="(food is served by ramu. mother walks to raj with a bowl of gajar ka halwa and tries to feed him.)"
+              >
+                <div class="speaker" aria-hidden="true"></div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic"
+                      >(Food is served by Ramu. Mother walks to Raj with a bowl
+                      of gajar ka halwa and tries to feed him.)</span
+                    >
+                  </p>
+                </div>
+              </div>
+              <div
+                class="line"
+                data-search="raj ye kya maa? gajar ka halwaa? aap bhool gayee kya mujhe gajar pasand nahee hain."
+                data-actor="Apurva"
+              >
+                <div class="speaker">Raj</div>
+                <div class="content">
+                  <p>
+                    Ye kya Maa? Gajar ka halwaa? Aap bhool gayee kya mujhe gajar
+                    pasand nahee hain.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="mother (sumitradevi) par beta har picture mein - jab beta bohut deeno ke baad ghar lautata hein, to maa gajar ka halwa he banate hain."
+                data-actor="Harsh"
+              >
+                <div class="speaker">Mother (Sumitradevi)</div>
+                <div class="content">
+                  <p>
+                    Par beta har picture mein - jab beta bohut deeno ke baad
+                    ghar lautata hein, to maa gajar ka halwa he banate hain.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="raj (one hand over his forehead.) scene 1 over."
+                data-actor="Apurva"
+              >
+                <div class="speaker">Raj</div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic">(One hand over his forehead.)</span>
+                    Scene 1 over.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="scene reveal-on-scroll" id="scene-2" data-scene="2">
+            <div class="scene-head">
+              <span class="scene-num"
+                ><span class="sn-label">Scene</span
+                ><span class="sn-digits">02</span></span
+              >
+              <h2>The Job Interview</h2>
+            </div>
+            <div class="meta-box">
+              <div class="meta-item">
+                <span class="meta-label">CAST</span
+                ><span class="meta-value"
+                  >Office receptionist, Raj, Man in office, Deendayaal (Simran’s
+                  father), Simran</span
+                >
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">LOCATION</span
+                ><span class="meta-value"
+                  >Office space (Place a table in front of the chair). This
+                  chair should be on one side of the three home chairs. Chair to
+                  be places from the beginning and table to be placed just
+                  before the scene. Receptionist chair on the other side of home
+                  chairs, opposite to office chair. This will also be placed
+                  from beginning.</span
+                >
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">PROPERTY</span
+                ><span class="meta-value">office table, vase with flowers</span>
+              </div>
+              <p class="meta-note">
+                (After scene 1 remove cover from home chairs. Place a table in
+                front of office chair. Receptionist chair can have a vase next
+                to it though not necessary. Raj and man in office sit on two of
+                the three chairs that were home earlier.)
+              </p>
+            </div>
+            <div class="dialogue">
+              <div
+                class="line"
+                data-search="narrator raj apne interview ke liye deendayal shetji ke office pahoch gaya hai. chaliye dekhate hain udhar kya hota hain."
+                data-actor="Madhuri"
+              >
+                <div class="speaker">Narrator</div>
+                <div class="content">
+                  <p>
+                    Raj apne interview ke liye Deendayal shetji ke office pahoch
+                    gaya hai. Chaliye dekhate hain udhar kya hota hain.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div class="line no-speaker" data-search="office scene">
+                <div class="speaker" aria-hidden="true"></div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic">Office scene</span>
+                  </p>
+                </div>
+              </div>
+              <div
+                class="line"
+                data-search="office receptionist raj malhotra, aap ko shetji ne andar bulaayaa hai"
+                data-actor="Aneeta"
+              >
+                <div class="speaker">Office Receptionist</div>
+                <div class="content">
+                  <p>Raj Malhotra, aap ko Shetji ne andar bulaayaa hai</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line no-speaker"
+                data-search="raj gets up to walk towards the shetji’s office door. a man who is sitting in the office for interview comes and stands in front of him."
+              >
+                <div class="speaker" aria-hidden="true"></div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic"
+                      >Raj gets up to walk towards the Shetji’s office
+                      door.</span
+                    >
+                  </p>
+                  <p>
+                    <span class="is-italic"
+                      >A man who is sitting in the office for interview comes
+                      and stands in front of him.</span
+                    >
+                  </p>
+                </div>
+              </div>
+              <div
+                class="line"
+                data-search="raj kya kar rahe ho. muzhe bulaayaa hai. aap mere baad jaanaa."
+                data-actor="Apurva"
+              >
+                <div class="speaker">Raj</div>
+                <div class="content">
+                  <p>
+                    Kya kar rahe ho. Muzhe bulaayaa hai.
+                    <span class="is-italic">Aap mere baad jaanaa.</span>
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="man in office hum jahan khade hote hain vahee se line shuru hotee hain."
+                data-actor="Maneesh"
+              >
+                <div class="speaker">Man in office</div>
+                <div class="content">
+                  <p>
+                    Hum jahan khade hote hain vahee se line shuru hotee hain.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="office receptionist (pushes the man aside) chal hat. kahan kahan se aa jaate hain amitabh. raj with one hand over his forehead."
+                data-actor="Aneeta"
+              >
+                <div class="speaker">Office Receptionist</div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic">(pushes the man aside)</span> Chal
+                    hat. Kahan kahan se aa jaate hain Amitabh.
+                  </p>
+                  <p>
+                    <span class="is-italic"
+                      >Raj with one hand over his forehead.</span
+                    >
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div class="line no-speaker" data-search="inside shetji’s office">
+                <div class="speaker" aria-hidden="true"></div>
+                <div class="content"><p>Inside Shetji’s office</p></div>
+              </div>
+              <div
+                class="line"
+                data-search="deendayal (simran’s father) (raj enters the office. receptionist and man in office can walk out of the stage so focus will shift to office space) aao barkhudar. tum vilaayat se first class first leke aaye ho. ye manager ka job tumhara hain. bahar jaakar munimjee se apna appointment letter le lo. kab join karna chaho ge."
+                data-actor="Shailendra"
+              >
+                <div class="speaker">Deendayal (Simran’s father)</div>
+                <div class="content">
+                  <p>
+                    (Raj enters the office. Receptionist and man in office can
+                    walk out of the stage so focus will shift to office space)
+                    Aao barkhudar. Tum vilaayat se first class first leke aaye
+                    ho. Ye manager ka job tumhara hain. Bahar jaakar munimjee se
+                    apna appointment letter le lo. Kab join karna chaho ge.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="raj shukriya shethji. kal se hee join karunga."
+                data-actor="Apurva"
+              >
+                <div class="speaker">Raj</div>
+                <div class="content">
+                  <p>Shukriya Shethji. Kal se hee join karunga.</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line no-speaker"
+                data-search="raj shakes hand with shetji and walks towards the door. he collides with simran. they look into each other’s eyes and go on staring at each other. (haunting music of dil to pagal hain). shetji coughs loudly. raj then hastily leaves the office. simran goes towards her dad."
+              >
+                <div class="speaker" aria-hidden="true"></div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic"
+                      >Raj shakes hand with Shetji and walks towards the door.
+                      He collides with Simran. They look into each other’s eyes
+                      and go on staring at each other. </span
+                    ><span class="c-music is-italic"
+                      >(Haunting music of Dil to Pagal Hain). </span
+                    ><span class="is-italic"
+                      >Shetji coughs loudly. Raj then hastily leaves the office.
+                      Simran goes towards her dad.</span
+                    >
+                  </p>
+                </div>
+              </div>
+              <div
+                class="line"
+                data-search="simran ye kaun tha papa."
+                data-actor="Aparna"
+              >
+                <div class="speaker">Simran</div>
+                <div class="content"><p>Ye kaun tha Papa.</p></div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="deendayal (simran’s father) voh raj hain. bahut honhaar naujawan hain, vilayat se first class first lekar aayaa hain, kal se office join karega."
+                data-actor="Shailendra"
+              >
+                <div class="speaker">Deendayal (Simran’s father)</div>
+                <div class="content">
+                  <p>
+                    Voh Raj hain. Bahut honhaar naujawan hain, vilayat se first
+                    class first lekar aayaa hain, Kal se office join karega.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="simran papa main shaadi esee se karungi."
+                data-actor="Aparna"
+              >
+                <div class="speaker">Simran</div>
+                <div class="content">
+                  <p>Papa main shaadi esee se karungi.</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="deendayal (simran’s father) ok beta. jo tumhe pasand hain usee se tumhari shaadi hogee."
+                data-actor="Shailendra"
+              >
+                <div class="speaker">Deendayal (Simran’s father)</div>
+                <div class="content">
+                  <p>
+                    Ok beta. Jo tumhe pasand hain usee se tumhari shaadi hogee.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="scene reveal-on-scroll" id="scene-3" data-scene="3">
+            <div class="scene-head">
+              <span class="scene-num"
+                ><span class="sn-label">Scene</span
+                ><span class="sn-digits">03</span></span
+              >
+              <h2>The Park</h2>
+            </div>
+            <div class="meta-box">
+              <div class="meta-item">
+                <span class="meta-label">CAST</span
+                ><span class="meta-value">Raj, Simran</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">LOCATION</span
+                ><span class="meta-value"
+                  >Park (Place vases or plant pots besides the chair). This
+                  chair is same a s receptionist chair.</span
+                >
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">PROPERTY</span
+                ><span class="meta-value"
+                  >vases with flowers/Plant pots. 2 roses.</span
+                >
+              </div>
+              <p class="meta-note">
+                (After scene 2 place vases/plant pots beside the chair)
+              </p>
+            </div>
+            <div class="dialogue">
+              <div
+                class="line"
+                data-search="narrator raj aur simran aksar ek doosare se milne lage hain. (music tbd – background music dhun of “ek main aur ek tu, dono mile is tarah” while narrator speaks and raj & simran take entry into the park.)"
+                data-actor="Madhuri"
+              >
+                <div class="speaker">Narrator</div>
+                <div class="content">
+                  <p>Raj aur Simran aksar ek doosare se milne lage hain.</p>
+                  <p>
+                    <span class="c-music"
+                      >(Music tbd – Background music dhun of “Ek main aur ek tu,
+                      dono mile is tarah” </span
+                    >while narrator speaks and<span class="c-music"> </span>Raj
+                    &amp; Simran take entry into the park.)
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line no-speaker"
+                data-search="raj sits and simran is dancing on ‘tathya tathya ho’ raj puts his hand on his head. simran pulls him aside and scene is closed by showing two flowers cross over each other. (flower cross over upon exit of raj and simran instead of over their faces, so no queries by children. also as simran takes raj away person enters with flowers) ."
+              >
+                <div class="speaker" aria-hidden="true"></div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic">
+                      Raj sits and Simran is dancing on ‘</span
+                    ><span class="c-music is-italic">Tathya tathya ho’ </span
+                    ><button
+                      type="button"
+                      class="cue-play"
+                      data-audio="Audio files/04 - Ta thaiya.mp3"
+                      data-cue="Tathya tathya ho"
+                    ></button
+                    ><span class="is-italic"
+                      >Raj puts his hand on his head. Simran pulls him aside and
+                      scene is closed by showing two flowers cross over each
+                      other. (flower cross over upon exit of Raj and Simran
+                      instead of over their faces, so no queries by children.
+                      Also as Simran takes Raj away person enters with flowers)
+                      .
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="scene reveal-on-scroll" id="scene-4" data-scene="4">
+            <div class="scene-head">
+              <span class="scene-num"
+                ><span class="sn-label">Scene</span
+                ><span class="sn-digits">04</span></span
+              >
+              <h2>Fixing the Match</h2>
+            </div>
+            <div class="meta-box">
+              <div class="meta-item">
+                <span class="meta-label">CAST</span
+                ><span class="meta-value"
+                  >Raj, Dharamchand, Sumitradevi, Deendayaal, Simran</span
+                >
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">LOCATION</span
+                ><span class="meta-value">drawing room (</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">PROPERTY</span
+                ><span class="meta-value">Nothing needed</span>
+              </div>
+              <p class="meta-note">
+                (After scene 3 place back covers on central chairs. Office chair
+                can move next to park space chair so Simran and dad can sit
+                there and Raj and parents in central 3 chairs.)
+              </p>
+            </div>
+            <div class="dialogue">
+              <div
+                class="line"
+                data-search="narrator deendayal, sharda devi aur simran shaadi ki baat pakki karne raj ke ghar gaye."
+                data-actor="Madhuri"
+              >
+                <div class="speaker">Narrator</div>
+                <div class="content">
+                  <p>
+                    Deendayal, Sharda Devi aur Simran shaadi ki baat pakki karne
+                    Raj ke ghar gaye.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="sumitradevi ramu kahan mar gaya. mehmaan aa gaye. chai nashta le aanaa"
+                data-actor="Harsh"
+              >
+                <div class="speaker">Sumitradevi</div>
+                <div class="content">
+                  <p>
+                    Ramu kahan mar gaya. Mehmaan aa gaye. Chai nashta le aanaa
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="ramu kaka ji maaji abhi laya."
+                data-actor="Maneesh"
+              >
+                <div class="speaker">Ramu Kaka</div>
+                <div class="content"><p>Ji maaji abhi laya.</p></div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="dharamchand aaaiye aaiye. baithiye."
+                data-actor="Rajesh"
+              >
+                <div class="speaker">Dharamchand</div>
+                <div class="content"><p>Aaaiye aaiye. Baithiye.</p></div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="simran (seeks blessing from sumitradevi)"
+                data-actor="Aparna"
+              >
+                <div class="speaker">Simran</div>
+                <div class="content">
+                  <p>(Seeks blessing from Sumitradevi)</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="sumitradevi kitni sundar bahu dhundee hain hamaare raj ne. kitni sanskari bhi hain. main diya lekar dundne jaate tab bhi aise sundar bahu nahee milatee. (simran sharmatee hai aur raj ko aankh maaratee hai)."
+                data-actor="Harsh"
+              >
+                <div class="speaker">Sumitradevi</div>
+                <div class="content">
+                  <p>
+                    Kitni sundar bahu dhundee hain hamaare Raj ne. Kitni
+                    sanskari bhi hain. Main diya lekar dundne jaate tab bhi aise
+                    sundar bahu nahee milatee.
+                  </p>
+                  <p>(Simran sharmatee hai aur Raj ko aankh maaratee hai).</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="deendayal hum ye shaadi dhoom dhaam se manaaenge."
+                data-actor="Shailendra"
+              >
+                <div class="speaker">Deendayal</div>
+                <div class="content">
+                  <p>Hum ye shaadi dhoom dhaam se manaaenge.</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="dharmachand (sumitradevi nudges dharmachand) thehero. ek baat to main bolna bhool hi gaya. (deendayal looks a bit worried/scared). ghabrao naahi sambdhijee. hamaree koi paison ki maange nahi hain. lekin (big pause) ham chahate hain ki baraateeyon ka swagat paan parag se kiya jaaye."
+                data-actor="Rajesh"
+              >
+                <div class="speaker">Dharmachand</div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic"
+                      >(Sumitradevi nudges Dharmachand)</span
+                    >
+                  </p>
+                  <p>Thehero. Ek baat to main bolna bhool hi gaya.</p>
+                  <p>
+                    <span class="is-italic"
+                      >(Deendayal looks a bit worried/scared).
+                    </span>
+                  </p>
+                  <p>
+                    Ghabrao naahi sambdhijee. Hamaree koi paison ki maange nahi
+                    hain. Lekin (big pause) ham chahate hain ki baraateeyon ka
+                    Swagat paan Parag se kiya jaaye.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line no-speaker"
+                data-search="everyone starts laughing. raj puts his hand on his forehead."
+              >
+                <div class="speaker" aria-hidden="true"></div>
+                <div class="content">
+                  <p>
+                    Everyone starts laughing. Raj puts his hand on his forehead.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="scene reveal-on-scroll" id="scene-5" data-scene="5">
+            <div class="scene-head">
+              <span class="scene-num"
+                ><span class="sn-label">Scene</span
+                ><span class="sn-digits">05</span></span
+              >
+              <h2>The Wedding</h2>
+            </div>
+            <div class="meta-box">
+              <div class="meta-item">
+                <span class="meta-label">CAST</span
+                ><span class="meta-value">All</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">LOCATION</span
+                ><span class="meta-value"
+                  >all 5 chairs. Central chairs to have red cover, can possibly
+                  have petals.</span
+                >
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">PROPERTY</span
+                ><span class="meta-value"
+                  >Red cover for chairs, petals, scarves for Dulha Dulhan and
+                  possibly others as well</span
+                >
+              </div>
+              <p class="meta-note">
+                Raj and Simran can have some nice scarves on their dress. All
+                can choose to have scarves not a must.
+              </p>
+            </div>
+            <div class="dialogue">
+              <div
+                class="line no-speaker"
+                data-search="wedding scene. raj and simran on stage sitting on their chairs. all the previous characters are attending the wedding reception. here we can have people coming in continuously and having a small talk with each other (just 30 seconds or so) suddenly dharmchand and sumitradevi break into a dance on (le jayenge le jayenge – everyone attending the reception joins and dances in a circle). simran also gets up. raj tries to hold her back but she also joins in. raj puts his hand on his forehead."
+              >
+                <div class="speaker" aria-hidden="true"></div>
+                <div class="content">
+                  <p>
+                    Wedding Scene. Raj and Simran on stage sitting on their
+                    chairs. All the previous characters are attending the
+                    wedding reception. Here we can have people coming in
+                    continuously and having a small talk with each other (just
+                    30 seconds or so) Suddenly Dharmchand and SumitraDevi break
+                    into a dance on
+                    <span class="c-music">(Le jayenge le jayenge </span
+                    ><button
+                      type="button"
+                      class="cue-play"
+                      data-audio="Audio files/05 - Le jayegne.mp3"
+                      data-cue="Le jayenge le jayenge"
+                    ></button
+                    >– everyone attending the reception joins and dances in a
+                    circle). Simran also gets up. Raj tries to hold her back but
+                    she also joins in.
+                  </p>
+                  <p>Raj puts his hand on his forehead.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="scene reveal-on-scroll" id="scene-6" data-scene="6">
+            <div class="scene-head">
+              <span class="scene-num"
+                ><span class="sn-label">Scene</span
+                ><span class="sn-digits">06</span></span
+              >
+              <h2>The Naagin Scare</h2>
+            </div>
+            <div class="meta-box">
+              <div class="meta-item">
+                <span class="meta-label">CAST</span
+                ><span class="meta-value">Raj, Symitradevi, Bhairav baba</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">PROPERTY</span
+                ><span class="meta-value"
+                  >Briefcase, tie, pungi, saffron shawl for baba</span
+                >
+              </div>
+              <p class="meta-note">
+                Location Home same as scene 1 so should have same set up as
+                scene 1.
+              </p>
+            </div>
+            <div class="dialogue">
+              <div
+                class="line"
+                data-search="narrator aise he haste khelte raj ki zindagi beet rahee hai. idhar ghar vaale aur bhi filmi ho jaa rahe the. is beech sreedevi ki naagin picture release ho gayee. iskaa raj ke ghar mein kya asar hua, yeh dekhte hain."
+                data-actor="Madhuri"
+              >
+                <div class="speaker">Narrator</div>
+                <div class="content">
+                  <p>
+                    Aise he haste khelte Raj ki Zindagi beet rahee hai. Idhar
+                    ghar vaale aur bhi filmi ho jaa rahe the. Is beech Sreedevi
+                    ki naagin picture release ho gayee. Iskaa Raj ke ghar mein
+                    kya asar hua, yeh dekhte hain.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line no-speaker"
+                data-search="raj comes home from office and loosens his tie."
+              >
+                <div class="speaker" aria-hidden="true"></div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic"
+                      >Raj comes home from office and loosens his tie.</span
+                    >
+                  </p>
+                </div>
+              </div>
+              <div
+                class="line"
+                data-search="sumitradevi aaj hamaare ghar ek bahot bade baba aa rahen hai. (bhairav baba arrives) bhairav baba ki jai. lagataa hai aaap ko pehle bhi kabhi dekha hain."
+                data-actor="Harsh"
+              >
+                <div class="speaker">Sumitradevi</div>
+                <div class="content">
+                  <p>
+                    Aaj hamaare ghar ek bahot bade baba aa rahen hai.
+                    <span class="is-italic">(Bhairav baba arrives)</span>
+                    Bhairav Baba ki Jai. Lagataa hai aaap ko pehle bhi kabhi
+                    dekha hain.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="bhairav baba mumkin hai kyun ki is skit me mera double role hai. shaayad aapko main amitabh ke jaisa lag rahaa hoon."
+                data-actor="Maneesh"
+              >
+                <div class="speaker">Bhairav Baba</div>
+                <div class="content">
+                  <p>
+                    Mumkin hai kyun ki is skit me mera double role hai. Shaayad
+                    aapko main Amitabh ke jaisa lag rahaa hoon.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="sumitradevi baba muze lagataa hai meri bahu, simran, ek naagin hain."
+                data-actor="Harsh"
+              >
+                <div class="speaker">Sumitradevi</div>
+                <div class="content">
+                  <p>
+                    Baba muze lagataa hai meri bahu, Simran, ek naagin hain.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="bhairav baba aap ghabrao naahi maaji. es naagino ko nachana mujhe achee tarah aatta hai. (he starts playing his been). simran comes down from stairs and dances to the tune of ‘main nagin tu sapera’ with tongue out and hissing like a snake. raj puts his hand on his forehead."
+                data-actor="Maneesh"
+              >
+                <div class="speaker">Bhairav Baba</div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic"
+                      >Aap ghabrao naahi maaji. Es naagino ko nachana mujhe
+                      achee tarah aatta hai. (He starts playing his been).
+                      Simran comes down from stairs and dances to the tune of </span
+                    ><span class="c-music is-italic"
+                      >‘Main nagin tu sapera’ </span
+                    ><button
+                      type="button"
+                      class="cue-play"
+                      data-audio="Audio files/06 - Mein Nagin.mp3"
+                      data-cue="Main nagin tu sapera"
+                    ></button
+                    ><span class="is-italic"
+                      >with tongue out and hissing like a snake.
+                    </span>
+                  </p>
+                  <p>
+                    <span class="is-italic"
+                      >Raj puts his hand on his forehead</span
+                    >.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="scene reveal-on-scroll" id="scene-7" data-scene="7">
+            <div class="scene-head">
+              <span class="scene-num"
+                ><span class="sn-label">Scene</span
+                ><span class="sn-digits">07</span></span
+              >
+              <h2>Rocky’s Report Card</h2>
+            </div>
+            <div class="meta-box">
+              <div class="meta-item">
+                <span class="meta-label">CAST</span
+                ><span class="meta-value">Raj, Rocky, Sumitradevi</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">LOCATION</span
+                ><span class="meta-value">Home same scene 1 and 6.</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">PROPS</span
+                ><span class="meta-value"
+                  >Result sheet, Dadaji’s photo, cap/jacket - a prop to show
+                  young Rocky, since in later scene he needs to look old.</span
+                >
+              </div>
+            </div>
+            <div class="dialogue">
+              <div
+                class="line"
+                data-search="narrator ghabrao naahi. simran sach muchki naagin naahi the. picture cinema theatre se jaate he, raj ke ghar se bhi ye naagin ka bhoot utar gaya. aur sumitra devie bhi khush thi kyonki ek nanaha raj ghar mein aa gayaa tha. naam rakha rocky. yeh rocky bhi kuch kam filmi naahi tha. aao dekhte hain rocky ki ek jhalak."
+                data-actor="Madhuri"
+              >
+                <div class="speaker">Narrator</div>
+                <div class="content">
+                  <p>
+                    Ghabrao naahi. Simran sach muchki naagin naahi the. Picture
+                    cinema theatre se jaate he, Raj ke ghar se bhi ye naagin ka
+                    bhoot utar gaya. Aur Sumitra devie bhi khush thi kyonki ek
+                    nanaha Raj ghar mein aa gayaa tha. Naam rakha Rocky. Yeh
+                    Rocky bhi kuch kam filmi naahi tha. Aao dekhte hain Rocky ki
+                    ek Jhalak.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="raj rocky, kaha se aa rahe ho. tumhaara result aaaya kya?"
+                data-actor="Apurva"
+              >
+                <div class="speaker">Raj</div>
+                <div class="content">
+                  <p>Rocky, kaha se aa rahe ho. Tumhaara result aaaya kya?</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="rocky hey dad! chill. result lene hi gaya tha. ye dekhiye meri mark sheet (presenting it proudly)"
+                data-actor="Jayant"
+              >
+                <div class="speaker">Rocky</div>
+                <div class="content">
+                  <p>
+                    Hey Dad! Chill. Result lene hi gaya tha. Ye dekhiye meri
+                    mark sheet
+                    <span class="is-italic">(presenting it proudly)</span>
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="raj ye kya. sab mein fail. heart fail ho jaaye ga mera."
+                data-actor="Apurva"
+              >
+                <div class="speaker">Raj</div>
+                <div class="content">
+                  <p>Ye kya. Sab mein fail. Heart fail ho jaaye ga mera.</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="rocky chill dad. just say ‘all is well’ ‘all is well’. (mimic aamir khan in three idiots)."
+                data-actor="Jayant"
+              >
+                <div class="speaker">Rocky</div>
+                <div class="content">
+                  <p>
+                    Chill Dad. Just say ‘All is Well’ ‘All is Well’.
+                    <span class="is-italic"
+                      >(Mimic Aamir khan in Three idiots).</span
+                    >
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line is-cut"
+                data-search="rocky dad, kya main bade dadaji ki photo ke saamne ye marksheet rakhun?"
+                data-actor="Jayant"
+              >
+                <div class="speaker">Rocky</div>
+                <div class="content">
+                  <p>
+                    Dad, kya main Bade Dadaji ki photo ke saamne ye marksheet
+                    rakhun?
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line is-cut"
+                data-search="raj ek khayega merese. (action like zapad khayega)"
+                data-actor="Apurva"
+              >
+                <div class="speaker">Raj</div>
+                <div class="content">
+                  <p>
+                    Ek khayega merese.
+                    <span class="is-italic">(Action like zapad khayega)</span>
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="sumitradevi (comes out from the kitchen – repeat kust like in scene 1) rocky beta - main tere liye gajar ka halwa lekar aate hun."
+                data-actor="Harsh"
+              >
+                <div class="speaker">SumitraDevi</div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic"
+                      >(Comes out from the kitchen – repeat kust like in scene
+                      1)</span
+                    >
+                    Rocky beta - main tere liye gajar ka halwa lekar aate hun.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="raj puts his hand on his forehead."
+                data-actor="Apurva"
+              >
+                <div class="speaker">Raj</div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic"
+                      >Puts his hand on his forehead.</span
+                    >
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="scene reveal-on-scroll" id="scene-8" data-scene="8">
+            <div class="scene-head">
+              <span class="scene-num"
+                ><span class="sn-label">Scene</span
+                ><span class="sn-digits">08</span></span
+              >
+              <h2>The Finale</h2>
+            </div>
+            <div class="meta-box">
+              <div class="meta-item">
+                <span class="meta-label">CAST</span
+                ><span class="meta-value">Raj, Rocky, Simran</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">LOCATION</span
+                ><span class="meta-value">Home same as scene 1, 6, 7</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">PROPS</span
+                ><span class="meta-value">small lamp, walking stick</span>
+              </div>
+            </div>
+            <div class="dialogue">
+              <div
+                class="line"
+                data-search="raj (old) (sings the roshni deta bajaj song – jab main chota bacha tha badee sharat karta tha…) raj starts coughing."
+                data-actor="Apurva"
+              >
+                <div class="speaker">Raj (Old)</div>
+                <div class="content">
+                  <p>
+                    <span class="c-music"
+                      >(Sings the Roshni deta bajaj song – jab main chota bacha
+                      tha badee sharat karta tha…) </span
+                    ><button
+                      type="button"
+                      class="cue-play"
+                      data-audio="Audio files/07 - Jab mein chota baccha.mp3"
+                      data-cue="Jab main chota bacha tha"
+                    ></button
+                    ><span class="is-italic">Raj starts coughing</span>.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="rocky (now grown up) dad. aap ko letna chaliye."
+                data-actor="Jayant"
+              >
+                <div class="speaker">Rocky (now grown up)</div>
+                <div class="content"><p>Dad. Aap ko letna chaliye.</p></div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line no-speaker"
+                data-search="simran, rocky all ask raj to lie on the bed. they light a small lamp."
+              >
+                <div class="speaker" aria-hidden="true"></div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic"
+                      >Simran, Rocky all ask Raj to lie on the bed. They light a
+                      small lamp.</span
+                    >
+                  </p>
+                </div>
+              </div>
+              <div
+                class="line"
+                data-search="raj ye kis liye? electricity chalee gayi kya?"
+                data-actor="Apurva"
+              >
+                <div class="speaker">Raj</div>
+                <div class="content">
+                  <p>Ye kis liye? Electricity chalee gayi kya?</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="simran nahhi sassur ji. is samay par aisa hi karte hain."
+                data-actor="Aparna"
+              >
+                <div class="speaker">Simran</div>
+                <div class="content">
+                  <p>Nahhi Sassur ji. Is samay par aisa hi karte hain.</p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="raj aisa samay? (confused)"
+                data-actor="Apurva"
+              >
+                <div class="speaker">Raj</div>
+                <div class="content">
+                  <p>Aisa samay? <span class="is-italic">(Confused)</span></p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line no-speaker"
+                data-search="light on the lamp flickers and goes off"
+              >
+                <div class="speaker" aria-hidden="true"></div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic"
+                      >Light on the lamp flickers and goes off</span
+                    >
+                  </p>
+                </div>
+              </div>
+              <div class="line" data-search="everyone naaaahhhi.">
+                <div class="speaker">Everyone</div>
+                <div class="content"><p>Naaaahhhi.</p></div>
+              </div>
+              <div
+                class="line"
+                data-search="simran (trying to break her bangles though fails) mujhe chod ke kyon chale gaye."
+                data-actor="Aparna"
+              >
+                <div class="speaker">Simran</div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic"
+                      >(Trying to break her bangles though fails)</span
+                    >
+                    Mujhe chod ke kyon chale gaye.
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="raj (gets up and starts beating everyone with his stick). chup karo saab log. diya bujh gayaa. mein abhi bhee zinda hoon. (raj’s hand starts to go to his forehead though suddenly he shrugs and breaks into a dance) can we have a song saying something like i am back or exhibiting some attitude saying don’t worry just live, have fun and raj invites family to dance)."
+                data-actor="Apurva"
+              >
+                <div class="speaker">Raj</div>
+                <div class="content">
+                  <p>
+                    <span class="is-italic"
+                      >(Gets up and starts beating everyone with his
+                      stick).</span
+                    >
+                    Chup karo saab log. Diya bujh gayaa. Mein abhi bhee zinda
+                    hoon.
+                  </p>
+                  <p>
+                    <span class="is-italic"
+                      >(Raj’s hand starts to go to his forehead though suddenly
+                      he shrugs and breaks into a dance)</span
+                    >
+                  </p>
+                  <p>
+                    <span class="c-music is-italic"
+                      >Can we have a song saying something like I am back or
+                      exhibiting some attitude saying don’t worry just live,
+                      have fun and Raj invites family to dance).</span
+                    >
+                  </p>
+                </div>
+                <button type="button" class="reveal-btn">Tap to reveal</button>
+              </div>
+              <div
+                class="line"
+                data-search="everyone dances on ek dusre se karte hain pyaar hum. we ask the whole audience to join in this dance. the end."
+              >
+                <div class="speaker">Everyone</div>
+                <div class="content">
+                  <p>
+                    Dances on
+                    <span class="c-music"
+                      >Ek dusre se karte hain pyaar hum.</span
+                    ><button
+                      type="button"
+                      class="cue-play"
+                      data-audio="Audio files/08 - Ek Dusre se.mp3"
+                      data-cue="Ek dusre se karte hain pyaar hum"
+                    ></button>
+                  </p>
+                  <p><br />We ask the whole audience to join in this dance.</p>
+                  <p>The End.</p>
+                </div>
+              </div>
+            </div>
+          </section>
         </main>
       </div>
 
@@ -4056,7 +5389,9 @@
       </nav>
 
       <footer class="page-footer">
-        Mein hu Hero · rehearsal companion.
+        Mein hu Hero · rehearsal companion, generated from the production
+        script. The Google Doc is the editable master; regenerate this page from
+        it whenever the script changes.
         <div class="shortcut-hint">
           Keyboard: <strong>/</strong> search · <strong>Esc</strong> clear ·
           <strong>[</strong> / <strong>]</strong> previous/next scene ·
@@ -4065,10 +5400,7 @@
       </footer>
     </div>
     <script>
-      // The whole page behaviour. Not run at parse time any more: every
-      // collection below is read from the rendered script, so renderShow()
-      // (the next script block) calls this once show.json is on the page.
-      window.mhhBoot = function () {
+      (function () {
         // ---- persistence ----
         // Everything on this page used to persist through window.storage, an
         // artifact-host API that does not exist when the page is served from
@@ -4288,27 +5620,18 @@
         // Flag every dialogue line that carries a music cue (a .c-music span)
         // and pin a teal note badge to it, so the sound operator can scan the
         // script for cues. Detected from the markup at load so the marker can
-        // never drift from the cue text; a "Sound cues only" toggle then
+        // never drift from the cue text; a "Music cues only" toggle then
         // filters the script down to just these lines.
         var MUSIC_NOTE_SVG =
           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
-        // Sound effect rows carry .c-sfx instead and get a speaker badge.
-        // Both count as "sound cues" for the operator's filter, so both take
-        // .has-music, which is what that filter keys on.
-        var SFX_SVG =
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
         var musicLines = lines.filter(function (line) {
-          return !!line.querySelector(".c-music, .c-sfx");
+          return !!line.querySelector(".c-music");
         });
         musicLines.forEach(function (line) {
-          var sfx = !line.querySelector(".c-music");
           line.classList.add("has-music");
-          if (sfx) line.classList.add("is-sfx");
           var flag = document.createElement("span");
-          flag.className = sfx ? "music-flag is-sfx" : "music-flag";
-          flag.innerHTML = sfx
-            ? SFX_SVG + "<span>SFX</span>"
-            : MUSIC_NOTE_SVG + "<span>Song</span>";
+          flag.className = "music-flag";
+          flag.innerHTML = MUSIC_NOTE_SVG + "<span>Music</span>";
           line.appendChild(flag);
         });
 
@@ -4320,7 +5643,7 @@
         // time, and pressing a second button should cut the first rather than
         // layer on top of it (a rehearsal plays cues in sequence).
         //
-        // The files are prefetched when "Sound cues only" is switched on,
+        // The files are prefetched when "Music cues only" is switched on,
         // rather than on first press. See prefetchCueAudio below for why.
         // ============================================================
         var cueButtons = Array.prototype.slice.call(
@@ -4340,7 +5663,7 @@
           return encodeURI(btn.getAttribute("data-audio") || "");
         }
         function cueLabel(btn) {
-          return btn.getAttribute("data-cue") || "sound cue";
+          return btn.getAttribute("data-cue") || "music cue";
         }
         function setCueState(btn, state) {
           btn.classList.toggle("is-loading", state === "loading");
@@ -4523,7 +5846,7 @@
         // ---- prefetch ----
         // A cue that buffers when the operator presses play is a cue that has
         // missed its moment on stage, so the audio has to be resident before
-        // it is wanted. Turning on "Sound cues only" is the operator saying
+        // it is wanted. Turning on "Music cues only" is the operator saying
         // who they are: nobody else uses that view. So that is the trigger,
         // and it usually happens well before the first cue is played.
         //
@@ -4545,10 +5868,10 @@
           // nothing could be pulled down ahead of time; say nothing rather
           // than promise a readiness that was never attempted
           if (cuePrefetchState === "unsupported") return "";
-          if (cuePrefetchState === "done") return "Sound cues ready to play";
+          if (cuePrefetchState === "done") return "Music ready to play";
           if (cuePrefetchState === "running")
             return (
-              "Loading sound cues, " +
+              "Loading music, " +
               (cuePrefetchDone + cuePrefetchFailed) +
               " of " +
               cueButtons.length
@@ -4558,7 +5881,7 @@
           // just have to stream, and the operator can retry by toggling the
           // view. Silence here would read as "ready".
           if (cuePrefetchFailed)
-            return "Some sound cues could not be loaded, they will stream";
+            return "Some music could not be loaded, cues will stream";
           return "";
         }
         function paintCuePrefetch() {
@@ -4566,7 +5889,7 @@
           if (!el) return;
           // Only speaks while the view it belongs to is on. A download started
           // and then left running after the operator switched back to the full
-          // script should not leave "Sound cues ready to play" sitting in the sheet
+          // script should not leave "Music ready to play" sitting in the sheet
           // with nothing to play it against.
           var on = document.body.classList.contains("music-only");
           var text = on ? cuePrefetchLabel() : "";
@@ -4734,7 +6057,7 @@
         musicBtn.addEventListener("click", function () {
           var on = document.body.classList.toggle("music-only");
           musicBtn.setAttribute("aria-pressed", on ? "true" : "false");
-          setPillLabel(musicBtn, on ? "Show all lines" : "Sound cues only");
+          setPillLabel(musicBtn, on ? "Show all lines" : "Music cues only");
           // recompute the per-line actor filter too: entering this view lifts
           // it, leaving it restores it
           applyActorState();
@@ -4860,7 +6183,7 @@
             searchNoResults.textContent =
               "No lines match “" +
               input.value.trim() +
-              "”. Try another word, or clear the search.";
+              "” — try another word, or clear the search.";
             searchNoResults.hidden = false;
           }
         }
@@ -5146,7 +6469,7 @@
             setMode("read");
           }
           var count = 0;
-          // Sound cues only is the sound operator's view and outranks the
+          // Music cues only is the sound operator's view and outranks the
           // actor filter: it must show every cue in the show, not just the
           // ones near the selected character's lines. Without this the actor
           // filter still hid other people's music lines one by one, even
@@ -5737,7 +7060,7 @@
         // filters have emptied is display:none, so its link would be a
         // clickable no-op that still looks and feels alive. Mark it
         // aria-disabled, take it out of the tab order (the CSS also removes
-        // pointer events), and say why in the accessible name, reusing
+        // pointer events), and say why in the accessible name — reusing
         // railTickLabel's wording so the two surfaces never disagree.
         function syncNavAvailability() {
           navLinks.forEach(function (link) {
@@ -6052,11 +7375,11 @@
         // (a getBoundingClientRect per line of the selected actor). It runs
         // before any style/class writes of the frame, so it never forces a
         // synchronous reflow, and it is skipped while the scroll position
-        // has not moved, the same y cannot change which line is "current".
+        // has not moved — the same y cannot change which line is "current".
         // (Caching line offsets outright was considered but rejected: line
         // heights change on text-size taps, cue-stub swaps, font loading and
         // visibility changes, and a stale cache would silently drift the
-        // counter, a correctness risk the small savings do not justify.)
+        // counter — a correctness risk the small savings do not justify.)
         var lastCueY = -1;
         function onScrollFrame() {
           scrollTicking = false;
@@ -6064,7 +7387,7 @@
           var max = doc.scrollHeight - window.innerHeight;
           var y = window.pageYOffset || doc.scrollTop || 0;
           var pct = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
-          // keep the cue counter honest as the reader scrolls by hand
+          // keep the cue counter honest as the reader scrolls by hand —
           // first, while the layout state is still clean this frame
           if (actorSelect.value && y !== lastCueY) {
             lastCueY = y;
@@ -6550,386 +7873,6 @@
         if (document.fonts && document.fonts.ready) {
           document.fonts.ready.then(syncChromeMetrics);
         }
-      };
-
-      // ============================================================
-      // Script rendering.
-      //
-      // show.json is the master copy of the script, cast and sound cues. It
-      // is edited through editor.html and published to the repository; this
-      // turns it into exactly the markup the page used to carry by hand
-      // (same classes, data-actor, data-search, .cue-play buttons), so every
-      // feature in mhhBoot() works on it unchanged.
-      //
-      // "?draft" renders the editor's unpublished draft from localStorage
-      // instead, so an editor can preview a change before publishing it.
-      // ============================================================
-      (function () {
-        var DRAFT_KEY = "mhh-editor-draft";
-
-        function esc(s) {
-          return String(s == null ? "" : s)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;");
-        }
-        function two(n) {
-          return (n < 10 ? "0" : "") + n;
-        }
-
-        // Stored text is a tiny HTML subset: <p>, <i> (stage business),
-        // <mark> (song words), <mark class="sfx"> (sound-effect words), <br>. Anything else is dropped to its text,
-        // so a stray tag in show.json can never inject markup into the page.
-        // Returns the page markup and the plain text used for search.
-        function rich(src) {
-          var tpl = document.createElement("template");
-          tpl.innerHTML = src || "";
-          var paras = [];
-          var cur = null;
-          var plain = [];
-          function open() {
-            if (!cur) {
-              cur = { html: "" };
-              paras.push(cur);
-            }
-          }
-          // mu: "" (none), "song" (<mark>) or "sfx" (<mark class="sfx">)
-          function walk(node, it, mu, top) {
-            Array.prototype.forEach.call(node.childNodes, function (n) {
-              if (n.nodeType === 3) {
-                if (top && !n.nodeValue.trim()) return;
-                open();
-                var t = esc(n.nodeValue.replace(/\s+/g, " "));
-                plain.push(n.nodeValue);
-                var cls = [];
-                if (mu) cls.push(mu === "sfx" ? "c-sfx" : "c-music");
-                if (it) cls.push("is-italic");
-                cur.html += cls.length
-                  ? '<span class="' + cls.join(" ") + '">' + t + "</span>"
-                  : t;
-              } else if (n.nodeType === 1) {
-                var tag = n.tagName;
-                if (tag === "BR") {
-                  open();
-                  cur.html += "<br />";
-                } else if (tag === "P" || tag === "DIV") {
-                  cur = null;
-                  open();
-                  walk(n, it, mu, false);
-                  cur = null;
-                  plain.push(" ");
-                } else {
-                  walk(
-                    n,
-                    it || tag === "I" || tag === "EM",
-                    mu ||
-                      (tag === "MARK"
-                        ? n.classList.contains("sfx")
-                          ? "sfx"
-                          : "song"
-                        : ""),
-                    false,
-                  );
-                }
-              }
-            });
-          }
-          walk(tpl.content, false, "", true);
-          return {
-            html: paras
-              .filter(function (p) {
-                return p.html.replace(/<br \/>/g, "").trim();
-              })
-              .map(function (p) {
-                return "<p>" + p.html.trim() + "</p>";
-              })
-              .join(""),
-            text: plain.join("").replace(/\s+/g, " ").trim(),
-          };
-        }
-
-        function renderShow(show) {
-          var chars = {};
-          var actors = {};
-          var songs = {};
-          var sfx = {};
-          (show.actors || []).forEach(function (a) {
-            actors[a.id] = a;
-          });
-          (show.characters || []).forEach(function (c) {
-            chars[c.id] = c;
-          });
-          (show.songs || []).forEach(function (a) {
-            songs[a.id] = a;
-          });
-          (show.sfx || []).forEach(function (a) {
-            sfx[a.id] = a;
-          });
-          var scenesData = show.scenes || [];
-
-          // "Viewing as": one option per actor who plays anyone, labelled
-          // with the characters they play, which the picker splits on " · ".
-          var select = document.getElementById("actorSelect");
-          (show.actors || []).forEach(function (a) {
-            var names = (show.characters || [])
-              .filter(function (c) {
-                return c.actorId === a.id;
-              })
-              .map(function (c) {
-                return c.name;
-              });
-            if (!names.length) return;
-            var o = document.createElement("option");
-            o.value = a.id;
-            o.textContent = a.name + " · " + names.join(", ");
-            select.appendChild(o);
-          });
-
-          // Cast & Crew table
-          var tbody = document.getElementById("castTableBody");
-          tbody.innerHTML = (show.characters || [])
-            .map(function (c) {
-              var a = actors[c.actorId];
-              return (
-                '<tr><td class="c-char">' +
-                esc(c.name) +
-                "</td><td>" +
-                esc(c.role || "") +
-                "</td><td>" +
-                esc(
-                  a
-                    ? a.name
-                    : c.actorId === "everyone"
-                      ? "Everyone"
-                      : "Not cast yet",
-                ) +
-                "</td></tr>"
-              );
-            })
-            .join("");
-
-          // Scene nav (desktop sidebar). The sheet and rail build themselves
-          // from the rendered sections.
-          var nav = document.querySelector(".scene-nav");
-          nav.insertAdjacentHTML(
-            "beforeend",
-            scenesData
-              .map(function (sc, i) {
-                return (
-                  '<a class="nav-link" href="#scene-' +
-                  (i + 1) +
-                  '" data-scene="' +
-                  (i + 1) +
-                  '"><span class="nav-num">' +
-                  two(i + 1) +
-                  '</span><span class="nav-title">' +
-                  esc(sc.title) +
-                  "</span></a>"
-                );
-              })
-              .join(""),
-          );
-          document.getElementById("sceneCount").textContent = String(
-            scenesData.length,
-          );
-
-          function cueRow(item) {
-            var isSfx = item.type === "sfx";
-            var track = (isSfx ? sfx : songs)[isSfx ? item.sfxId : item.songId];
-            if (!track) return "";
-            var cls = isSfx ? "c-sfx" : "c-music";
-            var note = item.note
-              ? ' <span class="is-italic">' + esc(item.note) + "</span>"
-              : "";
-            var btn = track.file
-              ? '<button type="button" class="cue-play' +
-                (isSfx ? " is-sfx" : "") +
-                '" data-audio="' +
-                esc(track.file) +
-                '" data-cue="' +
-                esc(track.title) +
-                '"></button>'
-              : "";
-            var label = isSfx ? "Sound effect" : "Song";
-            return (
-              '<div class="line cue-row" data-search="' +
-              esc((label + " " + track.title + " " + (item.note || "")).toLowerCase()) +
-              '"><div class="speaker">' +
-              label +
-              '</div><div class="content"><p><span class="' +
-              cls +
-              '">' +
-              esc(track.title) +
-              "</span>" +
-              btn +
-              note +
-              "</p></div></div>"
-            );
-          }
-
-          function itemHtml(item) {
-            if (item.type === "song" || item.type === "sfx") return cueRow(item);
-            var r = rich(item.text);
-            var cut = item.optional ? " is-cut" : "";
-            if (item.type === "direction") {
-              if (!item.label) {
-                return (
-                  '<div class="line no-speaker' +
-                  cut +
-                  '" data-search="' +
-                  esc(r.text.toLowerCase()) +
-                  '"><div class="speaker" aria-hidden="true"></div><div class="content">' +
-                  r.html +
-                  "</div></div>"
-                );
-              }
-              return (
-                '<div class="line' +
-                cut +
-                '" data-search="' +
-                esc((item.label + " " + r.text).toLowerCase()) +
-                '"><div class="speaker">' +
-                esc(item.label) +
-                '</div><div class="content">' +
-                r.html +
-                "</div></div>"
-              );
-            }
-            var c = chars[item.characterId] || { name: "Unassigned" };
-            var speaker = c.name + (item.note ? " (" + item.note + ")" : "");
-            var actor = c.actorId && actors[c.actorId] ? c.actorId : "";
-            return (
-              '<div class="line' +
-              cut +
-              '" data-search="' +
-              esc((speaker + " " + r.text).toLowerCase()) +
-              '"' +
-              (actor ? ' data-actor="' + esc(actor) + '"' : "") +
-              '><div class="speaker">' +
-              esc(speaker) +
-              '</div><div class="content">' +
-              r.html +
-              "</div>" +
-              (actor
-                ? '<button type="button" class="reveal-btn">Tap to reveal</button>'
-                : "") +
-              "</div>"
-            );
-          }
-
-          function metaItem(label, value) {
-            return value
-              ? '<div class="meta-item"><span class="meta-label">' +
-                  label +
-                  '</span><span class="meta-value">' +
-                  esc(value) +
-                  "</span></div>"
-              : "";
-          }
-
-          var html = scenesData
-            .map(function (sc, i) {
-              var n = i + 1;
-              var items = sc.items || [];
-              // Fallback CAST: whoever speaks in the scene, in cast order
-              var inScene = {};
-              items.forEach(function (it) {
-                if (it.type === "line") inScene[it.characterId] = true;
-              });
-              var cast = (show.characters || [])
-                .filter(function (c) {
-                  return inScene[c.id];
-                })
-                .map(function (c) {
-                  return c.name;
-                })
-                .join(", ");
-              // An explicit "who is on stage" wins: people can be on stage
-              // without a line (scene 3 is Raj and Simran dancing).
-              var meta =
-                metaItem("CAST", (sc.cast || "").trim() || cast) +
-                metaItem("LOCATION", sc.location) +
-                metaItem("PROPS", sc.props) +
-                (sc.notes
-                  ? '<p class="meta-note">' + esc(sc.notes) + "</p>"
-                  : "");
-              return (
-                '<section class="scene reveal-on-scroll" id="scene-' +
-                n +
-                '" data-scene="' +
-                n +
-                '"><div class="scene-head"><span class="scene-num"><span class="sn-label">Scene</span><span class="sn-digits">' +
-                two(n) +
-                "</span></span><h2>" +
-                esc(sc.title) +
-                "</h2></div>" +
-                (meta ? '<div class="meta-box">' + meta + "</div>" : "") +
-                '<div class="dialogue">' +
-                items.map(itemHtml).join("") +
-                "</div></section>"
-              );
-            })
-            .join("");
-          var status = document.getElementById("scriptStatus");
-          status.insertAdjacentHTML("beforebegin", html);
-          status.remove();
-        }
-
-        function fail() {
-          var status = document.getElementById("scriptStatus");
-          if (status)
-            status.textContent =
-              "The script could not be loaded. Check your connection and reload the page.";
-        }
-
-        function start(show, isDraft) {
-          if (isDraft) {
-            var b = document.createElement("p");
-            b.className = "draft-banner";
-            b.textContent = isDraft.unchanged
-              ? "Preview from the script editor. It matches the published script."
-              : "Preview of unpublished edits. The cast cannot see these yet.";
-            document.body.insertBefore(b, document.body.firstChild);
-            document.title =
-              (isDraft.unchanged ? "Preview · " : "Preview (unpublished) · ") +
-              document.title;
-          }
-          renderShow(show);
-          window.mhhBoot();
-          // The browser tried to honour a #scene-N link before the scene
-          // existed; honour it now.
-          if (location.hash.length > 1) {
-            var target = document.getElementById(location.hash.slice(1));
-            if (target) target.scrollIntoView();
-          }
-        }
-
-        if (/[?&]draft\b/.test(location.search)) {
-          try {
-            var d = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
-            if (d && d.show) {
-              start(d.show, {
-                unchanged: !!d.baseJson && JSON.stringify(d.show) === d.baseJson,
-              });
-              return;
-            }
-          } catch (e) {
-            /* no readable draft: fall through to the published script */
-          }
-        }
-        fetch("show.json", { cache: "no-cache" })
-          .then(function (res) {
-            if (!res.ok) throw new Error("HTTP " + res.status);
-            return res.json();
-          })
-          .then(function (show) {
-            start(show, false);
-          })
-          .catch(function (err) {
-            if (window.console) console.error(err);
-            fail();
-          });
       })();
 
       // ---- offline support ----
