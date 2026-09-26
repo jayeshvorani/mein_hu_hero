@@ -342,7 +342,13 @@
    "file": "Audio files/songs/tujhe-deka-muidtwex.mp3"
   }
  ],
- "sfx": [],
+ "sfx": [
+  {
+   "id": "sfx-muij4o9zev8y",
+   "title": "Fail 2",
+   "file": "Audio files/sfx/fail-2-muij4mua.mp3"
+  }
+ ],
  "scenes": [
   {
    "id": "scene-1",
@@ -526,7 +532,13 @@
      "id": "i-muie73rialni",
      "type": "direction",
      "label": "",
-     "text": "<p>Raj puts one hand over his forehead</p>"
+     "text": "<p><mark class=\"sfx\">Raj puts one hand over his forehead</mark></p>"
+    },
+    {
+     "id": "i-muiig5mobe3r",
+     "type": "sfx",
+     "sfxId": "sfx-muij4o9zev8y",
+     "note": ""
     }
    ],
    "onStage": [
