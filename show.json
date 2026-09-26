@@ -488,19 +488,25 @@
      "type": "line",
      "characterId": "narrator",
      "note": "",
-     "text": "<p>Raj aur Simran aksar ek doosare se milne lage hain.</p><p><mark>(Music tbd – Background music dhun of “Ek main aur ek tu, dono mile is tarah” </mark>while narrator speaks and Raj &amp; Simran take entry into the park.)</p>"
+     "text": "<p>Raj aur Simran aksar ek doosare se milne lage hain.</p>"
     },
     {
-     "id": "i39",
+     "id": "i-muibvyt2zdjr",
      "type": "direction",
      "label": "",
-     "text": "<p><i> Raj sits and Simran is dancing on ‘</i><mark><i>Tathya tathya ho’ </i></mark><i>Raj puts his hand on his head. Simran pulls him aside and scene is closed by showing two flowers cross over each other. (flower cross over upon exit of Raj and Simran instead of over their faces, so no queries by children. Also as Simran takes Raj away person enters with flowers) . </i></p>"
+     "text": "<p>...while narrator speaks and Raj &amp; Simran take entry into the park.)</p>"
     },
     {
      "id": "i39-s1",
      "type": "song",
      "songId": "song-04",
      "note": ""
+    },
+    {
+     "id": "i39",
+     "type": "direction",
+     "label": "",
+     "text": "<p><i> Raj sits and Simran is dancing on ‘</i><mark><i>Tathya tathya ho’ </i></mark><i>Raj puts his hand on his head. Simran pulls him aside and scene is closed by showing two flowers cross over each other. (flower cross over upon exit of Raj and Simran instead of over their faces, so no queries by children. Also as Simran takes Raj away person enters with flowers) . </i></p>"
     }
    ]
   },
