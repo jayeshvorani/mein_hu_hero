@@ -1391,8 +1391,6 @@
     optional: "Optional line (yellow)",
     song: "Song words (teal)",
     sfx: "Sound effect words (magenta)",
-    songBadge: "Song badge",
-    sfxBadge: "Sound effect badge",
     direction: "Stage direction (grey italic)",
   };
   function showField(key, label, value, opts) {
@@ -3707,6 +3705,10 @@
       "scenes",
     ].forEach(function (k) {
       if (!Array.isArray(show[k])) show[k] = [];
+    });
+    // the song and SFX badges were retired; their guide rows go with them
+    show.legend = show.legend.filter(function (row) {
+      return row.style !== "songBadge" && row.style !== "sfxBadge";
     });
     if (!show.show || typeof show.show !== "object") show.show = {};
     if (!show.show.photo) show.show.photo = {};

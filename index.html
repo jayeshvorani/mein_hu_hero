@@ -2082,53 +2082,19 @@
         display: none;
       }
 
-      /* ---------- music cue marker ---------- */
-      /* A teal note badge pinned to any line that carries a music cue, so the
-         sound operator can scan the script and spot every cue at a glance.
-         Lines are flagged at runtime from the .c-music spans already in the
-         markup, so the marker can never drift out of sync with the cue text. */
+      /* ---------- sound cue marker ----------
+         Any line carrying song or sound-effect words gets a coloured left
+         edge (teal for music, magenta for effects), so the sound operator can
+         scan for cues. Flagged at runtime from the coloured spans, so the
+         marker can never drift from the text. Song and sound-effect rows say
+         what they are in their label and play button; no badge on top. */
       .line.has-music {
         border-left: 3px solid var(--c-music);
       }
-      .line.has-music .content {
-        padding-right: 5.5rem;
-      }
-      .music-flag {
-        position: absolute;
-        right: 0.9rem;
-        top: 0.7rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.35rem;
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.6rem;
-        letter-spacing: 0.05em;
-        text-transform: uppercase;
-        color: var(--c-music);
-        background: color-mix(in srgb, var(--teal) 14%, transparent);
-        border: 1px solid color-mix(in srgb, var(--teal) 40%, transparent);
-        border-radius: 999px;
-        padding: 0.2rem 0.55rem;
-        pointer-events: none;
-      }
-      .music-flag svg {
-        width: 12px;
-        height: 12px;
-      }
-      /* In the legend the badge is a sample sitting in normal flow, not a
-         marker pinned to the corner of a line. */
-      .legend-swatch.music-flag {
-        position: static;
-      }
-      /* Sound effects: same badge and button shapes as music, in magenta so
+      /* Sound effects: same edge and button shapes as music, in magenta so
          the operator can tell a song from an effect at a glance. */
       .c-sfx {
         color: var(--c-sfx);
-      }
-      .music-flag.is-sfx {
-        color: var(--c-sfx);
-        background: color-mix(in srgb, var(--magenta) 14%, transparent);
-        border-color: color-mix(in srgb, var(--magenta) 40%, transparent);
       }
       .line.has-music.is-sfx {
         border-left-color: var(--c-sfx);
@@ -2153,13 +2119,6 @@
          than pushing the button onto a line of its own; a note always takes
          the line below. Songs and SFX rows therefore look alike at every
          width, however long the title. */
-      /* On phones the badge sits on the speaker line above, so a cue row's
-         title may use the full width. */
-      @media (max-width: 640px) {
-        .line.cue-row.has-music .content {
-          padding-right: 0;
-        }
-      }
       .cue-row .content p {
         margin: 0;
         display: flex;
@@ -2411,11 +2370,6 @@
         .cue-play.is-loading::after {
           animation: none;
         }
-      }
-      /* the practice reveal button and the music flag both sit top-right; when
-         both are present on one line, drop the flag below the reveal button */
-      body.practice-mode .line.is-practicing:not(.peek).has-music .music-flag {
-        top: 2.5rem;
       }
       /* music-cues-only view: hide every line that has no music */
       body.music-only .line:not(.has-music) {
@@ -3351,16 +3305,9 @@
         .cue-render {
           display: none !important;
         }
-        /* keep the music badge legible on the print palette; music-only view is
+        /* keep the cue edge visible on the print palette; music-only view is
            intentionally left filtered so printing in that mode yields a clean
            sound cue sheet */
-        .music-flag {
-          color: #0f6d6a !important;
-          border-color: #0f6d6a !important;
-          background: #fff !important;
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
-        }
         .line.has-music {
           border-left: 3px solid #0f6d6a !important;
         }
@@ -4285,32 +4232,17 @@
           document.querySelectorAll(".nav-link"),
         );
 
-        // ---- music cue marker ----
-        // Flag every dialogue line that carries a music cue (a .c-music span)
-        // and pin a teal note badge to it, so the sound operator can scan the
-        // script for cues. Detected from the markup at load so the marker can
-        // never drift from the cue text; a "Sound cues only" toggle then
-        // filters the script down to just these lines.
-        var MUSIC_NOTE_SVG =
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
-        // Sound effect rows carry .c-sfx instead and get a speaker badge.
-        // Both count as "sound cues" for the operator's filter, so both take
-        // .has-music, which is what that filter keys on.
-        var SFX_SVG =
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+        // ---- sound cue marker ----
+        // Flag every line that carries song or sound-effect words, so the
+        // coloured edge and the "Sound cues only" filter (which keys on
+        // .has-music) find them. Detected from the markup at load so the
+        // marker can never drift from the text.
         var musicLines = lines.filter(function (line) {
           return !!line.querySelector(".c-music, .c-sfx");
         });
         musicLines.forEach(function (line) {
-          var sfx = !line.querySelector(".c-music");
           line.classList.add("has-music");
-          if (sfx) line.classList.add("is-sfx");
-          var flag = document.createElement("span");
-          flag.className = sfx ? "music-flag is-sfx" : "music-flag";
-          flag.innerHTML = sfx
-            ? SFX_SVG + "<span>SFX</span>"
-            : MUSIC_NOTE_SVG + "<span>Song</span>";
-          line.appendChild(flag);
+          if (!line.querySelector(".c-music")) line.classList.add("is-sfx");
         });
 
         // ============================================================
@@ -4487,8 +4419,8 @@
             // Read the state from the class this function owns, not from
             // parentage. Inferring it from "is my parent the line" happens to
             // work while every cue sits inside .content > p, but a cue
-            // authored as a direct child of .line (where .reveal-btn and the
-            // injected .music-flag already live) would read as permanently
+            // authored as a direct child of .line (where .reveal-btn already
+            // lives) would read as permanently
             // detached and never be positioned at all.
             var detached = btn.classList.contains("is-detached");
             if (shouldDetach === detached) return;
@@ -6652,10 +6584,6 @@
 
         // Title, tagline, photo, legend and footer: the show's own words,
         // from show.json "show" and "legend".
-        var NOTE_SVG =
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
-        var SPEAKER_SVG =
-          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
         function renderFront(show, sceneCount) {
           var info = show.show || {};
           var title = (info.title || "").trim();
@@ -6708,13 +6636,16 @@
             optional: ["legend-swatch legend-gold", ""],
             song: ["legend-swatch c-music", ""],
             sfx: ["legend-swatch c-sfx", ""],
-            songBadge: ["legend-swatch music-flag", NOTE_SVG],
-            sfxBadge: ["legend-swatch music-flag is-sfx", SPEAKER_SVG],
             direction: ["legend-swatch is-italic", ""],
           };
-          document.getElementById("legendRows").innerHTML = (show.legend || [])
+          // rows in a look that no longer exists (the retired song and SFX
+          // badges) are skipped rather than drawn wrong
+          var legendRows = (show.legend || []).filter(function (row) {
+            return SAMPLE[row.style];
+          });
+          document.getElementById("legendRows").innerHTML = legendRows
             .map(function (row) {
-              var look = SAMPLE[row.style] || ["legend-swatch", ""];
+              var look = SAMPLE[row.style];
               var text = look[1]
                 ? look[1] + "<span>" + esc(row.sample) + "</span>"
                 : esc(row.sample);
@@ -6734,7 +6665,7 @@
               );
             })
             .join("");
-          document.getElementById("legend").hidden = !(show.legend || []).length;
+          document.getElementById("legend").hidden = !legendRows.length;
         }
 
         function renderShow(show) {
