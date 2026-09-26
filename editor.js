@@ -3791,6 +3791,24 @@
       }, 300);
       draft = null;
     }
+    // The editor saves a draft every time it opens, edited or not. A draft
+    // that is still identical to the version it was started from holds no
+    // work, so it is dropped and the published script used instead.
+    // Without this, a draft left from before someone published (from
+    // another browser, or a merged change) was taken for unpublished work:
+    // "Unpublished changes" never cleared, and "Publish mine anyway" would
+    // have put the older script back over the newer one.
+    if (draft && draft.show) {
+      var draftBase = S.baseJson;
+      try {
+        if (draft.baseJson)
+          draftBase = JSON.stringify(normalise(JSON.parse(draft.baseJson)));
+      } catch (e) {
+        draftBase = S.baseJson;
+      }
+      if (JSON.stringify(normalise(clone(draft.show))) === draftBase) draft = null;
+      else if (draft.baseJson) draft.baseJson = draftBase;
+    }
     if (draft && draft.show) {
       S.show = normalise(draft.show);
       if (draft.baseJson && draft.baseJson !== S.baseJson) {
