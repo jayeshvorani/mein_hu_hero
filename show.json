@@ -158,6 +158,11 @@
    "id": "song-08",
    "title": "Ek dusre se karte hain pyaar hum",
    "file": "Audio files/08 - Ek Dusre se.mp3"
+  },
+  {
+   "id": "song-muibomub84e2",
+   "title": "Tujhe Deka",
+   "file": "Audio files/songs/tujhe-deka-muibokha.mp3"
   }
  ],
  "sfx": [],
@@ -426,7 +431,19 @@
      "id": "i33",
      "type": "direction",
      "label": "",
-     "text": "<p><i>Raj shakes hand with Shetji and walks towards the door. He collides with Simran. They look into each other’s eyes and go on staring at each other. </i><mark><i>(Haunting music of Dil to Pagal Hain). </i></mark><i>Shetji coughs loudly. Raj then hastily leaves the office. Simran goes towards her dad.</i></p>"
+     "text": "<p><i>Raj shakes hand with Shetji and walks towards the door. He collides with Simran. </i><mark><i>They look into each other’s eyes and go on staring at each other.</i></mark></p>"
+    },
+    {
+     "id": "i-muibo4re920z",
+     "type": "song",
+     "songId": "song-muibomub84e2",
+     "note": ""
+    },
+    {
+     "id": "i-muibp0vvq6af",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Shetji coughs loudly. Raj then hastily leaves the office. Simran goes towards her dad.</p>"
     },
     {
      "id": "i34",
