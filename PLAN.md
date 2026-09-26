@@ -2206,7 +2206,11 @@ never copied over it.
 - [x] 3. Compared. Code differed only by the three cache safeguards; GitHub's notes had nothing the local ones lacked; show.json left as on GitHub
 - [x] 4. Carried across: index.html, editor.js, sw.js (safeguards), BRIEF.md, PLAN.md, tools/
 - [x] 5. .gitignore added; the three index.backup-* files removed from the repo (still in git history)
-- [ ] 6. First pull request opened: safeguards + notes + tools. Waiting for the user to merge
-- [ ] 7. Check the live site after merge
-- [ ] 8. Record the push exception in memory so future sessions follow it
+- [x] 6. Pull request #1 (safeguards, notes, tools) merged 2026-09-26
+- [x] 7. Live site checked after merge: safeguards live, no errors
+- [x] 8. Push exception recorded in memory
 - [ ] 9. The Downloads folder is left untouched; the user deletes it when happy
+
+### Changes since the workflow went live
+- #2 (merged 2026-09-26): SONG and SFX badges dropped; the guide has one Song and one Sound effect row.
+- Editor night mode: the "light theme only" limit was Claude's call during review, never agreed with the user, and is withdrawn. The editor now follows the device like the site, with its own sun/moon button (this visit only). The site's footer link opens the editor in a new tab.

@@ -74,8 +74,6 @@ Publish. Preview shows the real site with the draft.
 - Cast and sound rows stack with visible labels below 980px, including
   tablets, so no field is ever cut off. Longer pages there are the accepted
   cost.
-- The editor has a light theme only. It is a work tool for two or three
-  organisers on laptops; the dark theme serves the cast reading at rehearsal.
 - The scene rail's buttons overhang the script column by 12px on phones
   (640px and below). Decided in Round 6 (PLAN.md "The overlap trade"): the
   overhang lands on card padding, never on text. From 641 to 900px the
