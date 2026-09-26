@@ -335,6 +335,11 @@
    "id": "song-08",
    "title": "Ek dusre se karte hain pyaar hum",
    "file": "Audio files/08 - Ek Dusre se.mp3"
+  },
+  {
+   "id": "song-muidty0wkpj2",
+   "title": "Tujhe Deka",
+   "file": "Audio files/songs/tujhe-deka-muidtwex.mp3"
   }
  ],
  "sfx": [],
@@ -454,16 +459,14 @@
      "type": "line",
      "characterId": "dharamchand",
      "note": "",
-     "text": "<p>Jao aur pehle dada ji ka Ashirwad le lo.</p>",
-     "optional": true
+     "text": "<p>Jao aur pehle dada ji ka Ashirwad le lo.</p>"
     },
     {
      "id": "i14",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p><i>(Raj walks to Dadaji’s photo and keeps his degree near the photo)</i></p><p>Dadaji aaj main vilayat se degree leke aayaa hun. Aapka sapna maine puraa kiya hain. Muze aashirwad deejiye.</p>",
-     "optional": true
+     "text": "<p><i>(Raj walks to Dadaji’s photo and keeps his degree near the photo)</i></p><p>Dadaji aaj main vilayat se degree leke aayaa hun. Aapka sapna maine puraa kiya hain. Muze aashirwad deejiye.</p>"
     },
     {
      "id": "i15",
@@ -636,7 +639,19 @@
      "id": "i33",
      "type": "direction",
      "label": "",
-     "text": "<p><i>Raj shakes hand with Shetji and walks towards the door. He collides with Simran. They look into each other’s eyes and go on staring at each other. </i><mark><i>(Haunting music of Dil to Pagal Hain). </i></mark><i>Shetji coughs loudly. Raj then hastily leaves the office. Simran goes towards her dad.</i></p>"
+     "text": "<p><i>Raj shakes hand with Shetji and walks towards the door. He collides with Simran. </i><mark><i>They look into each other’s eyes and go on staring at each other.</i></mark><i> </i></p>"
+    },
+    {
+     "id": "i-muidte4s8o1c",
+     "type": "song",
+     "songId": "song-muidty0wkpj2",
+     "note": ""
+    },
+    {
+     "id": "i-muidu8an0fte",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Shetji coughs loudly. Raj then hastily leaves the office. Simran goes towards her dad.</p>"
     },
     {
      "id": "i34",
@@ -1012,16 +1027,14 @@
      "type": "line",
      "characterId": "rocky",
      "note": "",
-     "text": "<p>Dad, kya main Bade Dadaji ki photo ke saamne ye marksheet rakhun?</p>",
-     "optional": true
+     "text": "<p>Dad, kya main Bade Dadaji ki photo ke saamne ye marksheet rakhun?</p>"
     },
     {
      "id": "i62",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Ek khayega merese. <i>(Action like zapad khayega)</i></p>",
-     "optional": true
+     "text": "<p>Ek khayega merese. <i>(Action like zapad khayega)</i></p>"
     },
     {
      "id": "i63",
