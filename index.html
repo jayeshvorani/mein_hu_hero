@@ -2374,14 +2374,15 @@
         color: var(--muted);
         font-weight: 500;
       }
-      /* A stage direction with no speaker: let the text use the full width
-         rather than reserving an empty 158px speaker column beside it. The
-         class was in the markup with no rule behind it. */
-      .line.no-speaker {
-        grid-template-columns: 1fr;
+      /* Stage directions: italic, dimmer text and a dashed grey edge, the
+         counterpart of the teal edge on songs and magenta on sound effects.
+         A song or optional marking on the same row keeps its own edge. */
+      .line.stage-dir .content {
+        font-style: italic;
+        color: var(--ink-dim);
       }
-      .line.no-speaker .speaker {
-        display: none;
+      .line.stage-dir:not(.has-music):not(.is-cut) {
+        border-left: 3px dashed var(--muted);
       }
 
       body.rehearse-mode .line {
@@ -4006,7 +4007,11 @@
               <div class="legend-sample">
                 <span class="legend-swatch is-italic">(stage direction)</span>
               </div>
-              <div class="legend-meaning">What happens on stage.</div>
+              <div class="legend-meaning">
+                What happens on stage. Directions are labelled
+                <strong>Stage direction</strong>, in grey italics with a dashed
+                edge.
+              </div>
             </div>
           </section>
 
@@ -6785,24 +6790,16 @@
             var r = rich(item.text);
             var cut = item.optional ? " is-cut" : "";
             if (item.type === "direction") {
-              if (!item.label) {
-                return (
-                  '<div class="line no-speaker' +
-                  cut +
-                  '" data-search="' +
-                  esc(r.text.toLowerCase()) +
-                  '"><div class="speaker" aria-hidden="true"></div><div class="content">' +
-                  r.html +
-                  "</div></div>"
-                );
-              }
+              // Every direction is labelled, like a song or a line, so it
+              // reads as a direction at a glance. The generic label stays out
+              // of search, or "stage" would match every one of them.
               return (
-                '<div class="line' +
+                '<div class="line stage-dir' +
                 cut +
                 '" data-search="' +
-                esc((item.label + " " + r.text).toLowerCase()) +
+                esc(((item.label ? item.label + " " : "") + r.text).toLowerCase()) +
                 '"><div class="speaker">' +
-                esc(item.label) +
+                esc(item.label || "Stage direction") +
                 '</div><div class="content">' +
                 r.html +
                 "</div></div>"
