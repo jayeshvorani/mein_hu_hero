@@ -3688,6 +3688,41 @@
   );
 
   // ------------------------------------------------------------------
+  // day and night mode
+  // ------------------------------------------------------------------
+  // Same rule as the site: follow the device, and let the button switch
+  // for this visit only, so no lasting setting is created by accident.
+  var themeBtn = document.getElementById("themeBtn");
+  var themeOverridden = false;
+  function applyTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    themeBtn.setAttribute("aria-pressed", t === "dark" ? "true" : "false");
+  }
+  function systemTheme() {
+    return window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  }
+  applyTheme(systemTheme());
+  if (window.matchMedia) {
+    var darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    var onScheme = function () {
+      if (!themeOverridden) applyTheme(systemTheme());
+    };
+    if (darkQuery.addEventListener) darkQuery.addEventListener("change", onScheme);
+    else if (darkQuery.addListener) darkQuery.addListener(onScheme);
+  }
+  themeBtn.addEventListener("click", function () {
+    themeOverridden = true;
+    applyTheme(
+      document.documentElement.getAttribute("data-theme") === "dark"
+        ? "light"
+        : "dark",
+    );
+  });
+
+  // ------------------------------------------------------------------
   // load
   // ------------------------------------------------------------------
   // Fills in anything an older or hand-edited show.json lacks, so the rest
