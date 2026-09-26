@@ -462,11 +462,17 @@
      "text": "<p>Jao aur pehle dada ji ka Ashirwad le lo.</p>"
     },
     {
+     "id": "i-muie1mmxbx49",
+     "type": "direction",
+     "label": "",
+     "text": "<p><i>(Raj walks to Dadaji’s photo and keeps his degree near the photo)</i></p>"
+    },
+    {
      "id": "i14",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p><i>(Raj walks to Dadaji’s photo and keeps his degree near the photo)</i></p><p>Dadaji aaj main vilayat se degree leke aayaa hun. Aapka sapna maine puraa kiya hain. Muze aashirwad deejiye.</p>"
+     "text": "<p>Dadaji aaj main vilayat se degree leke aayaa hun. Aapka sapna maine puraa kiya hain. Muze aashirwad deejiye.</p>"
     },
     {
      "id": "i15",
@@ -521,7 +527,7 @@
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p><i>(One hand over his forehead.)</i> Scene 1 over.</p>"
+     "text": "<p><i>(One hand over his forehead.) Scene 1 over.</i></p>"
     }
    ],
    "onStage": [
