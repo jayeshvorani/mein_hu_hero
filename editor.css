@@ -66,6 +66,7 @@
   --bar-bg: #27221d;
   --bar-ink: #fffaf2;
   --error-bg: #8f241e;
+  --chip-on-bg: var(--gold-border);
   --radius: 10px;
   --topbar-h: 60px;
   --ui: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -82,14 +83,16 @@ html[data-theme="dark"] {
   --paper: #16110e;
   --ink: #e5ded7;
   --ink-dim: #c3bdb6;
-  --muted: #a39c95;
+  --muted: #918b84;
   --marigold: #f9b73f;
   --sindoor: #f66e60;
   --sindoor-strong: #ff8a80;
   --magenta: #df6c98;
   --teal: #44d0c1;
-  --gold-bg: #2a2110;
-  --gold-border: #b8892c;
+  --gold-bg: color-mix(in srgb, var(--marigold) 12%, transparent);
+  --gold-border: color-mix(in srgb, var(--marigold) 40%, transparent);
+  /* a pressed "Optional" chip needs a solid fill behind its dark label */
+  --chip-on-bg: var(--marigold);
   --gold-ink: #ffdf9e;
   --hairline: rgba(255, 240, 220, 0.12);
   --hairline-strong: rgba(255, 240, 220, 0.26);
@@ -100,6 +103,36 @@ html[data-theme="dark"] {
   --field-focus-bg: #1f1814;
   --bar-bg: #2e2520;
   --error-bg: #b3362c;
+}
+
+/* Wide-gamut screens (most Macs and phones) get the site's more saturated
+   versions of the same colours. Values copied from index.html; keep them
+   in step with it. */
+@supports (color: oklch(0.5 0.1 60)) {
+  :root {
+    --marigold: oklch(0.52 0.109 78);
+    --sindoor: oklch(0.505 0.165 28);
+    --sindoor-strong: oklch(0.43 0.155 28);
+    --magenta: oklch(0.47 0.17 358);
+    --teal: oklch(0.48 0.085 185);
+    --ink: oklch(0.255 0.012 70);
+    --ink-dim: oklch(0.375 0.012 70);
+    --muted: oklch(0.505 0.012 70);
+    --bg: oklch(0.945 0.018 78);
+    --bg-2: oklch(0.915 0.018 78);
+  }
+  html[data-theme="dark"] {
+    --marigold: oklch(0.82 0.15 78);
+    --sindoor: oklch(0.7 0.17 28);
+    --sindoor-strong: oklch(0.76 0.14 26);
+    --magenta: oklch(0.68 0.15 358);
+    --teal: oklch(0.78 0.12 185);
+    --ink: oklch(0.905 0.012 70);
+    --ink-dim: oklch(0.8 0.012 70);
+    --muted: oklch(0.64 0.012 70);
+    --bg: oklch(0.145 0.008 60);
+    --bg-2: oklch(0.185 0.008 60);
+  }
 }
 
 * {
@@ -818,8 +851,8 @@ main {
   min-height: 32px;
 }
 .chip-toggle[aria-pressed="true"] {
-  background: var(--gold-border);
-  border-color: var(--gold-border);
+  background: var(--chip-on-bg);
+  border-color: var(--chip-on-bg);
   color: #2c2003;
 }
 .icon-btn {

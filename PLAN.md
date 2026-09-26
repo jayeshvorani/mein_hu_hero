@@ -2214,3 +2214,4 @@ never copied over it.
 ### Changes since the workflow went live
 - #2 (merged 2026-09-26): SONG and SFX badges dropped; the guide has one Song and one Sound effect row.
 - Editor night mode: the "light theme only" limit was Claude's call during review, never agreed with the user, and is withdrawn. The editor now follows the device like the site, with its own sun/moon button (this visit only). The site's footer link opens the editor in a new tab.
+- Editor colours aligned with the site: grey labels, the site's more vivid colour versions on wide-gamut screens (both themes, values copied from index.html) and the see-through optional-line yellow. Kept on purpose: solid panels and slightly stronger borders, because the editor is mostly input boxes. Lowest measured contrast in night mode 4.77:1 (dim italic on an optional card).
