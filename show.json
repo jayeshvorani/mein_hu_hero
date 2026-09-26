@@ -24,22 +24,12 @@
   {
    "style": "song",
    "sample": "Song",
-   "meaning": "A song, or words describing music. The play button beside a song plays the track."
+   "meaning": "A song, with its play button and a teal edge. Words in teal inside a line describe music."
   },
   {
    "style": "sfx",
    "sample": "Sound effect",
-   "meaning": "A sound effect (SFX), with its own play button."
-  },
-  {
-   "style": "songBadge",
-   "sample": "Song",
-   "meaning": "A note badge marks every line with a song, for the sound operator."
-  },
-  {
-   "style": "sfxBadge",
-   "sample": "SFX",
-   "meaning": "A speaker badge marks every sound effect. Turn on **Sound cues only** to see just the songs and sound effects, for the sound operator."
+   "meaning": "A sound effect (SFX), with its play button and a magenta edge. Words in magenta inside a line describe a sound. Turn on **Sound cues only** to see just the songs and sound effects, for the sound operator."
   },
   {
    "style": "direction",
