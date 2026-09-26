@@ -281,16 +281,14 @@
      "type": "line",
      "characterId": "dharamchand",
      "note": "",
-     "text": "<p>Jao aur pehle dada ji ka Ashirwad le lo.</p>",
-     "optional": true
+     "text": "<p>Jao aur pehle dada ji ka Ashirwad le lo.</p>"
     },
     {
      "id": "i14",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p><i>(Raj walks to Dadaji’s photo and keeps his degree near the photo)</i></p><p>Dadaji aaj main vilayat se degree leke aayaa hun. Aapka sapna maine puraa kiya hain. Muze aashirwad deejiye.</p>",
-     "optional": true
+     "text": "<p><i>(Raj walks to Dadaji’s photo and keeps his degree near the photo)</i></p><p>Dadaji aaj main vilayat se degree leke aayaa hun. Aapka sapna maine puraa kiya hain. Muze aashirwad deejiye.</p>"
     },
     {
      "id": "i15",
@@ -688,16 +686,14 @@
      "type": "line",
      "characterId": "rocky",
      "note": "",
-     "text": "<p>Dad, kya main Bade Dadaji ki photo ke saamne ye marksheet rakhun?</p>",
-     "optional": true
+     "text": "<p>Dad, kya main Bade Dadaji ki photo ke saamne ye marksheet rakhun?</p>"
     },
     {
      "id": "i62",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Ek khayega merese. <i>(Action like zapad khayega)</i></p>",
-     "optional": true
+     "text": "<p>Ek khayega merese. <i>(Action like zapad khayega)</i></p>"
     },
     {
      "id": "i63",
