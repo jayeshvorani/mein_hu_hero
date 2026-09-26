@@ -2,6 +2,10 @@
 
 ## Status
 
+Round 7 (2026-09-25) in progress: the script moves into `show.json` and a
+non-technical editor (`editor.html`) publishes changes to GitHub. The Google
+Doc is no longer the master; `show.json` is. See PLAN.md "Round 7".
+
 Live. Round 5 (2026-09-05) complete pending review: five defects fixed, the
 orientation strip removed, the draft-marking accepted, and the end-of-scene
 links replaced by a floating scene rail. See PLAN.md "Round 5" for detail.
@@ -23,6 +27,87 @@ are recorded in PLAN.md and are not repeated here.
   as final in round 5, struck text was deleted from the script.
 - Navigation: sticky sidebar above 900px; below that a scene rail on the
   right edge (running order, current scene, prev/next) plus the Scenes sheet.
+
+## Round 7: the script editor (2026-09-25)
+
+### Why
+Change requests arrive on the fly. Hand-editing `index.html` was slow and
+error-prone. The script, cast, songs and sound effects now live in
+`show.json`; `editor.html` edits it and publishes to GitHub; `index.html`
+renders from it.
+
+### Audience for the editor
+The site owner plus one or two co-organisers. Non-technical. Laptop first,
+phone usable for quick fixes during rehearsal. Rarely editing at the same
+moment.
+
+### The editor must let them, without touching code
+- Edit dialogue inline: click the text, type, done.
+- Reorder lines, stage directions, songs and sound effects by drag-and-drop,
+  within and across scenes.
+- Reassign which character speaks a line (lines belong to characters,
+  characters map to actors).
+- Add, move and remove songs and sound effects anywhere in the script. Songs
+  and sound effects stay distinct, in the editor and on the site.
+- Add, rename and remove actors and characters.
+- Add, rename, reorder and remove scenes; edit who is on stage, location,
+  props and set-up notes; mark a line as optional.
+
+### UX priorities
+Understandable at a glance. Forgiving: undo and redo for every change,
+delete shows an Undo, destructive actions with knock-on effects ask first.
+Drafts save automatically in the browser; nothing reaches the cast until
+Publish. Preview shows the real site with the draft.
+
+### Site changes
+- Renders from `show.json`; every existing feature keeps working.
+- Sound effects: magenta, speaker badge, "SFX". Songs: teal, note badge.
+- "Music cues only" is now "Sound cues only" and shows both.
+
+### Accepted and out of scope for Round 7
+- Cues that sat mid-sentence in the old page (about seven, including the
+  scene 1 sad/happy pair) keep their wording exactly; the play button moves
+  to its own song row directly after that line. User's decision during the
+  interview, over splitting the sentences. Exception, at the user's request:
+  scene 1's "Background" direction is split so the sad and happy songs each
+  sit at their moment.
+- Cast and sound rows stack with visible labels below 980px, including
+  tablets, so no field is ever cut off. Longer pages there are the accepted
+  cost.
+- The editor has a light theme only. It is a work tool for two or three
+  organisers on laptops; the dark theme serves the cast reading at rehearsal.
+- The scene rail's buttons overhang the script column by 12px on phones
+  (640px and below). Decided in Round 6 (PLAN.md "The overlap trade"): the
+  overhang lands on card padding, never on text. From 641 to 900px the
+  script column now stops short of the rail.
+
+### Quality floor
+Same as the site: British English, no em dashes, responsive to 360px with no
+horizontal overflow, visible keyboard focus, labelled controls, reduced
+motion respected, WCAG AA text contrast.
+
+## Round 8: everything is an entity (2026-09-26)
+
+Nothing about the show is written into `index.html`; the site renders it all
+from `show.json` (format 2). App control labels stay part of the app.
+
+- Title, tagline, photo, character-picker prompt, footer and the top-bar
+  name come from `show`; the marking-up guide from `legend`.
+- Locations and props are shared lists. Each scene picks one location plus
+  its own note, and ticks props, each with its own note.
+- Each scene ticks who is on stage (or the whole company); anyone with a
+  line is always included. Names always match the Cast tab.
+- Each scene has set-change steps, each optionally given to an actor or a
+  crew member. Crew is a list beside Actors.
+- The site's scene box shows cast, location, props and set changes; a
+  closed "Crew checklist" section lists every prop with its scenes and every
+  set change in running order.
+- Editor: new "Places & props" and "Show" tabs, Crew on "Cast & crew", and a
+  "Scene details" panel per scene. Removing anything in use asks first.
+- Migration kept the original wording, split into items (see PLAN.md
+  Round 8). A draft saved by the previous editor is set aside with a notice.
+- Not dynamic, by necessity: `manifest.webmanifest` (read by the phone
+  before any page runs) and the page's search-engine description.
 
 ## What this is
 

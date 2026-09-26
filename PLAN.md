@@ -4,7 +4,7 @@ Supersedes the previous PLAN.md (usability pass, completed). That work shipped
 and is described in `PLAN-archive.md`. This plan covers the full overhaul agreed
 on 2026-09-02.
 
-Target: `/Users/I553472/Downloads/Mein hu hero/index.html`, plus new sibling
+Target: `index.html`, plus new sibling
 files for offline support. Deployed to GitHub Pages.
 
 ## Decisions agreed
@@ -1990,3 +1990,223 @@ is the right trade for buttons that can actually be found.
 | Print | rail and cue buttons hidden, 75 lines |
 | 4 widths x 2 themes | no overflow |
 | Console errors | none |
+
+# Round 7: content editor (2026-09-25)
+
+## Why
+
+Every change request meant hand-editing a 7,900-line `index.html`. Goal: a
+non-technical editor for script, cast, songs and sound effects whose published
+changes reach meinhuhero.com without touching code.
+
+## Decisions agreed
+
+| Topic | Decision |
+|---|---|
+| Hosting | GitHub Pages, personal repo. Built in this folder; user uploads/pushes the code changes |
+| Editors | User plus 1 or 2 others, rarely at the same moment |
+| Access | One fine-grained GitHub token, this repo only, Contents read/write; pasted once per browser |
+| Go-live | Draft autosaved in the browser, explicit Publish, live about a minute later |
+| Device | Laptop first, phone usable for quick fixes |
+| Master copy | `show.json` via the editor. Google Doc retired |
+| Cue shape | Songs and sound effects are their own rows in the running order |
+| Casting | Lines belong to characters, characters map to actors |
+| Extra scope | Scenes (add, rename, reorder, remove), location and props, optional-line flag. Not the hero copy |
+| SFX on site | Own badge; "Music cues only" becomes "Sound cues only" and shows both |
+
+## Build list
+
+- [x] 1. `tools/migrate.py` (Python + BeautifulSoup rather than node: no DOM parser in node without dependencies): parse `index.backup-20260925-213358.html` into `show.json`. 75 lines + 7 song rows = 82 items
+- [x] 2. Verify migration: all 75 lines match the old page paragraph by paragraph (text, italic spans, music spans, optional flag, actor). Only differences are the agreed speaker-name normalisations
+- [x] 3. `index.html`: `renderShow()` builds scenes, nav, cast table, actor select from `show.json`; the old main IIFE is now `window.mhhBoot()`, called after render; `?draft` preview reads the editor draft and shows a banner
+- [x] 4. SFX: magenta `.c-sfx`, speaker badge, `.cue-play.is-sfx`; legend row added; "Music cues only" renamed "Sound cues only"
+- [x] 5. `sw.js`: `show.json` network-first and precached; `mhh-v10`; editor files bypass the service worker (found in testing: cache-first would pin editors to the first editor.js they loaded)
+- [x] 6. `editor.html` / `editor.css` / `editor.js`. Drag-and-drop written in-house on Pointer Events (mouse + touch, arrow keys on the handle) instead of SortableJS: no third-party download, no dependency
+- [x] 7. Regression pass: picker, practice (Apurva 15 lines), cue mode, search + highlight, Sound cues only, Hide optional cuts, cue playback, offline reload (SW, 82 rows), print (82 rows, no play buttons), no overflow at 360/390/768/1440, no console errors
+- [x] 8. Editor round-trip against a simulated GitHub API: inline edit, drag, keyboard move across scenes, delete + Undo toast, insert song, change speaker, add/rename actor, recast, remove character with reassignment, upload SFX, place it, preview, publish, conflict dialog. **Still to do on the real repo once the user has a token.**
+- [ ] 9. `deliverable-reviewer` loop: 8 rounds run (16, 11, 13, 10, 6, 7, 5, 4 defects). All editor defects fixed. Not yet clean: two pre-existing site items escalated to the user (see Open questions)
+- [ ] 10. Setup note: creating and sharing the token (in the handover message)
+
+## Progress
+
+### Decisions taken during build
+
+- **Mid-sentence cues** (about 7, not 1 as first stated): line wording kept
+  exactly, music words stay teal, the play button moves to its own song row
+  directly after the line. User chose this over splitting sentences.
+- **Speaker names**: one name per character. Per-line note keeps
+  "Raj (Old)", "Rocky (now grown up)", "Deendayal (Simran’s father)".
+  Typos "Dharmachand" and "SumitraDevi" normalise to the character name.
+  "Father (Dharamchand)" / "Mother (Sumitradevi)" now show "Dharamchand" /
+  "Sumitradevi".
+- **Narrator**: character name "Narrator", role "Sutradhar".
+- **"Opening scene" and "Background"** become stage directions that keep their
+  label in the speaker column.
+- **Text format**: stored as a tiny HTML subset: `<p>`, `<i>` (stage
+  business, italic), `<mark>` (music words, teal), `<br>`. Sanitised on save
+  and on render. The editor shows it formatted, never as tags.
+- **Music cues with no audio file** ("Dil to Pagal Hain", "Ek main aur ek tu")
+  stay as teal text only; no song row.
+- Meta label "PROPERTY" / "PROPS" unified to "PROPS". Scene CAST line is now
+  derived from who speaks in the scene.
+- **Scene CAST** stays an editable field ("Who is on stage"), migrated from the
+  old text. Derived-from-speakers is only the fallback when it is empty.
+  Found in preview: scene 3 would have listed only "Narrator" though Raj and
+  Simran are on stage without lines.
+
+### Fixes worth remembering from review
+- Service worker must not cache editor.js/editor.css cache-first (it pinned editors to an old build).
+- Publish sets the published baseline from the JSON actually sent, not the live working copy.
+- Enter never presses a destructive dialog button; destructive dialogs open focused on Cancel.
+- Toast Undo closes as soon as another change is made, so it can never undo the wrong thing.
+- Italic song words (`c-music is-italic`) now render teal on the site; before they were grey.
+- Inline sound-effect style added (`<mark class="sfx">`, magenta, SFX badge).
+- "Everyone" is actorId "everyone"; null means "not cast yet". They used to collide.
+- Renaming or removing a character updates each scene's "who is on stage" text.
+- Cast and sound rows stack with visible labels below 980px.
+
+### Open questions (for the user)
+1. Scene rail at 768 to 900px sits over the right edge of optional-line cards and the legend rules (up to ~27px). Pre-dates Round 7; the Round 6 decision covered phones only. Fix now or leave?
+2. Light-theme hero "HERO" sheen shows a faint offset copy of the letters. Pre-dates Round 7. Fix now or leave?
+3. Scene 1 sad/happy play buttons now sit after the whole "Background" direction (per the mid-cue decision). Split that one direction so each button sits at its moment?
+4. Real publish test on the repo, needs the user's token.
+
+### 2026-09-26: user's four items
+- [x] Scene rail at 641-900px: `.app` reserves 44px on the right; measured clear of every card, meta box and legend row at 641/768/820/900.
+- [x] "HERO" sheen ghost: `.hero-accent` is inline-block and the sheen inherits line-height, so the sheen's copy of the word sits exactly over it.
+- [x] Scene 1 "Background" split: direction, sad song, direction ending "music changes and on a happy note", happy song, "Raj enters…". Wording unchanged.
+- [ ] Real publish test: waiting for the user's token.
+- [x] Formatting bar "moody": clicking straight from one text box into another hid the bar the new box had just opened (the old box's delayed hide). The delayed check now re-shows it on whichever box has focus. Verified across 6 consecutive box-to-box clicks.
+
+### 2026-09-26: six items from the last review, fixed and regression-tested
+- [x] Scene 1 brackets: each split row opens and closes its own bracket (user approved).
+- [x] Toast never covers the formatting bar: page scrolls just enough to lift the bar clear.
+- [x] Editor sidebar marks the current scene (aria-current); phone "Jump to scene" list follows.
+- [x] Uploads: MP3 only; anything else refused with a plain message.
+- [x] Undo/redo wording: "Undone: delete stage direction."
+- [x] Review screenshots dismiss passing messages first (tools/render_review.js).
+
+Regression (cache disabled, three short runs, no errors):
+- Site: text identical to the pre-Round-7 page in all 8 scenes (scene 1 differs only by the two approved brackets); practice (Apurva 15 lines), cue mode, search, Sound cues only, playback, print all work.
+- Editor: inline edit, formatting bar across boxes, drag, delete + Undo toast, speaker change, keyboard move across scenes, recast, rename reaching "who is on stage", MP3 upload accepted, WAV refused, publish, clash warning (opens on Cancel; Enter cancels).
+- Layout: no overflow on site (360/390/768/820/1440, both themes) or editor (360/390/768/1440, all tabs); rail clear of content at 768/820.
+- Not re-run: offline mode (unchanged since it last passed). No deliverable-reviewer round this time, at the user's request.
+
+### 2026-09-26: footer link to the editor
+- [x] User chose a small "Script editor" link in the site footer for everyone (over editors-only or no link). The footer, link included, is already hidden in print. Checked at 390 light and 1440 dark: no overflow, link opens the editor.
+- Note: meinhuhero.com/editor.html showing the script page was a firewall block, not a bug: the service worker falls back to its saved copy of the script page when the network fails.
+
+### 2026-09-26: stage directions marked on the site
+- [x] Every direction now carries a label ("Stage direction", or its own heading such as "Opening scene"), grey italic text and a dashed grey left edge, matching how songs (teal) and sound effects (magenta) are marked. Song/optional marking on the same row keeps its own edge. Legend updated. Dead `.no-speaker` CSS removed.
+- Checked: 15 directions labelled, no overflow at 390 light / 1440 dark, search, practice (15) and cue mode (13) unchanged, no errors.
+
+# Round 8: everything is an entity (approved and built 2026-09-26)
+
+## Goal
+Nothing about the show is written into `index.html`. Every piece of show
+content is an entity in `show.json`, edited in the editor. The site only
+renders. App control labels ("Practice mode", "Tap to reveal", keyboard
+hints) stay in the app: they describe the tool, not the show.
+
+## Decisions (interview, 2026-09-26)
+| Topic | Decision |
+|---|---|
+| Scope | All show content. Not control labels |
+| Locations | Shared list; each scene picks one, plus an optional note for that scene |
+| Props | Shared list; each scene ticks the props it needs, each with an optional note |
+| Scene cast | Tick characters on stage; anyone with a line is ticked automatically; "Everyone" option |
+| Setting | Set-change steps per scene, each optionally assigned to an actor or crew member |
+| Crew | New Crew list beside Actors; shown in the site's Cast & Crew table |
+| Site | Scene boxes show cast, location, props, set-change steps; new "Crew" section lists every prop (with scenes) and every set change in running order |
+
+## Data model additions (`show.json` format 2)
+- `show`: `{ title, titleAccent, eyebrow, tagline, photo: {file, alt}, pickerPrompt, footer }`
+- `legend`: `[{ sample, style, meaning }]` (style: optional, song, sfx, songBadge, sfxBadge, direction)
+- `crew`: `[{ id, name, role }]`
+- `locations`: `[{ id, name, description }]`
+- `props`: `[{ id, name, description }]`
+- per scene: `onStage: [characterId…] | "everyone"`, `locationId`, `locationNote`,
+  `props: [{ propId, note }]`, `setChanges: [{ id, text, assigneeId }]`
+  (assignee is an actor or crew id). Free-text `cast`, `location`, `props`,
+  `notes` fields are removed.
+- Scene CAST row = ticked characters plus anyone with a line, in cast order.
+
+## Migration of today's text (first pass, you correct anything in the editor)
+- Locations: "Drawing room at home" (scenes 1, 4, 6, 7, 8), "Office" (2),
+  "Park" (3), "Wedding reception" (5). Existing detail becomes the scene's
+  location note (e.g. scene 2's table and chair placement). Scene 4's
+  truncated "drawing room (" and scene 6/7/8's "Home same as scene 1…"
+  map to "Drawing room at home" with no note.
+- Props: split on commas into single props, detail in brackets becomes the
+  note ("degree", note "rolled paper tied with a ribbon"). Dadaji's photo is
+  one prop used in scenes 1 and 7. "Nothing needed" becomes no props.
+- On stage: from today's CAST text, matched to characters (typos
+  "Symitradevi", "Deendayaal" resolve to the right character); scene 5
+  "All" becomes Everyone.
+- Set changes: each sentence of today's italic note becomes one unassigned
+  step. Scene 5's scarves note is costume, so it becomes a prop note.
+- Hero, legend, footer: today's wording moved into `show` and `legend` unchanged.
+
+## Build list
+- [x] 1. Migration script `tools/migrate_v2.py` run; 4 locations, 21 props, 8 set-change steps. Original wording kept; scene 6 note kept word for word as a step (review D4)
+- [x] 2. `index.html`: hero, top-bar name, page title, legend, footer, cast & crew tables, scene boxes and Crew checklist all rendered from `show.json`
+- [x] 3. Editor: "Places & props" and "Show" tabs, Crew on "Cast & crew", "Scene details" panel per scene; photo upload (JPEG/PNG/WebP)
+- [x] 4. Removals ask first; removing an actor or crew member unassigns their set changes; removing a character takes them off stage lists
+- [x] 5. Regression passed (offline not re-run: service worker only gained .jpg caching)
+- [x] 6. One review round: 12 findings. Fixed D1-D8, D10, D11 and re-checked directly. Not fixed: D9 back-to-top button floating over text at 360px (pre-dates Round 7, it moves as you scroll); D12 extra review screenshots (evidence only).
+
+## Risks
+- The migration rewrites scene detail into lists: the wording of props and set-up notes changes shape (split sentences). You check the result in the editor before publishing.
+- `show.json` format changes, so `index.html`, `editor.js` and `show.json` must be uploaded together.
+
+### 2026-09-26: stale-cache safeguards
+- Cause of "[object Object]" on the live site: GitHub Pages sends max-age=600, so the browser reused the old index.html while show.json (fetched no-cache) was the new format.
+- [x] sw.js (mhh-v11): page and show.json fetched with cache "no-cache".
+- [x] index.html: SHOW_FORMAT 2; newer data reloads the page once, then shows a refresh message.
+- [x] editor.js: EDITOR_FORMAT 2; an out-of-date editor refuses to load newer data and disables Publish.
+- Tested locally with simulated format-3 data. Awaiting upload: sw.js, index.html, editor.js.
+
+# Round 9: a proper git workflow (approved 2026-09-26)
+
+## Why
+Code was being copied by hand from a Downloads folder and uploaded through
+the GitHub website. Meanwhile the editor publishes `show.json` straight to
+GitHub. Uploading the local copy would overwrite edits made on the live
+site. From now on every change starts from what is on GitHub and is merged,
+never copied over it.
+
+## Decisions (2026-09-26)
+| Topic | Decision |
+|---|---|
+| Repo | github.com/jayeshvorani/mein_hu_hero (personal, public), branch main, served by GitHub Pages |
+| Who pushes | Claude, as a stated exception to the "never personal GitHub" rule, for this repo only |
+| Review | Every code change goes on its own branch as a pull request; the user merges it on GitHub, and merging is what makes it live |
+| Local copy | ~/Projects/mein_hu_hero (not OneDrive, not ~/Developer) |
+| In the repo | Site files, BRIEF.md, PLAN.md, tools/. Not review/ screenshots or index.backup-* files |
+
+## Who owns what
+- `show.json` belongs to the editor. Code changes never touch it, except a
+  data-format change, which runs its migration on the freshly pulled file in
+  the same pull request, with a warning to pause publishing until merged.
+- Code (`index.html`, `editor.*`, `sw.js`, tools) belongs to pull requests.
+- Because the two touch different files, the editor's publishes and a pull
+  request never collide; if they ever do, GitHub reports a conflict instead
+  of losing either side.
+
+## Every change, from now on
+1. `git pull` on main before starting.
+2. New branch `claude/<topic>`, change, test locally.
+3. Before pushing, bring the branch up to date with main again.
+4. Push, open a pull request with a plain-English summary, link it here.
+5. The user reviews on GitHub and presses Merge. Live about a minute later.
+
+## Setting it up
+- [x] 1. GitHub Pages serves main, root folder, at meinhuhero.com (HTTPS on). main is not branch-protected
+- [x] 2. Cloned to ~/Projects/mein_hu_hero
+- [x] 3. Compared. Code differed only by the three cache safeguards; GitHub's notes had nothing the local ones lacked; show.json left as on GitHub
+- [x] 4. Carried across: index.html, editor.js, sw.js (safeguards), BRIEF.md, PLAN.md, tools/
+- [x] 5. .gitignore added; the three index.backup-* files removed from the repo (still in git history)
+- [ ] 6. First pull request opened: safeguards + notes + tools. Waiting for the user to merge
+- [ ] 7. Check the live site after merge
+- [ ] 8. Record the push exception in memory so future sessions follow it
+- [ ] 9. The Downloads folder is left untouched; the user deletes it when happy

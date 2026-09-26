@@ -6567,6 +6567,8 @@
       // ============================================================
       (function () {
         var DRAFT_KEY = "mhh-editor-draft";
+        // the show.json layout this page knows how to read
+        var SHOW_FORMAT = 2;
 
         function esc(s) {
           return String(s == null ? "" : s)
@@ -7087,7 +7089,7 @@
           var status = document.getElementById("scriptStatus");
           if (status)
             status.textContent =
-              "The script could not be loaded. Check your connection and reload the page.";
+              "The script could not be loaded. Check your connection, then reload the page (on a computer, Cmd+Shift+R or Ctrl+Shift+R).";
         }
 
         function start(show, isDraft) {
@@ -7132,6 +7134,28 @@
             return res.json();
           })
           .then(function (show) {
+            // Data newer than this page understands means the page itself
+            // is an old copy. Reload once from the server rather than show
+            // the script garbled.
+            if ((show.format || 1) > SHOW_FORMAT) {
+              var tried = false;
+              try {
+                tried = sessionStorage.getItem("mhh-reloaded") === "1";
+                sessionStorage.setItem("mhh-reloaded", "1");
+              } catch (e) {
+                tried = true;
+              }
+              if (!tried) {
+                location.reload();
+                return;
+              }
+              throw new Error("page older than show.json");
+            }
+            try {
+              sessionStorage.removeItem("mhh-reloaded");
+            } catch (e) {
+              /* nothing stored */
+            }
             start(show, false);
           })
           .catch(function (err) {
