@@ -1,1 +1,9 @@
+# Review screenshots, regenerated each round by tools/render_review.js
+review/
+# Old hand-made backups; git history replaces them
+index.backup-*.html
+# Tool caches
+.playwright-mcp/
+.ruff_cache/
+__pycache__/
 .DS_Store

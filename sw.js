@@ -12,7 +12,7 @@
  * deleted on activate, so a stale font subset can never linger.
  */
 
-var CACHE_VERSION = "mhh-v10";
+var CACHE_VERSION = "mhh-v11";
 
 // The cue audio lives in its own cache, on its own version counter.
 //
@@ -115,8 +115,12 @@ self.addEventListener("fetch", function (event) {
   // cache as the safety net at a venue with no signal.
   var isScript = /\/show\.json$/.test(url.pathname);
   if (req.mode === "navigate" || isScript) {
+    // cache: "no-cache" makes the browser check with the server every time
+    // rather than reuse its own copy for up to 10 minutes (GitHub Pages
+    // sends max-age=600). Without it the page and show.json could come
+    // from different uploads, and an old page cannot read new data.
     event.respondWith(
-      fetch(req)
+      fetch(req.mode === "navigate" ? req.url : req, { cache: "no-cache" })
         .then(function (res) {
           // Only cache a real page. fetch() resolves happily for a 404, a 500,
           // or a captive portal's sign-in page, and storing one of those would

@@ -29,6 +29,8 @@
   var HINT_KEY = "mhh-editor-hint-dismissed";
   var SHOW_PATH = "show.json";
   var UNDO_LIMIT = 200;
+  // the show.json layout this editor reads and writes
+  var EDITOR_FORMAT = 2;
   // actorId for a part the whole company plays; null means not cast yet
   var EVERYONE = "everyone";
 
@@ -3729,6 +3731,14 @@
   }
 
   function start(show, sha, draft) {
+    // An editor older than the published data would read it wrongly and
+    // could publish it back damaged. Stop, and say how to get the new one.
+    if ((show && show.format) > EDITOR_FORMAT) {
+      app.innerHTML =
+        '<p class="loading">This copy of the editor is out of date. Reload the page to get the new one (on a computer, Cmd+Shift+R or Ctrl+Shift+R).</p>';
+      $("#publishBtn").disabled = true;
+      return;
+    }
     var published = normalise(show);
     S.baseJson = JSON.stringify(published);
     S.baseSha = sha;
