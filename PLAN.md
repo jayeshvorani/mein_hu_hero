@@ -2417,3 +2417,46 @@ Nothing about the key is hard-coded.
 - Directions have the site's dashed grey edge. Pending song and sound-effect
   requests are also dashed, told apart by colour (teal, magenta) and their
   "Song" / "Sound effect" label and "Coming soon" text.
+
+# Round 12: script house style and full copy-edit
+
+Status: reviewed (three review rounds, clean), user's decisions applied
+2026-09-27, in pull request.
+
+## Decisions (user, 2026-09-27)
+| Topic | Decision |
+| --- | --- |
+| Depth | Full copy-edit: structure, English directions, one Hinglish spelling in dialogue |
+| Process | Before/after review page first; after approval, one PR changing show.json, with editor publishing paused until merged |
+| Running gag | Same direction and the "Fail 2" sound in scenes 1 to 7; the finale breaks the habit |
+
+## What was built
+- STYLE.md: the house style (rules 1 to 9, name and spelling tables).
+- tools/restyle.py: the new running order written out row by row. It
+  applies only to the script as published at e13a3d8 and stops if anything
+  has been published since, so a later edit is never overwritten.
+- review/ (not in git): review.json and style-review.html, built by
+  review/render_style_review.py.
+- 91 rows become 126: 80 changed, 22 split out of longer rows, 11 running-gag
+  rows, 3 newly written (each with a question), 1 removed.
+
+## User's decisions (2026-09-27)
+- Man in office is Kaalia; the Receptionist pushes him, the hook-step
+  music plays and he does the hook step.
+- Scene 4: Deendayal and Sharda Devi sit, Simran stands beside them.
+- Scene 7: Rocky is about 16; "report card" replaces "mark sheet".
+- Scene 8: Simran says "Nahi!!! Is samay par aisa hi karte hain."
+- Finale payoff kept. Sumitra Devi and Sharda Devi with a space.
+- Song-04 is "Naino mein sapna". Raj's role: "Raj Malhotra, the hero".
+
+## Questions that were put to the user
+- The Candidate's hook step (scene 2), Sharda Devi's seat (scene 4), Rocky's
+  age (scene 7), "Sasurji" said by Simran (scene 8).
+- Renaming "Man in office" to "Candidate"; Sharda Devi / Sumitradevi
+  spelling; scene 7 title; the "Tathya tathya ho" title; Raj's role; the
+  finale payoff.
+
+## Next
+- [x] User reviews and lists changes; update restyle.py; re-render
+- [x] Pause editor publishing; pull; run restyle.py; PR with show.json,
+      STYLE.md, tools/restyle.py, PLAN.md

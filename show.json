@@ -13,28 +13,32 @@
    "height": 941
   },
   "pickerPrompt": "Pick your character to start rehearsing",
-  "footer": "Mein hu Hero · rehearsal companion"
+  "footer": "Mein hu Hero · rehearsal companion",
+  "printTagline": "A fun stage skit inspired by classic Bollywood traditions and iconic scenes."
  },
  "legend": [
   {
    "style": "optional",
    "sample": "Optional line",
-   "meaning": "Highlighted sections in yellow can be deleted if the play becomes very lengthy."
+   "meaning": "Lines and directions marked in yellow can be cut if the show runs long.",
+   "printMeaning": "Lines and directions with a gold edge can be cut if the show runs long."
   },
   {
    "style": "song",
    "sample": "Song",
-   "meaning": "A song, with its play button and a teal edge. Words in teal inside a line describe music."
+   "meaning": "A song, with its play button and a teal edge. Teal words in a direction name the music.",
+   "printMeaning": "A song cue, with a teal edge. Teal words in a direction name the music."
   },
   {
    "style": "sfx",
    "sample": "Sound effect",
-   "meaning": "A sound effect (SFX), with its play button and a magenta edge. Words in magenta inside a line describe a sound. Turn on **Sound cues only** to see just the songs and sound effects, for the sound operator."
+   "meaning": "A sound effect (SFX), with its play button and a magenta edge. Magenta words in a direction describe a sound. Turn on **Sound cues only** to see just the songs and sound effects, for the sound operator.",
+   "printMeaning": "A sound-effect cue, with a magenta edge. Magenta words in a direction describe a sound."
   },
   {
    "style": "direction",
    "sample": "(stage direction)",
-   "meaning": "What happens on stage. Directions are labelled **Stage direction**, in grey italics with a dashed edge."
+   "meaning": "What happens on stage, in grey italics with a dashed edge. The first one in each scene, labelled **Setting**, is the stage picture at lights up."
   }
  ],
  "actors": [
@@ -85,7 +89,7 @@
   {
    "id": "raj",
    "name": "Raj",
-   "role": "Raj Malhotra, main protagonist",
+   "role": "Raj Malhotra, the hero",
    "actorId": "Apurva"
   },
   {
@@ -96,7 +100,7 @@
   },
   {
    "id": "sumitradevi",
-   "name": "Sumitradevi",
+   "name": "Sumitra Devi",
    "role": "Mother",
    "actorId": "Harsh"
   },
@@ -121,7 +125,7 @@
   {
    "id": "ramu",
    "name": "Ramu Kaka",
-   "role": "Nauker",
+   "role": "Household help",
    "actorId": "Maneesh"
   },
   {
@@ -132,14 +136,14 @@
   },
   {
    "id": "receptionist",
-   "name": "Office Receptionist",
-   "role": "",
+   "name": "Receptionist",
+   "role": "At Deendayal’s office",
    "actorId": "Aneeta"
   },
   {
    "id": "man-office",
-   "name": "Man in office",
-   "role": "",
+   "name": "Kaalia",
+   "role": "Another interview candidate",
    "actorId": "Maneesh"
   },
   {
@@ -159,12 +163,12 @@
  "locations": [
   {
    "id": "home",
-   "name": "Drawing room at home",
+   "name": "The Malhotras’ home",
    "description": ""
   },
   {
    "id": "office",
-   "name": "Office space",
+   "name": "Deendayal’s office",
    "description": ""
   },
   {
@@ -186,7 +190,7 @@
   },
   {
    "id": "sheet",
-   "name": "Light colored sheet",
+   "name": "Light-coloured sheet",
    "description": ""
   },
   {
@@ -206,7 +210,7 @@
   },
   {
    "id": "aarati-thali",
-   "name": "Aarati thali",
+   "name": "Aarti thali",
    "description": ""
   },
   {
@@ -266,12 +270,12 @@
   },
   {
    "id": "result-sheet",
-   "name": "Result sheet",
+   "name": "Report card",
    "description": ""
   },
   {
    "id": "cap-jacket",
-   "name": "Cap/jacket",
+   "name": "Cap and jacket",
    "description": ""
   },
   {
@@ -308,7 +312,7 @@
   },
   {
    "id": "song-04",
-   "title": "Tathya tathya ho",
+   "title": "Naino mein sapna",
    "file": "Audio files/04 - Ta thaiya.mp3"
   },
   {
@@ -333,7 +337,7 @@
   },
   {
    "id": "song-muidty0wkpj2",
-   "title": "Tujhe Deka",
+   "title": "Tujhe dekha",
    "file": "Audio files/songs/tujhe-deka-muidtwex.mp3"
   }
  ],
@@ -354,82 +358,82 @@
      "type": "line",
      "characterId": "narrator",
      "note": "",
-     "text": "<p>Namaste. Aaj hum milane jaa rahe hain ek aajebo garib naujavan Raj se. Naam to suna he hoga! Raj Hindi filmo se tang aa chuka hai. Nahi nahi; use filmo se koi shikaayat nahee, vah to kabhi kabhi ek do picture bhee dekh letaa hai. Use problem hain filmi fans se jo uske Jeevan mein bohut hein. Hamaare is natak ka naam hai</p><p>‘Mein Hu Hero’.</p><p>Aao dekhen Raj Malhotra ke ghar mein kya scene hain.</p><p>Milate hain unke pitaa Dharamchand aur mataji Sumitradevi se.</p>"
+     "text": "<p>Namaste. Aaj hum milane ja rahe hain ek ajeeb-o-gareeb naujawan Raj se. Naam to suna hi hoga! Raj Hindi filmon se tang aa chuka hai. Nahi, nahi; use filmon se koi shikayat nahi, woh to kabhi kabhi ek-do picture bhi dekh leta hai. Use problem hai filmi fans se, jo uske jeevan mein bahut hain. Hamare is natak ka naam hai</p><p>‘Mein hu Hero’.</p><p>Aao dekhen, Raj Malhotra ke ghar mein kya scene hai.</p><p>Milate hain unke pita Dharamchand aur Mataji Sumitra Devi se.</p>"
     },
     {
      "id": "i2",
      "type": "direction",
-     "label": "Opening scene",
-     "text": "<p><i>Father (Dharamchand) sitting and reading newspaper with his glasses on while Mum is in the kitchen.</i></p>"
+     "label": "Setting",
+     "text": "<p>The Malhotras’ drawing room. Dharamchand sits reading the newspaper, his glasses on. Sumitra Devi is in the kitchen.</p>"
     },
     {
      "id": "i3",
      "type": "line",
      "characterId": "dharamchand",
      "note": "",
-     "text": "<p><i>(Keeps newspaper aside) </i></p><p>Arre Bhagwaan, suntee ho! (Loud voice)</p>"
+     "text": "<p><i>(puts the newspaper aside; loudly)</i> Arre Bhagwan, sunti ho!</p>"
+    },
+    {
+     "id": "i-hs-1",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Sumitra Devi comes out of the kitchen, wiping her hands on her sari.</p>"
     },
     {
      "id": "i4",
      "type": "line",
      "characterId": "sumitradevi",
      "note": "",
-     "text": "<p><i>(Comes from the kitchen wiping her hands on the sari) </i></p><p>Kya hai Raj ke papa.</p>"
+     "text": "<p>Kya hai, Raj ke papa?</p>"
     },
     {
      "id": "i5",
      "type": "line",
      "characterId": "dharamchand",
      "note": "",
-     "text": "<p>Subahase rasoi mein kya kar rahee ho</p>"
+     "text": "<p>Subah se rasoi mein kya kar rahi ho?</p>"
     },
     {
      "id": "i6",
      "type": "line",
      "characterId": "sumitradevi",
      "note": "",
-     "text": "<p>Aaj hamara beta Raj aa raha hain na (vilaayat se). Uski taiyari kar rahi thee.</p>"
+     "text": "<p>Aaj hamara beta Raj vilayat se aa raha hai na. Uski taiyari kar rahi thi.</p>"
     },
     {
      "id": "i7",
      "type": "line",
      "characterId": "dharamchand",
      "note": "",
-     "text": "<p>Han. Aaj 3 saal baad apna beta vilayat se degree lekar aa rahaa hain. Woh bhi first class first number lekar. Baap dadaonka naam roshan kiya hain. Aakhir beta kiska hain.</p>"
+     "text": "<p>Haan. Aaj teen saal baad apna beta vilayat se degree lekar aa raha hai. Woh bhi first class first number lekar. Baap-dadaon ka naam roshan kiya hai. Aakhir beta kiska hai?</p>"
     },
     {
      "id": "i8",
      "type": "line",
      "characterId": "sumitradevi",
      "note": "",
-     "text": "<p>Haan, aap ka he hain. Par aap use lene naahi gaye airport?</p>"
+     "text": "<p>Haan, aapka hi hai. Par aap use lene nahi gaye airport?</p>"
     },
     {
      "id": "i9",
      "type": "line",
      "characterId": "dharamchand",
      "note": "",
-     "text": "<p>Usane bola tha ki driver ke saath gaadi bhijva do, vo khud aa jaye ga. Aataa he hoga.</p>"
+     "text": "<p>Usne bola tha ki driver ke saath gaadi bhijwa do, woh khud aa jaayega. Aata hi hoga.</p>"
     },
     {
      "id": "i10",
      "type": "line",
      "characterId": "sumitradevi",
      "note": "",
-     "text": "<p>Ramu, kaha mar gaya (Loud voice). Aarti ki thali taiyaar rakhna</p>"
+     "text": "<p><i>(loudly)</i> Ramu, kahan mar gaya? Aarti ki thali taiyaar rakhna.</p>"
     },
     {
      "id": "i11",
      "type": "line",
      "characterId": "ramu",
      "note": "",
-     "text": "<p>Tayar hai maaji. Ye lijeeye.</p>"
-    },
-    {
-     "id": "i12",
-     "type": "direction",
-     "label": "Background",
-     "text": "<p><mark><i>(Kabhi khushi kabhi gam music).</i></mark></p>"
+     "text": "<p>Taiyaar hai, Maaji. Yeh lijiye.</p>"
     },
     {
      "id": "i12-s1",
@@ -441,7 +445,7 @@
      "id": "i12b",
      "type": "direction",
      "label": "",
-     "text": "<p><i>(Mother walks to the door and realises Raj has not arrived. She turns back disheartened and then</i> <mark><i>music changes and on a happy note)</i></mark></p>"
+     "text": "<p>Sumitra Devi walks to the door and realises Raj has not arrived. She turns back, disheartened.</p>"
     },
     {
      "id": "i12-s2",
@@ -453,34 +457,34 @@
      "id": "i12c",
      "type": "direction",
      "label": "",
-     "text": "<p><i>(Raj enters. Mother does aarti. He bends down to take Ashirwad of mother and father).</i></p>"
+     "text": "<p>Raj enters. Sumitra Devi performs the aarti. Raj bends to touch his parents’ feet for their blessing.</p>"
     },
     {
      "id": "i13",
      "type": "line",
      "characterId": "dharamchand",
      "note": "",
-     "text": "<p>Jao aur pehle dada ji ka Ashirwad le lo.</p>"
+     "text": "<p>Jao, aur pehle Dadaji ka aashirwad le lo.</p>"
     },
     {
      "id": "i-muie1mmxbx49",
      "type": "direction",
      "label": "",
-     "text": "<p><i>(Raj walks to Dadaji’s photo and keeps his degree near the photo)</i></p>"
+     "text": "<p>Raj walks to Dadaji’s photo and places his degree beside it.</p>"
     },
     {
      "id": "i14",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Dadaji aaj main vilayat se degree leke aayaa hun. Aapka sapna maine puraa kiya hain. Muze aashirwad deejiye.</p>"
+     "text": "<p>Dadaji, aaj main vilayat se degree lekar aaya hoon. Aapka sapna maine poora kiya hai. Mujhe aashirwad dijiye.</p>"
     },
     {
      "id": "i15",
      "type": "line",
      "characterId": "dharamchand",
      "note": "",
-     "text": "<p>Raj beta, tu ab kya karnaa chaahega?</p>"
+     "text": "<p>Raj beta, tu ab kya karna chahega?</p>"
     },
     {
      "id": "i16",
@@ -494,40 +498,40 @@
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p><i>(Turns to mum)</i></p><p>Maa, mujhe bahut bhook lagee hai. Kuch khane ko do na</p>"
+     "text": "<p><i>(to Sumitra Devi)</i> Maa, mujhe bahut bhookh lagi hai. Kuch khaane ko do na.</p>"
     },
     {
      "id": "i18",
      "type": "line",
      "characterId": "sumitradevi",
      "note": "",
-     "text": "<p>Ha latee hun. Ramu, kahan mar gayaa (Loud voice). Khaanaa le aao.</p>"
+     "text": "<p>Haan, laati hoon. <i>(loudly)</i> Ramu, kahan mar gaya? Khaana le aao.</p>"
     },
     {
      "id": "i19",
      "type": "direction",
      "label": "",
-     "text": "<p><i>(Food is served by Ramu. Mother walks to Raj with a bowl of gajar ka halwa and tries to feed him.)</i></p>"
+     "text": "<p>Ramu serves the food. Sumitra Devi brings Raj a bowl of gajar ka halwa and tries to feed him.</p>"
     },
     {
      "id": "i20",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Ye kya Maa? Gajar ka halwaa? Aap bhool gayee kya mujhe gajar pasand nahee hain.</p>"
+     "text": "<p>Yeh kya, Maa? Gajar ka halwa? Aap bhool gayi kya, mujhe gajar pasand nahi hai.</p>"
     },
     {
      "id": "i21",
      "type": "line",
      "characterId": "sumitradevi",
      "note": "",
-     "text": "<p>Par beta har picture mein - jab beta bohut deeno ke baad ghar lautata hein, to maa gajar ka halwa he banate hain.</p>"
+     "text": "<p>Par beta, har picture mein jab beta bahut dinon ke baad ghar lautta hai, to maa gajar ka halwa hi banati hai.</p>"
     },
     {
      "id": "i-muie73rialni",
      "type": "direction",
      "label": "",
-     "text": "<p><mark class=\"sfx\">Raj puts one hand over his forehead</mark></p>"
+     "text": "<p>Raj puts his hand to his forehead.</p>"
     },
     {
      "id": "i-muiig5mobe3r",
@@ -551,7 +555,7 @@
     },
     {
      "propId": "sheet",
-     "note": "neutral sheet to cover three chairs"
+     "note": "to cover three of the chairs"
     },
     {
      "propId": "dadaji-photo",
@@ -559,11 +563,11 @@
     },
     {
      "propId": "degree",
-     "note": "Rolled paper can be tied with a ribbon"
+     "note": "rolled paper tied with a ribbon"
     },
     {
      "propId": "napkin",
-     "note": "for Ramu kaka"
+     "note": "for Ramu Kaka"
     },
     {
      "propId": "aarati-thali",
@@ -571,14 +575,20 @@
     },
     {
      "propId": "food-plate",
-     "note": "(tbd) with a bowl for gajar halwaa"
+     "note": "with a bowl of gajar ka halwa (to be decided)"
     },
     {
      "propId": "prop-muiq3y4ozvag",
      "note": ""
     }
    ],
-   "setChanges": []
+   "setChanges": [
+    {
+     "id": "scene-1-sc1",
+     "text": "Before the show, place the office chair to one side of the three home chairs, and the Receptionist’s chair on the other side, opposite it. Both stay in place all show.",
+     "assigneeId": ""
+    }
+   ]
   },
   {
    "id": "scene-2",
@@ -589,79 +599,103 @@
      "type": "line",
      "characterId": "narrator",
      "note": "",
-     "text": "<p>Raj apne interview ke liye Deendayal shetji ke office pahoch gaya hai. Chaliye dekhate hain udhar kya hota hain.</p>"
+     "text": "<p>Raj apne interview ke liye Deendayal Sethji ke office pahunch gaya hai. Chaliye, dekhte hain wahan kya hota hai.</p>"
     },
     {
      "id": "i24",
      "type": "direction",
-     "label": "",
-     "text": "<p><i>Office scene</i></p>"
+     "label": "Setting",
+     "text": "<p>The waiting area outside Deendayal’s office. The Receptionist is in her seat. Raj waits beside Kaalia, another candidate.</p>"
     },
     {
      "id": "i25",
      "type": "line",
      "characterId": "receptionist",
      "note": "",
-     "text": "<p>Raj Malhotra, aap ko Shetji ne andar bulaayaa hai</p>"
+     "text": "<p>Raj Malhotra, aapko Sethji ne andar bulaya hai.</p>"
     },
     {
      "id": "i26",
      "type": "direction",
      "label": "",
-     "text": "<p><i>Raj gets up to walk towards the Shetji’s office door.</i></p><p><i>A man who is sitting in the office for interview comes and stands in front of him.</i></p>"
+     "text": "<p>Raj gets up and walks towards Deendayal’s door. Kaalia steps in front of him.</p>"
     },
     {
      "id": "i27",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Kya kar rahe ho. Muzhe bulaayaa hai. <i>Aap mere baad jaanaa.</i></p>"
+     "text": "<p>Kya kar rahe ho? Mujhe bulaya hai. Aap mere baad jaana.</p>"
     },
     {
      "id": "i28",
      "type": "line",
      "characterId": "man-office",
      "note": "",
-     "text": "<p>Hum jahan khade hote hain vahee se line shuru hotee hain.</p>"
+     "text": "<p>Hum jahan khade hote hain, wahin se line shuru hoti hai.</p>"
     },
     {
      "id": "i29",
      "type": "line",
      "characterId": "receptionist",
      "note": "",
-     "text": "<p><i>(pushes the man aside)</i> Chal hat. Kahan kahan se aa jaate hain Amitabh.</p><p><i>Raj with one hand over his forehead.</i></p>"
+     "text": "<p>Chal hat. Kahan kahan se aa jaate hain Amitabh.</p>"
+    },
+    {
+     "id": "i-hs-2",
+     "type": "direction",
+     "label": "",
+     "text": "<p>The Receptionist pushes Kaalia aside.</p>"
     },
     {
      "id": "i-mujpsvzptwrm",
      "type": "song",
-     "request": "Jaha teri ye nazar hai",
-     "note": "Just the music where Amitabh does the hook step - https://www.youtube.com/watch?v=BXaqBNTl7zI&list=RDBXaqBNTl7zI&start_radio=1"
+     "request": "‘Jahan teri yeh nazar hai’: just the music for Amitabh’s hook step. Reference: https://www.youtube.com/watch?v=BXaqBNTl7zI",
+     "note": ""
+    },
+    {
+     "id": "i-hs-3",
+     "type": "direction",
+     "label": "",
+     "text": "<p>As the music plays, Kaalia does Amitabh’s hook step.</p>"
+    },
+    {
+     "id": "i-hs-gag-2",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Raj puts his hand to his forehead.</p>"
+    },
+    {
+     "id": "i-hs-fail-2",
+     "type": "sfx",
+     "sfxId": "sfx-muij4o9zev8y",
+     "note": ""
     },
     {
      "id": "i30",
      "type": "direction",
-     "label": "",
-     "text": "<p>Inside Shetji’s office</p>"
+     "label": "Setting",
+     "text": "<p>Inside Deendayal’s office. Raj enters. The Receptionist and Kaalia can walk off, so the focus moves to the office.</p>"
     },
     {
      "id": "i31",
      "type": "line",
      "characterId": "deendayal",
-     "note": "Simran’s father",
-     "text": "<p>(Raj enters the office. Receptionist and man in office can walk out of the stage so focus will shift to office space) Aao barkhudar. Tum vilaayat se first class first leke aaye ho. Ye manager ka job tumhara hain. Bahar jaakar munimjee se apna appointment letter le lo. Kab join karna chaho ge.</p>"
+     "note": "",
+     "text": "<p>Aao, barkhurdar. Tum vilayat se first class first lekar aaye ho. Yeh manager ka job tumhara hai. Bahar jaakar Munimji se apna appointment letter le lo. Kab join karna chahoge?</p>"
     },
     {
      "id": "i32",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Shukriya Shethji. Kal se hee join karunga.</p>"
+     "text": "<p>Shukriya, Sethji. Kal se hi join karunga.</p>"
     },
     {
      "id": "i33",
      "type": "direction",
      "label": "",
-     "text": "<p><i>Raj shakes hand with Shetji and walks towards the door. He collides with Simran. </i><mark><i>They look into each other’s eyes and go on staring at each other.</i></mark><i> </i></p>"
+     "text": "<p>Raj shakes Deendayal’s hand and walks to the door, where he collides with Simran. They gaze into each other’s eyes.</p>"
     },
     {
      "id": "i-muidte4s8o1c",
@@ -673,35 +707,35 @@
      "id": "i-muidu8an0fte",
      "type": "direction",
      "label": "",
-     "text": "<p>Shetji coughs loudly. Raj then hastily leaves the office. Simran goes towards her dad.</p>"
+     "text": "<p>Deendayal coughs loudly. Raj hurries out. Simran goes to her father.</p>"
     },
     {
      "id": "i34",
      "type": "line",
      "characterId": "simran",
      "note": "",
-     "text": "<p>Ye kaun tha Papa.</p>"
+     "text": "<p>Yeh kaun tha, Papa?</p>"
     },
     {
      "id": "i35",
      "type": "line",
      "characterId": "deendayal",
-     "note": "Simran’s father",
-     "text": "<p>Voh Raj hain. Bahut honhaar naujawan hain, vilayat se first class first lekar aayaa hain, Kal se office join karega.</p>"
+     "note": "",
+     "text": "<p>Woh Raj hai. Bahut honhaar naujawan hai. Vilayat se first class first lekar aaya hai. Kal se office join karega.</p>"
     },
     {
      "id": "i36",
      "type": "line",
      "characterId": "simran",
      "note": "",
-     "text": "<p>Papa main shaadi esee se karungi.</p>"
+     "text": "<p>Papa, main shaadi isi se karungi.</p>"
     },
     {
      "id": "i37",
      "type": "line",
      "characterId": "deendayal",
-     "note": "Simran’s father",
-     "text": "<p>Ok beta. Jo tumhe pasand hain usee se tumhari shaadi hogee.</p>"
+     "note": "",
+     "text": "<p>OK, beta. Jo tumhe pasand hai, usi se tumhari shaadi hogi.</p>"
     }
    ],
    "onStage": [
@@ -712,7 +746,7 @@
     "simran"
    ],
    "locationId": "office",
-   "locationNote": "Place a table in front of the chair. This chair should be on one side of the three home chairs. Chair to be places from the beginning and table to be placed just before the scene. Receptionist chair on the other side of home chairs, opposite to office chair. This will also be placed from beginning.",
+   "locationNote": "",
    "props": [
     {
      "propId": "office-table",
@@ -726,22 +760,22 @@
    "setChanges": [
     {
      "id": "scene-2-sc1",
-     "text": "After scene 1 remove cover from home chairs.",
+     "text": "Take the covers off the home chairs.",
      "assigneeId": ""
     },
     {
      "id": "scene-2-sc2",
-     "text": "Place a table in front of office chair.",
+     "text": "Place the office table in front of the office chair.",
      "assigneeId": ""
     },
     {
      "id": "scene-2-sc3",
-     "text": "Receptionist chair can have a vase next to it though not necessary.",
+     "text": "If you like, place a vase beside the Receptionist’s chair.",
      "assigneeId": ""
     },
     {
      "id": "scene-2-sc4",
-     "text": "Raj and man in office sit on two of the three chairs that were home earlier.",
+     "text": "Leave two of the three home chairs free for Raj and Kaalia.",
      "assigneeId": ""
     }
    ]
@@ -755,19 +789,25 @@
      "type": "line",
      "characterId": "narrator",
      "note": "",
-     "text": "<p>Raj aur Simran aksar ek doosare se milne lage hain.</p><p><i>...while narrator speaks and Raj &amp; Simran take entry into the park.</i></p>"
+     "text": "<p>Raj aur Simran aksar ek dusre se milne lage hain.</p>"
+    },
+    {
+     "id": "i-hs-4",
+     "type": "direction",
+     "label": "Setting",
+     "text": "<p>A park bench. Raj and Simran walk in while the Narrator speaks.</p>"
+    },
+    {
+     "id": "i-mujpfognltzz",
+     "type": "song",
+     "request": "The opening dings of ‘Naino mein sapna’.",
+     "note": ""
     },
     {
      "id": "i39",
      "type": "direction",
      "label": "",
-     "text": "<p><i> Raj sits and Simran is dancing on ‘</i><mark><i>Tathya tathya ho’ </i></mark><i>Raj puts his hand on his head. Simran pulls him aside and scene is closed by showing two flowers cross over each other. (flower cross over upon exit of Raj and Simran instead of over their faces, so no queries by children. Also as Simran takes Raj away person enters with flowers) . </i></p>"
-    },
-    {
-     "id": "i-mujpfognltzz",
-     "type": "song",
-     "request": "Starting dings from Tathiya ...",
-     "note": "coming soon..."
+     "text": "<p>Raj sits on the bench.</p>"
     },
     {
      "id": "i39-s1",
@@ -776,10 +816,34 @@
      "note": ""
     },
     {
+     "id": "i-hs-5",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Simran dances around him.</p>"
+    },
+    {
+     "id": "i-hs-gag-3",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Raj puts his hand to his forehead.</p>"
+    },
+    {
+     "id": "i-hs-fail-3",
+     "type": "sfx",
+     "sfxId": "sfx-muij4o9zev8y",
+     "note": ""
+    },
+    {
      "id": "i-mujpg3q74f4w",
      "type": "song",
-     "request": "Nanio mein sapna,.... , finally closing with Ek mein aur ek tu",
-     "note": "coming soon..."
+     "request": "The rest of ‘Naino mein sapna’, closing with ‘Ek main aur ek tu’.",
+     "note": ""
+    },
+    {
+     "id": "i-hs-6",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Simran pulls Raj away and they leave together. As they exit, a person crosses the stage with two roses, which meet behind the couple rather than in front of their faces, so the children in the audience have no questions.</p>"
     }
    ],
    "onStage": [
@@ -787,21 +851,21 @@
     "simran"
    ],
    "locationId": "park",
-   "locationNote": "Place vases or plant pots besides the chair. This chair is same a s receptionist chair.",
+   "locationNote": "The Receptionist’s chair from scene 2 is the park bench.",
    "props": [
     {
      "propId": "vase",
-     "note": "vases with flowers/Plant pots"
+     "note": "vases of flowers or plant pots"
     },
     {
      "propId": "roses",
-     "note": "2 roses"
+     "note": "two roses"
     }
    ],
    "setChanges": [
     {
      "id": "scene-3-sc1",
-     "text": "After scene 2 place vases/plant pots beside the chair.",
+     "text": "Place vases or plant pots beside the Receptionist’s chair.",
      "assigneeId": ""
     }
    ]
@@ -818,59 +882,101 @@
      "text": "<p>Deendayal, Sharda Devi aur Simran shaadi ki baat pakki karne Raj ke ghar gaye.</p>"
     },
     {
+     "id": "i-hs-7",
+     "type": "direction",
+     "label": "Setting",
+     "text": "<p>The Malhotras’ drawing room. Dharamchand, Sumitra Devi and Raj welcome Deendayal, Sharda Devi and Simran.</p>"
+    },
+    {
      "id": "i41",
      "type": "line",
      "characterId": "sumitradevi",
      "note": "",
-     "text": "<p>Ramu kahan mar gaya. Mehmaan aa gaye. Chai nashta le aanaa</p>"
+     "text": "<p>Ramu, kahan mar gaya? Mehmaan aa gaye. Chai-nashta le aana.</p>"
     },
     {
      "id": "i42",
      "type": "line",
      "characterId": "ramu",
      "note": "",
-     "text": "<p>Ji maaji abhi laya.</p>"
+     "text": "<p>Ji, Maaji, abhi laaya.</p>"
     },
     {
      "id": "i43",
      "type": "line",
      "characterId": "dharamchand",
      "note": "",
-     "text": "<p>Aaaiye aaiye. Baithiye.</p>"
+     "text": "<p>Aaiye, aaiye. Baithiye.</p>"
     },
     {
      "id": "i44",
-     "type": "line",
-     "characterId": "simran",
-     "note": "",
-     "text": "<p>(Seeks blessing from Sumitradevi)</p>"
+     "type": "direction",
+     "label": "",
+     "text": "<p>Simran touches Sumitra Devi’s feet for her blessing.</p>"
     },
     {
      "id": "i45",
      "type": "line",
      "characterId": "sumitradevi",
      "note": "",
-     "text": "<p>Kitni sundar bahu dhundee hain hamaare Raj ne. Kitni sanskari bhi hain. Main diya lekar dundne jaate tab bhi aise sundar bahu nahee milatee.</p><p>(Simran sharmatee hai aur Raj ko aankh maaratee hai).</p>"
+     "text": "<p>Kitni sundar bahu dhoondhi hai hamare Raj ne. Kitni sanskari bhi hai. Main diya lekar dhoondhne jaati, tab bhi aisi sundar bahu nahi milti.</p>"
+    },
+    {
+     "id": "i-hs-8",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Simran blushes, then winks at Raj.</p>"
     },
     {
      "id": "i46",
      "type": "line",
      "characterId": "deendayal",
      "note": "",
-     "text": "<p>Hum ye shaadi dhoom dhaam se manaaenge.</p>"
+     "text": "<p>Hum yeh shaadi dhoom-dhaam se manaayenge.</p>"
+    },
+    {
+     "id": "i-hs-9",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Sumitra Devi nudges Dharamchand.</p>"
     },
     {
      "id": "i47",
      "type": "line",
      "characterId": "dharamchand",
      "note": "",
-     "text": "<p><i>(Sumitradevi nudges Dharmachand)</i></p><p>Thehero. Ek baat to main bolna bhool hi gaya.</p><p><i>(Deendayal looks a bit worried/scared). </i></p><p>Ghabrao naahi sambdhijee. Hamaree koi paison ki maange nahi hain. Lekin (big pause) ham chahate hain ki baraateeyon ka Swagat paan Parag se kiya jaaye.</p>"
+     "text": "<p>Thehro. Ek baat to main bolna bhool hi gaya.</p>"
+    },
+    {
+     "id": "i-hs-10",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Deendayal looks worried.</p>"
+    },
+    {
+     "id": "i-hs-11",
+     "type": "line",
+     "characterId": "dharamchand",
+     "note": "",
+     "text": "<p>Ghabrao nahi, Sambandhiji. Hamari koi paison ki maang nahi hai. Lekin <i>(long pause)</i> hum chahte hain ki baraatiyon ka swagat Pan Parag se kiya jaaye.</p>"
     },
     {
      "id": "i48",
      "type": "direction",
      "label": "",
-     "text": "<p>Everyone starts laughing. Raj puts his hand on his forehead.</p>"
+     "text": "<p>Everyone laughs.</p>"
+    },
+    {
+     "id": "i-hs-gag-4",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Raj puts his hand to his forehead.</p>"
+    },
+    {
+     "id": "i-hs-fail-4",
+     "type": "sfx",
+     "sfxId": "sfx-muij4o9zev8y",
+     "note": ""
     }
    ],
    "onStage": [
@@ -878,7 +984,9 @@
     "dharamchand",
     "sumitradevi",
     "deendayal",
-    "simran"
+    "simran",
+    "sharda",
+    "ramu"
    ],
    "locationId": "home",
    "locationNote": "",
@@ -886,12 +994,12 @@
    "setChanges": [
     {
      "id": "scene-4-sc1",
-     "text": "After scene 3 place back covers on central chairs.",
+     "text": "Put the covers back on the three central chairs.",
      "assigneeId": ""
     },
     {
      "id": "scene-4-sc2",
-     "text": "Office chair can move next to park space chair so Simran and dad can sit there and Raj and parents in central 3 chairs.",
+     "text": "Move the office chair next to the Receptionist’s chair, for Deendayal and Sharda Devi. Simran stands beside them. Raj and his parents sit on the three central chairs.",
      "assigneeId": ""
     }
    ]
@@ -903,19 +1011,37 @@
     {
      "id": "i49",
      "type": "direction",
-     "label": "",
-     "text": "<p>Wedding Scene. Raj and Simran on stage sitting on their chairs. All the previous characters are attending the wedding reception. Here we can have people coming in continuously and having a small talk with each other (just 30 seconds or so) Suddenly Dharmchand and SumitraDevi break into a dance on <mark>(Le jayenge le jayenge </mark>– everyone attending the reception joins and dances in a circle). Simran also gets up. Raj tries to hold her back but she also joins in.</p><p>Raj puts his hand on his forehead.</p>"
+     "label": "Setting",
+     "text": "<p>The wedding reception. Raj and Simran sit on their chairs. All the characters so far are guests, arriving and making small talk for about 30 seconds.</p>"
     },
     {
      "id": "i49-s1",
      "type": "song",
      "songId": "song-05",
      "note": ""
+    },
+    {
+     "id": "i-hs-12",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Suddenly Dharamchand and Sumitra Devi break into a dance, and the guests join them in a circle. Simran gets up. Raj tries to hold her back, but she joins in too.</p>"
+    },
+    {
+     "id": "i-hs-gag-5",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Raj puts his hand to his forehead.</p>"
+    },
+    {
+     "id": "i-hs-fail-5",
+     "type": "sfx",
+     "sfxId": "sfx-muij4o9zev8y",
+     "note": ""
     }
    ],
    "onStage": "everyone",
    "locationId": "wedding",
-   "locationNote": "All 5 chairs. Central chairs to have red cover, can possibly have petals.",
+   "locationNote": "All five chairs, the central ones with red covers and perhaps petals.",
    "props": [
     {
      "propId": "red-covers",
@@ -927,7 +1053,7 @@
     },
     {
      "propId": "scarves",
-     "note": "for Dulha Dulhan and possibly others as well. Raj and Simran can have some nice scarves on their dress. All can choose to have scarves not a must."
+     "note": "for the bride and groom, and anyone else who likes; not a must"
     }
    ],
    "setChanges": []
@@ -941,53 +1067,91 @@
      "type": "line",
      "characterId": "narrator",
      "note": "",
-     "text": "<p>Aise he haste khelte Raj ki Zindagi beet rahee hai. Idhar ghar vaale aur bhi filmi ho jaa rahe the. Is beech Sreedevi ki naagin picture release ho gayee. Iskaa Raj ke ghar mein kya asar hua, yeh dekhte hain.</p>"
+     "text": "<p>Aise hi hanste-khelte Raj ki zindagi beet rahi hai. Idhar ghar waale aur bhi filmi hote ja rahe the. Is beech Sridevi ki naagin picture release ho gayi. Iska Raj ke ghar mein kya asar hua, yeh dekhte hain.</p>"
     },
     {
      "id": "i51",
      "type": "direction",
-     "label": "",
-     "text": "<p><i>Raj comes home from office and loosens his tie.</i></p>"
+     "label": "Setting",
+     "text": "<p>The Malhotras’ drawing room. Sumitra Devi is at home. Raj comes back from the office and loosens his tie.</p>"
     },
     {
      "id": "i52",
      "type": "line",
      "characterId": "sumitradevi",
      "note": "",
-     "text": "<p>Aaj hamaare ghar ek bahot bade baba aa rahen hai. <i>(Bhairav baba arrives)</i> Bhairav Baba ki Jai. Lagataa hai aaap ko pehle bhi kabhi dekha hain.</p>"
+     "text": "<p>Aaj hamare ghar ek bahut bade Baba aa rahe hain.</p>"
+    },
+    {
+     "id": "i-hs-13",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Bhairav Baba arrives.</p>"
+    },
+    {
+     "id": "i-hs-14",
+     "type": "line",
+     "characterId": "sumitradevi",
+     "note": "",
+     "text": "<p>Bhairav Baba ki jai! Lagta hai aapko pehle bhi kabhi dekha hai.</p>"
     },
     {
      "id": "i53",
      "type": "line",
      "characterId": "bhairav",
      "note": "",
-     "text": "<p>Mumkin hai kyun ki is skit me mera tripe role hai. Shaayad aapko main Amitabh ke jaisa lag rahaa hoon.</p>"
+     "text": "<p>Mumkin hai, kyunki is skit mein mera triple role hai. Shayad aapko main Amitabh ke jaisa lag raha hoon.</p>"
     },
     {
      "id": "i54",
      "type": "line",
      "characterId": "sumitradevi",
      "note": "",
-     "text": "<p>Baba muze lagataa hai meri bahu, Simran, ek naagin hain.</p>"
+     "text": "<p>Baba, mujhe lagta hai meri bahu, Simran, ek naagin hai.</p>"
     },
     {
      "id": "i55",
      "type": "line",
      "characterId": "bhairav",
      "note": "",
-     "text": "<p><i>Aap ghabrao naahi maaji. Es naagino ko nachana mujhe achee tarah aatta hai. (He starts playing his been). Simran comes down from stairs and dances to the tune of </i><mark><i>‘Main nagin tu sapera’ </i></mark><i>with tongue out and hissing like a snake. </i></p><p><i>Raj puts his hand on his forehead</i>.</p>"
+     "text": "<p>Aap ghabrao nahi, Maaji. In naaginon ko nachaana mujhe achchhi tarah aata hai.</p>"
+    },
+    {
+     "id": "i-hs-15",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Bhairav Baba starts playing his pungi.</p>"
     },
     {
      "id": "i55-s1",
      "type": "song",
      "songId": "song-06",
      "note": ""
+    },
+    {
+     "id": "i-hs-16",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Simran comes down the stairs and dances, tongue out, hissing like a snake.</p>"
+    },
+    {
+     "id": "i-hs-gag-6",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Raj puts his hand to his forehead.</p>"
+    },
+    {
+     "id": "i-hs-fail-6",
+     "type": "sfx",
+     "sfxId": "sfx-muij4o9zev8y",
+     "note": ""
     }
    ],
    "onStage": [
     "raj",
     "sumitradevi",
-    "bhairav"
+    "bhairav",
+    "simran"
    ],
    "locationId": "home",
    "locationNote": "",
@@ -1006,13 +1170,13 @@
     },
     {
      "propId": "saffron-shawl",
-     "note": "for baba"
+     "note": "for Bhairav Baba"
     }
    ],
    "setChanges": [
     {
      "id": "scene-6-sc1",
-     "text": "Location Home same as scene 1 so should have same set up as scene 1.",
+     "text": "Set the drawing room as in scene 1.",
      "assigneeId": ""
     }
    ]
@@ -1026,63 +1190,80 @@
      "type": "line",
      "characterId": "narrator",
      "note": "",
-     "text": "<p>Ghabrao naahi. Simran sach muchki naagin naahi the. Picture cinema theatre se jaate he, Raj ke ghar se bhi ye naagin ka bhoot utar gaya. Aur Sumitra devie bhi khush thi kyonki ek nanaha Raj ghar mein aa gayaa tha. Naam rakha Rocky. Yeh Rocky bhi kuch kam filmi naahi tha. Aao dekhte hain Rocky ki ek Jhalak.</p>"
+     "text": "<p>Ghabrao nahi. Simran sach-much ki naagin nahi thi. Picture cinema theatre se jaate hi, Raj ke ghar se bhi yeh naagin ka bhoot utar gaya. Aur Sumitra Devi bhi khush thi, kyunki ek nanha Raj ghar mein aa gaya tha. Naam rakha Rocky. Yeh Rocky bhi kuch kam filmi nahi tha. Aao, dekhte hain Rocky ki ek jhalak.</p>"
+    },
+    {
+     "id": "i-hs-17",
+     "type": "direction",
+     "label": "Setting",
+     "text": "<p>Some years later. The Malhotras’ drawing room. Raj is at home. Rocky, now about 16, comes in with his report card.</p>"
     },
     {
      "id": "i57",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Rocky, kaha se aa rahe ho. Tumhaara result aaaya kya?</p>"
+     "text": "<p>Rocky, kahan se aa rahe ho? Tumhara result aaya kya?</p>"
     },
     {
      "id": "i58",
      "type": "line",
      "characterId": "rocky",
      "note": "",
-     "text": "<p>Hey Dad! Chill. Result lene hi gaya tha. Ye dekhiye meri mark sheet <i>(presenting it proudly)</i></p>"
+     "text": "<p>Hey Dad! Chill. Result lene hi gaya tha. <i>(presents it proudly)</i> Yeh dekhiye, mera report card.</p>"
     },
     {
      "id": "i59",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Ye kya. Sab mein fail. Heart fail ho jaaye ga mera.</p>"
+     "text": "<p>Yeh kya? Sab mein fail! Heart fail ho jaayega mera.</p>"
     },
     {
      "id": "i60",
      "type": "line",
      "characterId": "rocky",
      "note": "",
-     "text": "<p>Chill Dad. Just say ‘All is Well’ ‘All is Well’. <i>(Mimic Aamir khan in Three idiots).</i></p>"
+     "text": "<p><i>(like Aamir Khan in ‘3 Idiots’)</i> Chill, Dad. Just say ‘All is well’, ‘All is well’.</p>"
     },
     {
      "id": "i61",
      "type": "line",
      "characterId": "rocky",
      "note": "",
-     "text": "<p>Dad, kya main Bade Dadaji ki photo ke saamne ye marksheet rakhun?</p>"
+     "text": "<p>Dad, kya main Bade Dadaji ki photo ke saamne yeh report card rakhoon?</p>"
     },
     {
      "id": "i62",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Ek khayega merese. <i>(Action like zapad khayega)</i></p>"
+     "text": "<p><i>(raises his hand to slap him)</i> Ek khaayega mujhse.</p>"
+    },
+    {
+     "id": "i-hs-18",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Sumitra Devi comes out of the kitchen, exactly as in scene 1.</p>"
     },
     {
      "id": "i63",
      "type": "line",
      "characterId": "sumitradevi",
      "note": "",
-     "text": "<p><i>(Comes out from the kitchen – repeat kust like in scene 1)</i> Rocky beta - main tere liye gajar ka halwa lekar aate hun.</p>"
+     "text": "<p>Rocky beta, main tere liye gajar ka halwa lekar aati hoon.</p>"
     },
     {
      "id": "i64",
-     "type": "line",
-     "characterId": "raj",
-     "note": "",
-     "text": "<p><i>Puts his hand on his forehead.</i></p>"
+     "type": "direction",
+     "label": "",
+     "text": "<p>Raj puts his hand to his forehead.</p>"
+    },
+    {
+     "id": "i-hs-fail-7",
+     "type": "sfx",
+     "sfxId": "sfx-muij4o9zev8y",
+     "note": ""
     }
    ],
    "onStage": [
@@ -1103,7 +1284,7 @@
     },
     {
      "propId": "cap-jacket",
-     "note": "a prop to show young Rocky, since in later scene he needs to look old."
+     "note": "to make Rocky look young; he is grown up in scene 8"
     }
    ],
    "setChanges": []
@@ -1113,11 +1294,10 @@
    "title": "The Finale",
    "items": [
     {
-     "id": "i65",
-     "type": "line",
-     "characterId": "raj",
-     "note": "Old",
-     "text": "<p><mark>(Sings the Roshni deta bajaj song – jab main chota bacha tha badee sharat karta tha…) </mark><i>Raj starts coughing</i>.</p>"
+     "id": "i-hs-19",
+     "type": "direction",
+     "label": "Setting",
+     "text": "<p>Many years later, at the Malhotras’ home. Raj, now old, walks with a stick. Simran and a grown-up Rocky are with him.</p>"
     },
     {
      "id": "i65-s1",
@@ -1126,78 +1306,119 @@
      "note": ""
     },
     {
+     "id": "i65",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Raj sings along to the old Bajaj jingle, then starts coughing.</p>"
+    },
+    {
      "id": "i66",
      "type": "line",
      "characterId": "rocky",
-     "note": "now grown up",
-     "text": "<p>Dad. Aap ko letna chaliye.</p>"
+     "note": "",
+     "text": "<p>Dad, aapko letna chahiye.</p>"
     },
     {
      "id": "i67",
      "type": "direction",
      "label": "",
-     "text": "<p><i>Simran, Rocky all ask Raj to lie on the bed. They light a small lamp.</i></p>"
+     "text": "<p>Simran and Rocky get Raj to lie down on the bed. They light a small lamp.</p>"
     },
     {
      "id": "i68",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Ye kis liye? Electricity chalee gayi kya?</p>"
+     "text": "<p>Yeh kis liye? Electricity chali gayi kya?</p>"
     },
     {
      "id": "i69",
      "type": "line",
      "characterId": "simran",
      "note": "",
-     "text": "<p>Nahhi Sassur ji. Is samay par aisa hi karte hain.</p>"
+     "text": "<p>Nahi!!! Is samay par aisa hi karte hain.</p>"
     },
     {
      "id": "i70",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Aisa samay? <i>(Confused)</i></p>"
+     "text": "<p><i>(confused)</i> Aisa samay?</p>"
     },
     {
      "id": "i71",
      "type": "direction",
      "label": "",
-     "text": "<p><i>Light on the lamp flickers and goes off</i></p>"
+     "text": "<p>The lamp flickers and goes out.</p>"
     },
     {
      "id": "i72",
      "type": "line",
      "characterId": "everyone",
      "note": "",
-     "text": "<p>Naaaahhhi.</p>"
+     "text": "<p>Nahiii!</p>"
+    },
+    {
+     "id": "i-hs-20",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Simran tries to break her bangles, but fails.</p>"
     },
     {
      "id": "i73",
      "type": "line",
      "characterId": "simran",
      "note": "",
-     "text": "<p><i>(Trying to break her bangles though fails)</i> Mujhe chod ke kyon chale gaye.</p>"
+     "text": "<p>Mujhe chhodkar kyun chale gaye?</p>"
+    },
+    {
+     "id": "i-hs-21",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Raj gets up and starts beating everyone with his stick.</p>"
     },
     {
      "id": "i74",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p><i>(Gets up and starts beating everyone with his stick).</i> Chup karo saab log. Diya bujh gayaa. Mein abhi bhee zinda hoon.</p><p><i>(Raj’s hand starts to go to his forehead though suddenly he shrugs and breaks into a dance)</i></p><p><mark><i>Can we have a song saying something like I am back or exhibiting some attitude saying don’t worry just live, have fun and Raj invites family to dance).</i></mark></p>"
+     "text": "<p>Chup karo, sab log! Diya bujh gaya. Main abhi bhi zinda hoon.</p>"
     },
     {
-     "id": "i75",
-     "type": "line",
-     "characterId": "everyone",
-     "note": "",
-     "text": "<p>Dances on <mark>Ek dusre se karte hain pyaar hum.</mark></p><p>We ask the whole audience to join in this dance.</p><p>The End.</p>"
+     "id": "i-hs-22",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Raj’s hand starts towards his forehead, but he shrugs it off.</p>"
+    },
+    {
+     "id": "i-hs-23",
+     "type": "song",
+     "request": "An ‘I’m back’ song with attitude: don’t worry, just live and have fun.",
+     "note": ""
+    },
+    {
+     "id": "i-hs-24",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Raj breaks into a dance and invites the family to join him.</p>"
     },
     {
      "id": "i75-s1",
      "type": "song",
      "songId": "song-08",
      "note": ""
+    },
+    {
+     "id": "i75",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Everyone dances. The audience is invited to join in.</p>"
+    },
+    {
+     "id": "i-hs-25",
+     "type": "direction",
+     "label": "",
+     "text": "<p>The End.</p>"
     }
    ],
    "onStage": [
