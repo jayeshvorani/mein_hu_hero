@@ -758,10 +758,10 @@
      "text": "<p><i> Raj sits and Simran is dancing on ‘</i><mark><i>Tathya tathya ho’ </i></mark><i>Raj puts his hand on his head. Simran pulls him aside and scene is closed by showing two flowers cross over each other. (flower cross over upon exit of Raj and Simran instead of over their faces, so no queries by children. Also as Simran takes Raj away person enters with flowers) . </i></p>"
     },
     {
-     "id": "i-muirxoo8zxw8",
-     "type": "direction",
-     "label": "",
-     "text": "<p><mark>Starting dings from Tathiya ...</mark></p>"
+     "id": "i-mujpfognltzz",
+     "type": "song",
+     "request": "Starting dings from Tathiya ...",
+     "note": "coming soon..."
     },
     {
      "id": "i39-s1",
@@ -770,10 +770,10 @@
      "note": ""
     },
     {
-     "id": "i-muirx7gr0g7h",
-     "type": "direction",
-     "label": "",
-     "text": "<p><mark>Nanio mein sapna,.... , finally closing with Ek mein aur ek tu</mark></p>"
+     "id": "i-mujpg3q74f4w",
+     "type": "song",
+     "request": "Nanio mein sapna,.... , finally closing with Ek mein aur ek tu",
+     "note": "coming soon..."
     }
    ],
    "onStage": [
