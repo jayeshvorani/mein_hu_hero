@@ -629,7 +629,13 @@
      "type": "line",
      "characterId": "receptionist",
      "note": "",
-     "text": "<p><i>(pushes the man aside)</i> Chal hat. Kahan kahan se aa jaate hain Amitabh.</p><p><i>Raj with one hand over his forehead.</i><br><br><mark><i>Song: Jaha teri ye nazar hai</i></mark></p>"
+     "text": "<p><i>(pushes the man aside)</i> Chal hat. Kahan kahan se aa jaate hain Amitabh.</p><p><i>Raj with one hand over his forehead.</i></p>"
+    },
+    {
+     "id": "i-mujpsvzptwrm",
+     "type": "song",
+     "request": "Jaha teri ye nazar hai",
+     "note": "Just the music where Amitabh does the hook step - https://www.youtube.com/watch?v=BXaqBNTl7zI&list=RDBXaqBNTl7zI&start_radio=1"
     },
     {
      "id": "i30",
