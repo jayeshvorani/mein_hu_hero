@@ -2467,3 +2467,11 @@ e13a3d8). To go back to the old script, restore show.json from that tag
 in a new pull request (editor publishing paused while it is open). Any
 editor changes made after the restyle would need re-doing on the old
 script, so decide early.
+
+### 2026-09-27: tidier page ends and front sections
+- The gap between "The End" and the footer (a 3.6rem scene margin plus
+  6rem reserved for the phone's bottom bar) is gone. On phones the bottom
+  bar's room is now reserved under the footer instead.
+- Cast & Crew and How This Script Is Marked Up now open and close like the
+  crew checklist, closed by default. Closed, the three headings sit close
+  together.
