@@ -816,6 +816,12 @@
      "note": ""
     },
     {
+     "id": "i-mujpg3q74f4w",
+     "type": "song",
+     "request": "The rest of ‘Naino mein sapna’, closing with ‘Ek main aur ek tu’.",
+     "note": ""
+    },
+    {
      "id": "i-hs-5",
      "type": "direction",
      "label": "",
@@ -831,12 +837,6 @@
      "id": "i-hs-fail-3",
      "type": "sfx",
      "sfxId": "sfx-muij4o9zev8y",
-     "note": ""
-    },
-    {
-     "id": "i-mujpg3q74f4w",
-     "type": "song",
-     "request": "The rest of ‘Naino mein sapna’, closing with ‘Ek main aur ek tu’.",
      "note": ""
     },
     {
