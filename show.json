@@ -334,6 +334,11 @@
    "id": "song-muidty0wkpj2",
    "title": "Tujhe dekha - Instrumental",
    "file": "Audio files/songs/tujhe-deka-muidtwex.mp3"
+  },
+  {
+   "id": "song-mukeiygavmxj",
+   "title": "Jaha teri ye nazar hai",
+   "file": "Audio files/songs/jaha-teri-ye-nazar-hai-mukeix5i.mp3"
   }
  ],
  "sfx": [
@@ -645,8 +650,8 @@
     {
      "id": "i-mujpsvzptwrm",
      "type": "song",
-     "request": "‘Jahan teri yeh nazar hai’: just the music for Amitabh’s hook step. Reference: https://www.youtube.com/watch?v=BXaqBNTl7zI",
-     "note": ""
+     "note": "",
+     "songId": "song-mukeiygavmxj"
     },
     {
      "id": "i-hs-3",
