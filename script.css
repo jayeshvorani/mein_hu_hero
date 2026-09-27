@@ -1,0 +1,142 @@
+/* Script export: fonts and the on-screen chrome around the pages. The
+   pages themselves are styled by script-print.css. */
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("fonts/BricolageGrotesque-subset.woff2") format("woff2");
+  font-weight: 400 800;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("fonts/HankenGrotesk-subset.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("fonts/HankenGrotesk-Italic-subset.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: italic;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("fonts/JetBrainsMono-subset.woff2") format("woff2");
+  font-weight: 100 800;
+  font-style: normal;
+}
+
+:root {
+  color-scheme: light;
+}
+html,
+body {
+  margin: 0;
+  background: #e8e0d3;
+  color: #27221d;
+  font-family: "Hanken Grotesk", system-ui, sans-serif;
+}
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: calc(0.7rem + env(safe-area-inset-top, 0px)) 16px 0.7rem;
+  background: #fffaf2;
+  border-bottom: 1px solid rgba(90, 60, 20, 0.16);
+}
+.bar-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+  flex: 1;
+}
+.bar-text strong {
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-size: 1.05rem;
+}
+.bar-text span {
+  font-size: 0.85rem;
+  color: #69645d;
+}
+.bar.is-error .bar-text strong {
+  color: #af3029;
+}
+.bar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  padding: 0 1.1rem;
+  border: 0;
+  border-radius: 999px;
+  background: #af3029;
+  color: #fffaf2;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.bar-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.bar-btn:hover:not(:disabled) {
+  background: #8f241e;
+}
+.bar-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.bar-btn:focus-visible {
+  outline: 3px solid #8b6000;
+  outline-offset: 2px;
+}
+.bar-tip {
+  margin: 0 auto;
+  max-width: 210mm;
+  padding: 0.8rem 16px 0;
+  font-size: 0.85rem;
+  color: #45403a;
+}
+
+/* the pages, as sheets on a desk */
+.pagedjs_pages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 16px 48px;
+}
+.pagedjs_page {
+  background: #fff;
+  box-shadow:
+    0 1px 2px rgba(60, 40, 10, 0.12),
+    0 8px 24px rgba(60, 40, 10, 0.12);
+}
+
+@media print {
+  .bar,
+  .bar-tip {
+    display: none !important;
+  }
+  html,
+  body {
+    background: none;
+  }
+  #pages {
+    zoom: 1 !important;
+  }
+  .pagedjs_pages {
+    display: block;
+    padding: 0;
+  }
+  .pagedjs_page {
+    box-shadow: none;
+    margin: 0;
+  }
+}

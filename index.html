@@ -1144,6 +1144,32 @@
         outline: 2px solid var(--accent);
         outline-offset: -2px;
       }
+      /* links styled as a pill or a sheet row (Export PDF) */
+      a.pill,
+      a.sheet-toggle {
+        text-decoration: none;
+      }
+      /* On small laptops the search field needs the room: Export PDF shows
+         just its icon, and keeps its name for screen readers. */
+      @media (min-width: 901px) and (max-width: 1060px) {
+        #exportPdf {
+          padding-inline: 0.75rem;
+        }
+        #exportPdf .pill-text {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          overflow: hidden;
+          clip: rect(0 0 0 0);
+          white-space: nowrap;
+        }
+      }
+      .st-go {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+        color: var(--muted);
+      }
       .st-body {
         display: flex;
         flex-direction: column;
@@ -3633,6 +3659,31 @@
           aria-live="polite"
         ></span>
 
+        <a
+          class="sheet-toggle"
+          href="script.html"
+          target="_blank"
+          rel="noopener"
+        >
+          <span class="st-body">
+            <span class="st-title">Export PDF</span>
+            <span class="st-note"
+              >The full script as A4 pages, to print or save as a PDF. Opens
+              in a new tab.</span
+            >
+          </span>
+          <svg
+            class="st-go"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            aria-hidden="true"
+          >
+            <path d="M7 17 17 7M8 7h9v9" />
+          </svg>
+        </a>
+
         <button
           type="button"
           class="sheet-toggle"
@@ -3765,6 +3816,27 @@
             </svg>
             <span class="pill-text">Sound cues only</span>
           </button>
+          <a
+            class="pill desk-only"
+            id="exportPdf"
+            href="script.html"
+            target="_blank"
+            rel="noopener"
+            title="The full script laid out as A4 pages, to print or save as a PDF"
+          >
+            <svg
+              class="pill-ico"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+              <path d="M14 3v5h5M12 11v6M9 14l3 3 3-3" />
+            </svg>
+            <span class="pill-text">Export PDF</span>
+          </a>
 
           <button
             class="icon-btn theme-pill"

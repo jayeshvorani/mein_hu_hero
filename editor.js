@@ -1426,7 +1426,9 @@
         key +
         '" data-key="sh-' +
         key +
-        '">' +
+        '"' +
+        (opts.placeholder ? ' placeholder="' + esc(opts.placeholder) + '"' : "") +
+        ">" +
         esc(value || "") +
         "</textarea>"
       : '<input class="text-input" data-field="show-' +
@@ -1460,6 +1462,11 @@
         hint: "The number of scenes is added after it automatically.",
       }) +
       showField("tagline", "Introduction", sm.tagline, { long: true }) +
+      showField("printTagline", "Introduction in the PDF", sm.printTagline, {
+        long: true,
+        placeholder: "Leave blank to use the introduction above",
+        hint: "For the title page of the PDF, where there is no character picker to point to.",
+      }) +
       showField("pickerPrompt", "Prompt above the character cards", sm.pickerPrompt) +
       showField("footer", "Footer", sm.footer) +
       "</section>";
@@ -1476,7 +1483,10 @@
         : '<p class="empty">No photo.</p>') +
       "</section>";
     h +=
-      '<section class="section"><div class="section-head"><h2>How this script is marked up</h2><p>The guide on the site. The look of each sample is fixed; the words are yours. Put words between ** and ** to make them bold.</p></div><div class="rows">';
+      '<section class="section"><div class="section-head"><h2>How this script is marked up</h2><p>The guide on the site and in the PDF of the script. The look of each sample is fixed; the words are yours. Put words between ** and ** to make them bold. Paper has no buttons, so a row that mentions one can have its own wording for the PDF.</p></div><div class="rows">';
+    if (S.show.legend.length)
+      h +=
+        '<div class="row legend-edit-row row-head" aria-hidden="true"><span>Look</span><span>Sample</span><span>Meaning on the site</span><span>Wording in the PDF</span></div>';
     S.show.legend.forEach(function (row, i) {
       h +=
         '<div class="row legend-edit-row">' +
@@ -1495,13 +1505,23 @@
             '" />',
         ) +
         cell(
-          "Meaning",
+          "Meaning on the site",
           '<textarea class="textarea" rows="2" data-field="legend-meaning" data-index="' +
             i +
             '" data-key="lgm-' +
             i +
             '">' +
             esc(row.meaning || "") +
+            "</textarea>",
+        ) +
+        cell(
+          "Wording in the PDF",
+          '<textarea class="textarea" rows="2" data-field="legend-print" data-index="' +
+            i +
+            '" data-key="lgp-' +
+            i +
+            '" placeholder="Leave blank to use the same words as the site">' +
+            esc(row.printMeaning || "") +
             "</textarea>",
         ) +
         "</div>";
@@ -1810,6 +1830,7 @@
         "crew-role": "Edited crew role",
         "legend-sample": "Edited guide sample",
         "legend-meaning": "Edited guide wording",
+        "legend-print": "Edited guide wording for the PDF",
         note: "Edited note",
         request: "Edited request",
         label: "Edited heading",
@@ -1853,6 +1874,11 @@
       sh.legend[+t.getAttribute("data-index")][
         f === "legend-sample" ? "sample" : "meaning"
       ] = v;
+    else if (f === "legend-print") {
+      var lrow = sh.legend[+t.getAttribute("data-index")];
+      if (v.trim()) lrow.printMeaning = v;
+      else delete lrow.printMeaning;
+    }
     else if (f === "note" && it) it.item.note = v.trim() ? v : "";
     else if (f === "request" && it) it.item.request = v.trim() ? v : "";
     else if (f === "label" && it) it.item.label = v;
@@ -3731,6 +3757,15 @@
         label: "Preview the site with my changes",
         onClick: function () {
           $("#previewBtn").click();
+        },
+      },
+      {
+        label: "Preview the PDF with my changes",
+        onClick: function () {
+          if (document.activeElement && document.activeElement.blur)
+            document.activeElement.blur();
+          saveDraftNow();
+          window.open("script.html?draft", "mhh-pdf-preview");
         },
       },
       {

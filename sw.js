@@ -12,7 +12,7 @@
  * deleted on activate, so a stale font subset can never linger.
  */
 
-var CACHE_VERSION = "mhh-v11";
+var CACHE_VERSION = "mhh-v12";
 
 // The cue audio lives in its own cache, on its own version counter.
 //
@@ -44,6 +44,13 @@ var PRECACHE = [
   "./fonts/HankenGrotesk-subset.woff2",
   "./fonts/HankenGrotesk-Italic-subset.woff2",
   "./fonts/JetBrainsMono-subset.woff2",
+  // the script export, so "Export PDF" works offline on a device that has
+  // never opened it
+  "./script.html",
+  "./script.js",
+  "./script.css",
+  "./script-print.css",
+  "./vendor/paged-0.4.3.min.js",
 ];
 
 self.addEventListener("install", function (event) {

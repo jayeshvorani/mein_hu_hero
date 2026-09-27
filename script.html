@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Script · Mein hu Hero</title>
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <!-- Screen chrome and fonts. The page layout itself is in
+         script-print.css, which Paged.js reads to build the pages. -->
+    <link rel="stylesheet" href="script.css" />
+  </head>
+  <body>
+    <div class="bar" id="bar">
+      <div class="bar-text" id="barText" role="status">
+        <strong id="barTitle">Preparing the script…</strong>
+        <span id="barNote"
+          >Laying out the pages. This takes a few seconds.</span
+        >
+      </div>
+      <button type="button" class="bar-btn" id="saveBtn" disabled>
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path d="M12 3v12M7 10l5 5 5-5M5 21h14" />
+        </svg>
+        Save as PDF
+      </button>
+    </div>
+    <p class="bar-tip" id="barTip" hidden>
+      In the print window, set the destination to <strong>Save as PDF</strong>.
+      In Safari, untick <strong>Print headers and footers</strong> if you see a
+      date or web address at the edges.
+    </p>
+    <main id="pages"></main>
+
+    <script src="vendor/paged-0.4.3.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

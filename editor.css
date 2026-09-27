@@ -572,7 +572,7 @@ main {
   grid-template-columns: minmax(10rem, 1fr) minmax(0, 1.4fr) 11rem 6.5rem;
 }
 .legend-edit-row {
-  grid-template-columns: 12rem minmax(8rem, 14rem) minmax(0, 1fr);
+  grid-template-columns: 9rem minmax(8rem, 12rem) minmax(0, 1fr) minmax(0, 1fr);
   align-items: start;
 }
 .row.legend-edit-row > .cell {
@@ -1461,4 +1461,9 @@ main {
   flex-wrap: wrap;
   gap: 0.4rem;
   margin-top: 0.2rem;
+}
+
+/* the key's column headings sit over their columns, the last one too */
+.row.legend-edit-row.row-head > span {
+  justify-self: start;
 }
