@@ -388,8 +388,9 @@ h2 {
   font-style: italic;
   color: var(--ink-dim);
 }
-/* dashed grey edge, as on the site */
-.direction {
+/* dashed grey edge, as on the site; an optional direction keeps the solid
+   gold edge of every optional row */
+.direction:not(.is-optional) {
   border-left-color: #b5ab9c;
   border-left-style: dashed;
 }
