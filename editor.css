@@ -189,7 +189,7 @@ svg {
   display: flex;
   align-items: center;
   gap: 1rem;
-  min-height: var(--topbar-h);
+  min-height: 60px;
   padding: 0.5rem max(16px, env(safe-area-inset-right)) 0.5rem
     max(16px, env(safe-area-inset-left));
   padding-top: calc(0.5rem + env(safe-area-inset-top, 0px));
@@ -200,7 +200,8 @@ svg {
   display: flex;
   flex-direction: column;
   line-height: 1.1;
-  min-width: 0;
+  /* never squeezed under the tabs: the save message gives way instead */
+  flex-shrink: 0;
 }
 .brand-title {
   font-family: var(--display);
@@ -247,7 +248,9 @@ svg {
   font-size: 0.82rem;
   color: var(--muted);
   margin-right: 0.4rem;
-  white-space: nowrap;
+  min-width: 0;
+  text-align: right;
+  line-height: 1.25;
 }
 .status.is-dirty {
   color: var(--gold-ink);
@@ -1197,10 +1200,21 @@ main {
 }
 
 /* ---------- narrow screens ---------- */
-@media (max-width: 980px) {
+/* The top bar needs about 1,220px in one row (five tabs, the save
+   message, the buttons). Below that the tabs take a row of their own. */
+@media (max-width: 1240px) {
+  /* a first guess; editor.js sets the real height once the bar is drawn */
+  :root {
+    --topbar-h: 124px;
+  }
   .topbar {
     flex-wrap: wrap;
+    align-items: flex-start;
     gap: 0.5rem 0.75rem;
+  }
+  /* level with the buttons, not with buttons plus the save message */
+  .brand {
+    padding-top: 0.2rem;
   }
   .tabs {
     order: 3;
@@ -1225,6 +1239,8 @@ main {
     text-align: right;
     font-size: 0.78rem;
   }
+}
+@media (max-width: 980px) {
   .script-layout {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -1384,4 +1400,65 @@ main {
   .drag-ghost {
     transform: none;
   }
+}
+
+/* ---------- audio requests ---------- */
+/* A song or sound effect the director has asked for, with no audio yet. */
+.request-tag {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.card--song .request-tag {
+  color: var(--teal);
+}
+.card--sfx .request-tag {
+  color: var(--magenta);
+}
+.cue-body .request-input {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+.track-name {
+  font-weight: 700;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.tab-count {
+  display: inline-block;
+  min-width: 1.4em;
+  padding: 0 0.4em;
+  margin-left: 0.2rem;
+  border-radius: 999px;
+  background: var(--sindoor);
+  color: var(--on-accent);
+  font-size: 0.75rem;
+  line-height: 1.4;
+  text-align: center;
+}
+.request-row {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.3rem;
+  padding: 0.7rem 0.2rem 0.7rem 0.8rem;
+  border-left: 3px dashed var(--teal);
+}
+.requests--sfx .request-row {
+  border-left-color: var(--magenta);
+}
+.request-text {
+  margin: 0;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.request-context {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--ink-dim);
+  overflow-wrap: anywhere;
+}
+.request-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.2rem;
 }

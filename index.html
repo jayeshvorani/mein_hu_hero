@@ -2099,6 +2099,16 @@
       .line.has-music.is-sfx {
         border-left-color: var(--c-sfx);
       }
+      /* A requested cue whose audio is not made yet: dashed edge, grey
+         text, no play button. */
+      .line.has-music.is-pending {
+        border-left-style: dashed;
+      }
+      .c-music.cue-pending,
+      .c-sfx.cue-pending {
+        color: var(--muted);
+        font-style: italic;
+      }
       .cue-play.is-sfx {
         border-color: color-mix(in srgb, var(--magenta) 55%, transparent);
         background: color-mix(in srgb, var(--magenta) 16%, transparent);
@@ -6774,11 +6784,30 @@
           function cueRow(item) {
             var isSfx = item.type === "sfx";
             var track = (isSfx ? sfx : songs)[isSfx ? item.sfxId : item.songId];
-            if (!track) return "";
             var cls = isSfx ? "c-sfx" : "c-music";
             var note = item.note
               ? ' <span class="is-italic">' + esc(item.note) + "</span>"
               : "";
+            // A cue the director has asked for whose audio is not made yet:
+            // shown greyed, with what was asked for and no play button, so
+            // actors know a cue goes here.
+            if (!track) {
+              var want = String(item.request || "").trim();
+              var what = isSfx ? "Sound effect" : "Song";
+              return (
+                '<div class="line cue-row is-pending" data-search="' +
+                esc((what + " coming soon " + want + " " + (item.note || "")).toLowerCase()) +
+                '"><div class="speaker">' +
+                what +
+                '</div><div class="content"><p><span class="' +
+                cls +
+                ' cue-pending">Coming soon' +
+                (want ? ": " + esc(want) : "") +
+                "</span>" +
+                note +
+                "</p></div></div>"
+              );
+            }
             var btn = track.file
               ? '<button type="button" class="cue-play' +
                 (isSfx ? " is-sfx" : "") +
