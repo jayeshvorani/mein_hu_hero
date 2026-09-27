@@ -1654,7 +1654,7 @@
       .app {
         max-width: var(--maxw);
         margin: 2.6rem auto 0;
-        padding: 0 1.5rem 6rem;
+        padding: 0 1.5rem 1.5rem;
         display: grid;
         grid-template-columns: 232px 1fr;
         gap: 2.6rem;
@@ -1739,6 +1739,15 @@
       /* front-matter sections */
       section.front {
         margin-bottom: 3rem;
+      }
+      /* Closed, the three front sections read as one short list of
+         headings; an open one gets its full spacing back. */
+      section.front:has(> details.checklist:not([open])) {
+        margin-bottom: 0.4rem;
+      }
+      section.front:has(> details.checklist:not([open])) + section.scene,
+      section.front:has(> details.checklist:not([open])) + .script-status {
+        margin-top: 2.6rem;
       }
       /* Where the scene rail shows, keep front-matter text out from under
          it, the way the script cards' own padding does. */
@@ -1859,6 +1868,10 @@
       section.scene {
         margin-bottom: 3.6rem;
         scroll-margin-top: calc(var(--header-h) + 1.4rem);
+      }
+      /* the script ends at "The End": no gap before the footer */
+      section.scene:last-of-type {
+        margin-bottom: 0;
       }
       /* The auto-hide top bar is parked: a native anchor jump that lands
          while it is offscreen must not reserve its height, or the scene
@@ -3094,9 +3107,12 @@
           margin-bottom: 0.15rem;
         }
 
-        /* leave room for the bottom bar at the end of the script */
-        .app {
-          padding-bottom: calc(var(--bottombar-h, 72px) + 2.5rem);
+        /* leave room for the bottom bar below the footer, not between
+           the script and the footer */
+        footer.page-footer {
+          padding-bottom: calc(
+            var(--bottombar-h, 72px) + 2.5rem + env(safe-area-inset-bottom, 0px)
+          );
         }
         /* back-to-top sits above the bar */
         .to-top {
@@ -3986,8 +4002,11 @@
         </nav>
 
         <main>
+          <!-- Cast, crew and the guide are closed by default, like the crew
+               checklist, so the script starts near the top of the page. -->
           <section class="front reveal-on-scroll" id="cast">
-            <h2>Cast &amp; Crew</h2>
+            <details class="checklist">
+              <summary><h2>Cast &amp; Crew</h2></summary>
             <div class="table-shell">
               <table class="cast-table">
                 <thead>
@@ -4011,6 +4030,7 @@
                 <tbody id="crewTableBody"></tbody>
               </table>
             </div>
+            </details>
           </section>
 
           <!-- Props and set changes for the whole show, from show.json.
@@ -4023,9 +4043,11 @@
           </section>
 
           <section class="front reveal-on-scroll" id="legend">
-            <h2>How This Script Is Marked Up</h2>
-            <!-- rows come from show.json ("legend") -->
-            <div id="legendRows"></div>
+            <details class="checklist">
+              <summary><h2>How This Script Is Marked Up</h2></summary>
+              <!-- rows come from show.json ("legend") -->
+              <div id="legendRows"></div>
+            </details>
           </section>
 
           <!-- The scenes are rendered from show.json by renderShow() at the
