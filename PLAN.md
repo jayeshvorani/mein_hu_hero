@@ -2216,3 +2216,84 @@ never copied over it.
 - Editor night mode: the "light theme only" limit was Claude's call during review, never agreed with the user, and is withdrawn. The editor now follows the device like the site, with its own sun/moon button (this visit only). The site's footer link opens the editor in a new tab.
 - Editor colours aligned with the site: grey labels, the site's more vivid colour versions on wide-gamut screens (both themes, values copied from index.html) and the see-through optional-line yellow. Kept on purpose: solid panels and slightly stronger borders, because the editor is mostly input boxes. Lowest measured contrast in night mode 4.77:1 (dim italic on an optional card).
 - Fix: "Unpublished changes" showed on opening the editor with nothing changed. The editor saves a draft on every open; once the published script changed (a publish from another browser, or a merge touching show.json such as #2), that untouched draft was taken for unpublished work, and "Publish mine anyway" could have put the older script back. A draft identical to the version it started from is now dropped. Drafts with real edits are kept as before.
+
+# Round 10: audio requests (placeholders)
+
+Status: built and tested 2026-09-27, in pull request; approved by the user the same day.
+
+## Goal
+Directors decide where a song or sound effect goes and describe what they
+want. The audio maker (the user) only makes the files and attaches them. No
+director ever uploads or picks a track.
+
+## Decisions (interview, 2026-09-27)
+| Topic | Decision |
+| --- | --- |
+| Kinds | Songs and sound effects stay separate everywhere: insert menu, card colour (teal / magenta), request list, library, folder |
+| Delivery | In the editor: a Requests list, Upload on a request, then Publish |
+| Live site | A greyed-out cue with the request text and no play button |
+| Director's choice | Requests only. The script row has a note box; linking any audio (new upload or existing track) happens only in the Requests list |
+| Wrong audio | "Send back" on a delivered cue, with a note; the row becomes a request again; the old file stays in the library |
+| Roles | No logins: this separates the jobs by design, it does not lock anyone out |
+
+## Data model (additive, stays format 2)
+- A song or sfx row with no track is a request:
+  `{ id, type: "song", request: "slow romantic entry for Raj", note: "" }`
+  (no `songId` / `sfxId`). `sfx` rows the same.
+- `request` is kept apart from the existing `note`, which is the stage text
+  already shown beside a cue on the site.
+- Attaching audio sets `songId`/`sfxId` and removes `request`. Sending back
+  removes the id and sets `request` to the director's note.
+- Rows with an empty id (possible today via "Choose…") are read as requests
+  with blank text. show.json is not edited by this change; no format bump.
+- `replaces` (editor only, never shown on the site) names the track a
+  request is replacing, after a send back or a track removed from the
+  library. The cast sees only `request`.
+
+## Editor
+- Script tab: Song / Sound effect rows show "Song needed" / "Sound effect
+  needed", a text box "Describe what you need", and the usual stage note.
+  The track dropdown and upload are gone from the script. A delivered cue
+  shows its track name, a play link and "Send back…".
+- Songs & sound effects tab: a new "Requests" section at the top, split into
+  Songs and Sound effects, each request showing scene, the line before and
+  after, and the request text. Per request: "Upload audio…" (asks for a
+  title, prefilled from the request) and "Use an existing track…". Empty
+  state: "No open requests".
+- A count on the tab label, e.g. "Songs & sound effects (3)", so open
+  requests are visible from anywhere.
+- Undo covers all of it, as today.
+
+## Site (index.html)
+- Request rows render as a greyed cue: "♪ Song coming: <request>" /
+  "Sound effect coming: <request>", no play button, not counted as playable.
+  They still show under "Sound cues only" so actors see where cues go.
+
+## Build list
+- [x] 1. Renderer: greyed request cue, both themes
+- [x] 2. Editor script cards: request state, send back
+- [x] 3. Requests list with upload / use existing
+- [x] 4. Tab count
+- [x] 5. Local test: add request, preview, fulfil, send back, undo, publish path, both themes, phone width
+- [x] 6. Review (one round, 15 findings, all fixed), then pull request
+
+## Built differently from the plan (and why)
+- Site wording: the row keeps its usual "Song" / "Sound effect" label and
+  reads "Coming soon: <request>" (just "Coming soon" if blank), so it lines
+  up with every other row. Search finds it by "coming soon".
+- Uploading for a request titles the track from the file name, not the
+  request text: a description makes a poor title. Renameable in the library.
+  Upload and attach are one undo step.
+- Removing a track from the library no longer deletes its cues: they become
+  requests again, because placement is the director's decision.
+- The send-back box asks "What do you need instead?" and says the cast sees
+  it, so complaints do not end up on the site.
+- Editor header: it was already too wide between about 980px and 1,210px
+  (it spilled sideways, and the brand could be squeezed under the tabs). The
+  tabs now take their own row below 1,240px, and the editor measures the
+  bar so scrolling to a card clears it at every width.
+
+## Risks
+- A browser still holding an old index.html would show a request row as a
+  broken cue until it reloads. The service worker fetches pages network-first,
+  so this is brief.

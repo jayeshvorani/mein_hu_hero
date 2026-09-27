@@ -264,6 +264,23 @@
       (a ? " · " + a.name : c.actorId === EVERYONE ? "" : " · not cast yet")
     );
   }
+  // The track a song or sound-effect row plays, or null while it is still
+  // a request waiting for its audio.
+  function trackOf(it) {
+    return byId(
+      it.type === "song" ? S.show.songs : S.show.sfx,
+      it.type === "song" ? it.songId : it.sfxId,
+    );
+  }
+  // Rows still waiting for audio, in running order.
+  function openRequests(kind) {
+    var out = [];
+    eachItem(function (it, sc, si) {
+      if (it.type === kind && !trackOf(it))
+        out.push({ item: it, scene: sc, sceneIndex: si });
+    });
+    return out;
+  }
   function usesOf(kind, id) {
     var found = [];
     eachItem(function (it, sc, si) {
@@ -312,6 +329,7 @@
     Discarded: "discard", Duplicated: "duplicate", Edited: "edit",
     Loaded: "load", Moved: "move", Recast: "recast", Removed: "remove",
     Renamed: "rename", Replaced: "replace", Uploaded: "upload",
+    Attached: "attach", Sent: "send",
   };
   function actionName(label) {
     var m = /^(\S+)(.*)$/.exec(label || "");
@@ -588,6 +606,18 @@
     else if (S.tab === "places") renderPlaces();
     else if (S.tab === "show") renderShowTab();
     else renderSounds();
+    var open = openRequests("song").length + openRequests("sfx").length;
+    var soundsTab = $('.tab[data-tab="sounds"]');
+    if (soundsTab)
+      soundsTab.innerHTML =
+        "Songs &amp; sound effects" +
+        (open
+          ? ' <span class="tab-count" aria-hidden="true">' +
+            open +
+            '</span><span class="sr-only">, ' +
+            plural(open, "open request") +
+            "</span>"
+          : "");
     $all(".tab").forEach(function (t) {
       t.setAttribute(
         "aria-pressed",
@@ -1025,42 +1055,28 @@
           : "Describe what happens on stage…") +
         '"></div>';
     } else {
-      var list = it.type === "song" ? S.show.songs : S.show.sfx;
-      var cur = it.type === "song" ? it.songId : it.sfxId;
-      var track = byId(list, cur);
+      // Directors only say what they need; audio is attached by whoever
+      // makes it, from the Requests list in Songs & sound effects.
+      var track = trackOf(it);
       h += '<div class="cue-body">';
-      if (!list.length) {
+      if (!track) {
         h +=
-          '<span class="empty-note">No ' +
-          (it.type === "song" ? "songs" : "sound effects") +
-          ' yet. </span><button type="button" class="link-btn" data-act="upload-for" data-item="' +
+          '<span class="request-tag">' +
+          (it.type === "song" ? "Song needed" : "Sound effect needed") +
+          "</span>" +
+          '<input class="text-input request-input" spellcheck="true" data-field="request" data-item="' +
           id +
-          '">Upload one</button>';
+          '" data-key="r-' +
+          id +
+          '" value="' +
+          esc(it.request || "") +
+          '" placeholder="Describe it, e.g. ' +
+          (it.type === "song" ? "slow love song" : "door slam") +
+          '" aria-label="What ' +
+          (it.type === "song" ? "song" : "sound effect") +
+          ' you need" />';
       } else {
-        h +=
-          '<select class="select" data-field="track" data-item="' +
-          id +
-          '" data-key="k-' +
-          id +
-          '" aria-label="Which ' +
-          KIND_LABEL[it.type].toLowerCase() +
-          '">' +
-          (track ? "" : '<option value="">Choose…</option>') +
-          list
-            .map(function (t) {
-              return (
-                '<option value="' +
-                esc(t.id) +
-                '"' +
-                (t.id === cur ? " selected" : "") +
-                ">" +
-                esc(t.title) +
-                "</option>"
-              );
-            })
-            .join("") +
-          '<option value="__new">+ Upload a new one…</option></select>';
-        if (track && track.file)
+        if (track.file)
           h +=
             '<button type="button" class="play-btn" data-act="play" data-file="' +
             esc(track.file) +
@@ -1069,6 +1085,14 @@
             '">' +
             ICONS.play +
             "</button>";
+        h +=
+          '<span class="track-name">' +
+          esc(track.title) +
+          '</span><button type="button" class="link-btn" data-act="send-back" data-item="' +
+          id +
+          '" aria-label="Send back ' +
+          esc(cardName(it)) +
+          '">Send back…</button>';
       }
       h +=
         '<input class="note-input" spellcheck="false" data-field="note" data-item="' +
@@ -1536,10 +1560,90 @@
   // ----- sounds tab -----
   function renderSounds() {
     var h =
-      '<h1 class="panel-title">Songs &amp; sound effects</h1><p class="panel-intro">Upload MP3 files here, then place them in the script from the Script tab. Songs and sound effects are kept separate and look different on the site.</p>';
+      '<h1 class="panel-title">Songs &amp; sound effects</h1><p class="panel-intro">Directors place a song or sound effect in the Script tab and describe what they need. Those requests are listed here: upload the audio for each one, then Publish.</p>';
+    h += requestSection("song", "Song requests");
+    h += requestSection("sfx", "Sound effect requests");
     h += soundSection("song", "Songs", S.show.songs);
     h += soundSection("sfx", "Sound effects", S.show.sfx);
     app.innerHTML = h;
+  }
+  // Open requests for one kind, with enough of the script around each to
+  // know what the moment is.
+  function requestSection(kind, title) {
+    var reqs = openRequests(kind);
+    var h =
+      '<section class="section requests requests--' +
+      kind +
+      '"><div class="section-head"><h2>' +
+      title +
+      "</h2><p>" +
+      (reqs.length ? plural(reqs.length, "open request") : "") +
+      '</p></div><div class="rows">';
+    if (!reqs.length) h += '<p class="empty">No open requests.</p>';
+    reqs.forEach(function (r) {
+      var items = r.scene.items;
+      var i = items.indexOf(r.item);
+      var who =
+        (String(r.item.request || "").trim() || "the request") +
+        ", scene " +
+        (r.sceneIndex + 1);
+      h +=
+        '<div class="row request-row">' +
+        '<div class="request-where"><button type="button" class="link-btn" data-act="goto-item" data-item="' +
+        esc(r.item.id) +
+        '">Scene ' +
+        (r.sceneIndex + 1) +
+        ": " +
+        esc(r.scene.title) +
+        "</button></div>" +
+        '<p class="request-text">' +
+        (String(r.item.request || "").trim()
+          ? esc(r.item.request)
+          : '<span class="meta">No description yet</span>') +
+        "</p>" +
+        (r.item.replaces
+          ? '<p class="request-context"><span class="meta">Replaces</span> ' +
+            esc(r.item.replaces) +
+            "</p>"
+          : "") +
+        contextLine("Before", items[i - 1]) +
+        contextLine("After", items[i + 1]) +
+        '<div class="request-actions"><button type="button" class="btn small" data-act="fulfil-upload" data-item="' +
+        esc(r.item.id) +
+        '" aria-label="Upload audio for ' +
+        esc(who) +
+        '">' +
+        ICONS.plus +
+        "Upload audio…</button> " +
+        '<button type="button" class="btn small" data-act="fulfil-existing" data-item="' +
+        esc(r.item.id) +
+        '" aria-haspopup="menu" aria-label="Use an existing ' +
+        (kind === "song" ? "song" : "sound effect") +
+        " for " +
+        esc(who) +
+        '">Use an existing ' +
+        (kind === "song" ? "song" : "sound effect") +
+        "…</button></div></div>";
+    });
+    return h + "</div></section>";
+  }
+  function contextLine(label, it) {
+    if (!it) return "";
+    var words;
+    if (it.type === "song" || it.type === "sfx") {
+      var t = trackOf(it);
+      words = KIND_LABEL[it.type] + ": " + (t ? t.title : "requested");
+    } else {
+      words = describe(it) + ": " + plainOf(it.text);
+    }
+    if (words.length > 140) words = words.slice(0, 137) + "…";
+    return (
+      '<p class="request-context"><span class="meta">' +
+      label +
+      "</span> " +
+      esc(words) +
+      "</p>"
+    );
   }
   function soundSection(kind, title, list) {
     var h =
@@ -1707,6 +1811,7 @@
         "legend-sample": "Edited guide sample",
         "legend-meaning": "Edited guide wording",
         note: "Edited note",
+        request: "Edited request",
         label: "Edited heading",
         "actor-name": "Renamed actor",
         "char-name": "Renamed character",
@@ -1749,6 +1854,7 @@
         f === "legend-sample" ? "sample" : "meaning"
       ] = v;
     else if (f === "note" && it) it.item.note = v.trim() ? v : "";
+    else if (f === "request" && it) it.item.request = v.trim() ? v : "";
     else if (f === "label" && it) it.item.label = v;
     else if (f === "actor-name") {
       var a = byId(sh.actors, t.getAttribute("data-actor"));
@@ -2115,23 +2221,6 @@
       change("Changed speaker", function () {
         findItem(itemId).item.characterId = t.value;
       });
-    } else if (f === "track") {
-      var id = t.getAttribute("data-item");
-      var it = findItem(id).item;
-      if (t.value === "__new") {
-        uploadFlow(it.type).then(function (trackId) {
-          if (trackId)
-            change("Chose " + KIND_LABEL[it.type].toLowerCase(), function () {
-              var x = findItem(id).item;
-              x[x.type === "song" ? "songId" : "sfxId"] = trackId;
-            });
-          else render();
-        });
-        return;
-      }
-      change("Chose " + KIND_LABEL[it.type].toLowerCase(), function () {
-        it[it.type === "song" ? "songId" : "sfxId"] = t.value;
-      });
     } else if (f === "scene-everyone" || f === "scene-onstage") {
       var scId = t.getAttribute("data-scene");
       change("Changed who is on stage", function (sh) {
@@ -2208,11 +2297,9 @@
     } else if (kind === "direction") {
       it.label = "";
       it.text = "";
-    } else if (kind === "song") {
-      it.songId = S.show.songs.length ? S.show.songs[0].id : "";
-      it.note = "";
     } else {
-      it.sfxId = S.show.sfx.length ? S.show.sfx[0].id : "";
+      // starts as a request: the audio is attached later
+      it.request = "";
       it.note = "";
     }
     return it;
@@ -2233,7 +2320,7 @@
           ? card.querySelector("select")
           : kind === "direction"
             ? card.querySelector(".rich")
-            : card.querySelector("select") || card.querySelector(".link-btn");
+            : card.querySelector(".request-input");
       if (target) target.focus();
     }
   }
@@ -2308,18 +2395,48 @@
       case "upload":
         uploadFlow(b.getAttribute("data-kind"));
         break;
-      case "upload-for":
+      case "send-back":
+        sendBackFlow(itemId);
+        break;
+      case "fulfil-upload":
         f = findItem(itemId);
-        uploadFlow(f.item.type).then(function (tid) {
-          if (tid)
-            change(
-              "Chose " + KIND_LABEL[f.item.type].toLowerCase(),
-              function () {
-                var x = findItem(itemId).item;
-                x[x.type === "song" ? "songId" : "sfxId"] = tid;
+        uploadFlow(f.item.type, itemId);
+        break;
+      case "fulfil-existing":
+        f = findItem(itemId);
+        var kindList = f.item.type === "song" ? S.show.songs : S.show.sfx;
+        if (!kindList.length) {
+          toast(
+            "There are no " +
+              (f.item.type === "song" ? "songs" : "sound effects") +
+              " in the library yet. Upload one instead.",
+            false,
+          );
+          break;
+        }
+        showMenu(
+          b,
+          kindList.map(function (t) {
+            return {
+              label: t.title,
+              onClick: function () {
+                attachTrack(itemId, t.id);
               },
-            );
-        });
+            };
+          }),
+        );
+        break;
+      case "goto-item":
+        S.tab = "script";
+        render();
+        var target = app.querySelector('.card[data-id="' + itemId + '"]');
+        if (target) {
+          target.scrollIntoView({ block: "center" });
+          flash(itemId);
+          var into = target.querySelector(".request-input") || target;
+          if (into === target) target.setAttribute("tabindex", "-1");
+          into.focus({ preventScroll: true });
+        } else toast("That cue is no longer in the script.", false);
         break;
       case "replace-file":
         replaceFileFlow(
@@ -2399,8 +2516,8 @@
   function cardName(it) {
     var words = "";
     if (it.type === "song" || it.type === "sfx") {
-      var t = byId(it.type === "song" ? S.show.songs : S.show.sfx, it.type === "song" ? it.songId : it.sfxId);
-      words = t ? t.title : "";
+      var t = trackOf(it);
+      words = t ? t.title : it.request || "";
     } else {
       words = plainOf(it.text).split(" ").slice(0, 5).join(" ");
     }
@@ -3032,6 +3149,69 @@
     });
   }
 
+  // A request gets its audio: the row now plays that track.
+  function fillRequest(x, trackId) {
+    x[x.type === "song" ? "songId" : "sfxId"] = trackId;
+    delete x.request;
+    delete x.replaces;
+  }
+  function attachTrack(itemId, trackId) {
+    var f = findItem(itemId);
+    if (!f) return;
+    if (trackOf(f.item)) {
+      toast("That cue already has its audio.", false);
+      return;
+    }
+    var kind = f.item.type;
+    var t = byId(kind === "song" ? S.show.songs : S.show.sfx, trackId);
+    change(
+      "Attached " + (kind === "song" ? "song" : "sound effect"),
+      function () {
+        fillRequest(findItem(itemId).item, trackId);
+      },
+      {
+        toast:
+          "“" + (t ? t.title : "Audio") + "” attached. Publish to send it to the cast.",
+      },
+    );
+  }
+  // A delivered cue is wrong: it goes back on the Requests list with the
+  // director's note. The audio stays in the library. Which track was
+  // turned down is kept in `replaces`, which only the editor shows: the
+  // cast sees just the request.
+  function sendBackFlow(itemId) {
+    var f = findItem(itemId);
+    if (!f) return;
+    var kind = f.item.type;
+    var t = trackOf(f.item);
+    var body = el(
+      "<p>This turns the cue back into a request. “" +
+        esc(t ? t.title : "") +
+        "” stays in the library, so nothing is lost.</p>" +
+        '<label class="field"><span class="field-label">What do you need instead? The cast sees this on the site.</span><textarea class="text-input" id="sendBackNote" rows="3" placeholder="e.g. same song, but slower"></textarea></label>',
+    );
+    ask({
+      title: "Send back “" + (t ? t.title : KIND_LABEL[kind]) + "”?",
+      body: body,
+      buttons: [
+        { label: "Cancel", value: null },
+        { label: "Send back", value: "ok", primary: true },
+      ],
+    }).then(function (v) {
+      if (v !== "ok") return;
+      var why = body.querySelector("#sendBackNote").value.trim();
+      change(
+        "Sent back " + (kind === "song" ? "song" : "sound effect"),
+        function () {
+          var x = findItem(itemId).item;
+          delete x[kind === "song" ? "songId" : "sfxId"];
+          x.request = why;
+          if (t) x.replaces = t.title;
+        },
+        { toast: "Sent back. It is on the Requests list again." },
+      );
+    });
+  }
   function removeTrack(kind, trackId) {
     var list = kind === "song" ? S.show.songs : S.show.sfx;
     var t = byId(list, trackId);
@@ -3042,12 +3222,16 @@
         function (s) {
           var l = kind === "song" ? s.songs : s.sfx;
           l.splice(l.indexOf(byId(l, trackId)), 1);
+          // Where it goes in the script is the director's decision, so the
+          // cues stay, as requests for new audio.
           s.scenes.forEach(function (sc) {
-            sc.items = sc.items.filter(function (it) {
-              return !(
-                it.type === kind &&
-                (kind === "song" ? it.songId : it.sfxId) === trackId
-              );
+            sc.items.forEach(function (it) {
+              var key = kind === "song" ? "songId" : "sfxId";
+              if (it.type === kind && it[key] === trackId) {
+                delete it[key];
+                it.request = it.request || "";
+                it.replaces = t.title;
+              }
             });
           });
         },
@@ -3062,9 +3246,11 @@
         esc(plural(uses.length, "time")) +
         " (" +
         esc(sceneList(uses)) +
-        "). Removing it also takes " +
-        (uses.length === 1 ? "that cue" : "those cues") +
-        " out of the script. You can undo this afterwards.</p>",
+        "). " +
+        (uses.length === 1
+          ? "That cue stays in the script and goes"
+          : "Those cues stay in the script and go") +
+        " back on the Requests list. You can undo this afterwards.</p>",
       buttons: [
         { label: "Cancel", value: null },
         {
@@ -3370,7 +3556,8 @@
       });
     });
   }
-  function uploadFlow(kind) {
+  // attachTo: a request row to give the new audio to, in the same undo step
+  function uploadFlow(kind, attachTo) {
     if (!connected()) {
       openSettings(
         "Connect to GitHub first, so uploaded files can be stored with the site.",
@@ -3386,17 +3573,27 @@
             title: titleFromFile(file.name),
             file: path,
           };
+          var target = attachTo && findItem(attachTo);
+          // the request may have been filled or removed during the upload
+          var attach = !!(target && !trackOf(target.item));
           change(
-            "Uploaded " + (kind === "song" ? "song" : "sound effect"),
+            (attach ? "Attached " : "Uploaded ") +
+              (kind === "song" ? "song" : "sound effect"),
             function (s) {
               (kind === "song" ? s.songs : s.sfx).push(t);
+              if (attach) fillRequest(findItem(attachTo).item, t.id);
             },
           );
           toast(
             "Uploaded “" +
               t.title +
-              "”. You can rename it in Songs & sound effects.",
-            false,
+              "”" +
+              (attach
+                ? " and attached it. Publish to send it to the cast."
+                : attachTo
+                  ? ". That request already had audio, so it is in the library only."
+                  : ". You can rename it in Songs & sound effects."),
+            !!attach,
           );
           return t.id;
         },
@@ -3766,6 +3963,22 @@
     });
     return show;
   }
+
+  // The top bar wraps onto two or three rows on narrower screens. Scrolling
+  // to a scene or card leaves room for its real height.
+  (function () {
+    var bar = document.querySelector(".topbar");
+    if (!bar) return;
+    var set = function () {
+      document.documentElement.style.setProperty(
+        "--topbar-h",
+        Math.ceil(bar.getBoundingClientRect().height) + "px",
+      );
+    };
+    set();
+    if (window.ResizeObserver) new ResizeObserver(set).observe(bar);
+    else window.addEventListener("resize", set);
+  })();
 
   function start(show, sha, draft) {
     // An editor older than the published data would read it wrongly and
