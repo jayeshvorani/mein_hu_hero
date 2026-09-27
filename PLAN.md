@@ -2460,3 +2460,10 @@ Status: reviewed (three review rounds, clean), user's decisions applied
 - [x] User reviews and lists changes; update restyle.py; re-render
 - [x] Pause editor publishing; pull; run restyle.py; PR with show.json,
       STYLE.md, tools/restyle.py, PLAN.md
+
+## Restore point
+Before merging, the live site was tagged `before-house-style` (commit
+e13a3d8). To go back to the old script, restore show.json from that tag
+in a new pull request (editor publishing paused while it is open). Any
+editor changes made after the restyle would need re-doing on the old
+script, so decide early.
