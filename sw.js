@@ -135,10 +135,18 @@ self.addEventListener("fetch", function (event) {
           // offline visit. Same guard the asset path below uses.
           if (res && res.status === 200 && res.type === "basic") {
             var copy = res.clone();
+            var key = url.origin + url.pathname;
             caches.open(CACHE_VERSION).then(function (c) {
-              // a quota failure is survivable: the page still works online and
-              // the previous cached copy is left intact
-              c.put(url.origin + url.pathname, copy).catch(function () {});
+              // Open pages re-check show.json every minute. When the server
+              // says it has not changed (same ETag), the cached copy is
+              // already right: skip rewriting it.
+              return c.match(key).then(function (old) {
+                var tag = copy.headers.get("ETag");
+                if (old && tag && old.headers.get("ETag") === tag) return;
+                // a quota failure is survivable: the page still works online
+                // and the previous cached copy is left intact
+                return c.put(key, copy).catch(function () {});
+              });
             });
           }
           return res;

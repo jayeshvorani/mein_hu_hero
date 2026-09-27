@@ -7067,7 +7067,15 @@
                 "</h2></div>" +
                 (meta ? '<div class="meta-box">' + meta + "</div>" : "") +
                 '<div class="dialogue">' +
-                items.map(itemHtml).join("") +
+                items
+                  .map(function (it) {
+                    // the item id lets a live update return to this row
+                    return itemHtml(it).replace(
+                      /^<div /,
+                      '<div data-item="' + esc(it.id) + '" ',
+                    );
+                  })
+                  .join("") +
                 "</div></section>"
               );
             })
@@ -7140,6 +7148,11 @@
         }
 
         function fail() {
+          try {
+            history.scrollRestoration = "auto";
+          } catch (e) {
+            /* older browsers */
+          }
           var status = document.getElementById("scriptStatus");
           if (status)
             status.textContent =
@@ -7167,6 +7180,286 @@
             var target = document.getElementById(location.hash.slice(1));
             if (target) target.scrollIntoView();
           }
+          if (!isDraft) restoreSpot();
+        }
+
+        // ============================================================
+        // Live updates.
+        //
+        // Phones stay open through a rehearsal while the script is edited
+        // and published. The page re-reads show.json every minute while it
+        // is on screen, and at once when someone comes back to it. When the
+        // script differs from the one on screen, the page reloads itself,
+        // after noting the row at the top of the screen and the filters, and
+        // returns there, with its filters, search and revealed practice
+        // lines. It waits while a cue is playing or buffering, while a text
+        // box or picker has focus and while a sheet is open. It leaves a
+        // newer data format alone, backs off for ten minutes if GitHub's
+        // servers still hand back the old script after a reload, and does
+        // nothing in ?draft previews.
+        // ============================================================
+        var LIVE_KEY = "mhh-live-restore";
+        var TRIED_KEY = "mhh-live-tried";
+        // a short fingerprint of the script, to tell one published version
+        // from another
+        function hash(text) {
+          var h = 0;
+          for (var i = 0; i < text.length; i++)
+            h = (h * 31 + text.charCodeAt(i)) | 0;
+          return h;
+        }
+        var CHECK_EVERY = 60000;
+
+        function saveSpot() {
+          var rows = document.querySelectorAll("[data-item]");
+          var spot = null;
+          // the first row below the top bar (which wraps on narrow phones,
+          // and is parked offscreen while scrolling down)
+          var bar = document.getElementById("topbar");
+          var below =
+            bar && !document.documentElement.hasAttribute("data-topbar-hidden")
+              ? bar.getBoundingClientRect().bottom
+              : 0;
+          for (var i = 0; i < rows.length; i++) {
+            var r = rows[i].getBoundingClientRect();
+            if (rows[i].offsetParent !== null && r.bottom > below) {
+              spot = rows[i];
+              break;
+            }
+          }
+          var scene = spot && spot.closest("section.scene");
+          var search = document.getElementById("searchInput");
+          try {
+            sessionStorage.setItem(
+              LIVE_KEY,
+              JSON.stringify({
+                item: spot ? spot.getAttribute("data-item") : "",
+                scene: scene ? scene.id : "",
+                offset: spot ? spot.getBoundingClientRect().top : 0,
+                cuts: document.body.classList.contains("hide-cuts"),
+                music: document.body.classList.contains("music-only"),
+                q: search ? search.value : "",
+                // lines revealed in practice mode stay revealed
+                peek: Array.prototype.map.call(
+                  document.querySelectorAll(".line.peek[data-item]"),
+                  function (el) {
+                    return el.getAttribute("data-item");
+                  },
+                ),
+                t: Date.now(),
+              }),
+            );
+          } catch (e) {
+            /* private mode: reload anyway, at the top */
+          }
+        }
+
+        // the browser's own scroll memory, switched off only for a live reload
+        function browserScroll(on) {
+          try {
+            history.scrollRestoration = on ? "auto" : "manual";
+          } catch (e) {
+            /* older browsers */
+          }
+        }
+        // a row by its item id, safe for any characters the id may hold
+        function rowById(id) {
+          return document.querySelector(
+            '[data-item="' + String(id).replace(/["\\]/g, "") + '"]',
+          );
+        }
+
+        function restoreSpot() {
+          var saved = null;
+          try {
+            saved = JSON.parse(sessionStorage.getItem(LIVE_KEY) || "null");
+            sessionStorage.removeItem(LIVE_KEY);
+          } catch (e) {
+            saved = null;
+          }
+          if (!saved || Date.now() - saved.t > 120000) {
+            browserScroll(true);
+            return;
+          }
+          // the Options-sheet copies of the switches keep both in step
+          if (saved.cuts !== document.body.classList.contains("hide-cuts")) {
+            var c = document.getElementById("hideCutsToggleSheet");
+            if (c) c.click();
+          }
+          if (saved.music !== document.body.classList.contains("music-only")) {
+            var m = document.getElementById("musicOnlyToggleSheet");
+            if (m) m.click();
+          }
+          var search = document.getElementById("searchInput");
+          if (search && saved.q) {
+            search.value = saved.q;
+            search.dispatchEvent(new Event("input", { bubbles: true }));
+          }
+          // Practice mode comes back a moment after this runs (it is read
+          // from storage), and switching it on hides every line. So reveal
+          // the saved lines once it is back, the same way a tap does.
+          var peeks = saved.peek || [];
+          var tries = 0;
+          (function repeek() {
+            if (!peeks.length) return;
+            // practice mode on and the actor's lines marked, however slowly
+            // the stored settings come back
+            var ready = peeks.some(function (id) {
+              var row = rowById(id);
+              return row && row.classList.contains("is-practicing");
+            });
+            if (!ready) {
+              if (++tries < 20) window.setTimeout(repeek, 150);
+              return;
+            }
+            peeks.forEach(function (id) {
+              var row = rowById(id);
+              if (
+                row &&
+                row.classList.contains("is-practicing") &&
+                !row.classList.contains("peek")
+              )
+                row.click();
+            });
+          })();
+          function land() {
+            var el = null;
+            if (saved.item) el = rowById(saved.item);
+            if (!el || el.offsetParent === null)
+              el = saved.scene ? document.getElementById(saved.scene) : null;
+            if (!el) return;
+            // Aim at where the row settles, not where it is now: a scene
+            // that has not revealed yet, and its rows, sit a little lower
+            // (translateY) until their entrance runs. Same correction as
+            // scrollToScene.
+            var dy = 0;
+            var scene = el.parentNode && el.parentNode.closest("section.scene");
+            [el, scene].forEach(function (n) {
+              if (!n) return;
+              var tm = /matrix\(([^)]+)\)/.exec(getComputedStyle(n).transform);
+              dy += tm ? parseFloat(tm[1].split(",")[5]) || 0 : 0;
+            });
+            window.scrollTo({
+              top:
+                el.getBoundingClientRect().top +
+                window.scrollY -
+                dy -
+                (saved.offset || 0),
+              // instant: the page scrolls smoothly by default, which would
+              // sweep through the whole script to get there
+              behavior: "instant",
+            });
+          }
+          // After the search has run and the layout has settled; and again
+          // once the page has fully loaded (the hero photo can arrive late
+          // and move everything below it).
+          var landedAt = null;
+          window.setTimeout(function () {
+            land();
+            landedAt = window.scrollY;
+          }, 200);
+          // once more when everything has loaded, unless the reader has
+          // moved on since the first landing
+          function lastLanding() {
+            window.setTimeout(function () {
+              if (landedAt === null || Math.abs(window.scrollY - landedAt) < 2)
+                land();
+              browserScroll(true);
+            }, 50);
+          }
+          if (document.readyState === "complete")
+            window.setTimeout(lastLanding, 250);
+          else window.addEventListener("load", lastLanding);
+        }
+
+        function watchForUpdates(onScreen) {
+          // an editor preview stays as it is, draft or not
+          if (/[?&]draft\b/.test(location.search)) return;
+          var pending = false;
+          var pendingSig = "";
+          var checking = false;
+          var waitTimer = null;
+          function busy() {
+            // a cue playing, or still buffering after being pressed
+            if (
+              document.querySelector(
+                '.cue-play[aria-pressed="true"], .cue-play.is-loading',
+              )
+            )
+              return true;
+            // typing, or a picker such as "Viewing as" open
+            var a = document.activeElement;
+            if (a && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)) return true;
+            var scrim = document.getElementById("sheetScrim");
+            return !!(scrim && !scrim.hidden);
+          }
+          function update() {
+            if (!pending || document.visibilityState !== "visible") return;
+            if (busy()) {
+              window.clearTimeout(waitTimer);
+              waitTimer = window.setTimeout(update, 3000);
+              return;
+            }
+            saveSpot();
+            // this reload's position is set by restoreSpot, not the browser
+            browserScroll(false);
+            try {
+              sessionStorage.setItem(
+                TRIED_KEY,
+                JSON.stringify({ sig: pendingSig, t: Date.now() }),
+              );
+            } catch (e) {
+              /* reload anyway */
+            }
+            location.reload();
+          }
+          function check() {
+            if (pending) return update();
+            if (checking || document.visibilityState !== "visible") return;
+            checking = true;
+            fetch("show.json", { cache: "no-cache" })
+              .then(function (res) {
+                if (!res.ok) throw new Error("HTTP " + res.status);
+                return res.json();
+              })
+              .then(function (show) {
+                var text = JSON.stringify(show);
+                if (text === onScreen) return;
+                // A newer data format needs a newer page, which this copy
+                // cannot be sure to get: keep the script on screen.
+                if ((show.format || 1) > SHOW_FORMAT) return;
+                // GitHub's servers can briefly disagree after a publish. If
+                // the last reload for this same version still came back
+                // with the old script, give them ten minutes to catch up
+                // rather than reload every minute.
+                var sig = text.length + ":" + hash(text);
+                var tried = null;
+                try {
+                  tried = JSON.parse(
+                    sessionStorage.getItem(TRIED_KEY) || "null",
+                  );
+                } catch (e) {
+                  tried = null;
+                }
+                if (tried && tried.sig === sig && Date.now() - tried.t < 600000)
+                  return;
+                pending = true;
+                pendingSig = sig;
+                update();
+              })
+              .catch(function () {
+                /* offline or mid-publish: keep the script on screen */
+              })
+              .then(function () {
+                checking = false;
+              });
+          }
+          window.setInterval(check, CHECK_EVERY);
+          document.addEventListener("visibilitychange", check);
+          window.addEventListener("focus", check);
+          window.addEventListener("pageshow", function (e) {
+            if (e.persisted) check();
+          });
         }
 
         if (/[?&]draft\b/.test(location.search)) {
@@ -7211,6 +7504,7 @@
               /* nothing stored */
             }
             start(show, false);
+            watchForUpdates(JSON.stringify(show));
           })
           .catch(function (err) {
             if (window.console) console.error(err);

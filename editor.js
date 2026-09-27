@@ -3508,7 +3508,7 @@
       S.baseJson = JSON.stringify(JSON.parse(json));
       saveDraftNow();
       toast(
-        "Published. The cast will see it within a couple of minutes (they may need to refresh).",
+        "Published. Open copies of the site update themselves within a couple of minutes.",
         false,
       );
     });

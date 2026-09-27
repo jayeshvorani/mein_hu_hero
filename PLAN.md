@@ -2475,3 +2475,58 @@ script, so decide early.
 - Cast & Crew and How This Script Is Marked Up now open and close like the
   crew checklist, closed by default. Closed, the three headings sit close
   together.
+
+# Round 13: phones pick up published changes by themselves
+
+Status: built, tested and reviewed (four rounds, clean) 2026-09-27; in pull request.
+
+## Goal
+During rehearsal the user edits and publishes from the editor; phones that
+already have the site open show the new script without anyone refreshing.
+
+## Decision (user, 2026-09-27)
+Update automatically: the page reloads itself and returns to the same spot.
+
+## How it works
+- **When it checks:** every 60 seconds while the page is on screen, and
+  straight away when someone comes back to the tab or unlocks the phone.
+  Each check re-asks for show.json; if nothing changed, the server answers
+  "not modified", a few hundred bytes.
+- **How it knows:** it compares the script it has on screen with the one
+  on the server. The published date is not used; a republish of identical
+  text does nothing.
+- **What it keeps:** just before reloading it notes the line at the top of
+  the screen, "Hide optional cuts", "Sound cues only" and the search box.
+  After the reload the page scrolls back to that line (or its scene, if
+  the line was deleted). "Viewing as", practice and cue mode and text size
+  are already remembered.
+- **When it waits:** never mid-song (a cue that is playing finishes
+  first), never while someone is typing in the search box or has a sheet
+  or menu open. It updates as soon as those end.
+- **Not for previews:** the editor's "?draft" preview is left alone.
+- **Timing:** GitHub takes about a minute to publish, so a phone shows a
+  change one to two minutes after you press Publish.
+- **Safety:** if the new script can't be read (a bad connection, or a
+  format this copy of the page doesn't know), it does nothing and keeps
+  the current script on screen.
+
+## Built differently from the plan (and why)
+- "Waits while busy" also covers a cue that is still buffering, and any
+  focused text box or picker (such as "Viewing as"), not only the search.
+- Lines revealed in practice mode stay revealed after an update.
+- If GitHub's servers disagree for a while after a publish (a check sees
+  the new script, the reload still gets the old one), the page reloads
+  once for that version and then waits ten minutes before trying again.
+- A newer data format is left alone: phones keep the current script until
+  someone reloads by hand.
+- The offline copy of show.json is only rewritten when the server says it
+  changed (same ETag means nothing to do), so the minute-by-minute checks
+  do not wear the phone's storage.
+- The editor's "Published" message no longer tells people to refresh.
+
+## Build list
+- [x] 1. Renderer: rows carry their item id (for returning to the same line)
+- [x] 2. Checker: poll, compare, wait for quiet moments, save state, reload
+- [x] 3. Restore after reload: position, filters, search
+- [x] 4. Test locally: publish a change to the served show.json while pages are open (phone and laptop sizes), mid-song, in a sheet, while searching, offline, in ?draft
+- [ ] 5. Review, then pull request
