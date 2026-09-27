@@ -2297,3 +2297,123 @@ director ever uploads or picks a track.
 - A browser still holding an old index.html would show a request row as a
   broken cue until it reloads. The service worker fetches pages network-first,
   so this is brief.
+
+# Round 11: export the script as a PDF
+
+Status: approved 2026-09-27; built and tested, in review.
+
+## Goal
+One button on the site produces a programme-quality A4 PDF of the full
+script, always current, because it is built from the same show.json.
+
+## Decisions (interview, 2026-09-27)
+| Topic | Decision |
+| --- | --- |
+| Content | Full script for the company (no per-actor copies for now) |
+| Look | Show-branded: site fonts and accent colours on white paper; still readable printed in black and white |
+| Paper | A4 |
+| Per scene | Location and who is on stage; props; set changes and who does them; song and sound-effect cues in running order, including "Coming soon" requests; optional lines with the gold edge |
+| Front | Title page (title, tagline, photo); cast (actor and character), crew and a key to the colours and markers |
+| Back | Crew prop checklist (props by scene) as an appendix |
+| Mechanism | Print-ready preview laid out by Paged.js (MIT, stored in the repo under vendor/), then the browser's Save as PDF |
+| Button | The site's options: top bar on laptops, Options sheet on phones, next to "Sound cues only" |
+
+## How it works
+- New page `script.html` (+ `script.css`, `script.js`). The site's "Export
+  PDF" button opens it in a new tab. It reads show.json (or the editor draft
+  with `?draft`), builds the print layout, and Paged.js paginates it on
+  screen, so what you see is what the PDF will be.
+- A slim bar above the preview (not printed): "Save as PDF", which opens the
+  print window with A4 already chosen, and a one-line tip ("choose Save as
+  PDF as the destination").
+- Kept out of the main page on purpose: index.html stays as it is, and the
+  layout library only runs on the export page (the offline cache downloads
+  it for every visitor, see below).
+
+## Layout
+- Title page: eyebrow, title with its accent word, tagline, the show photo,
+  and the export date ("Script as of 27 September 2026") so printed copies
+  can be told apart.
+- Company page: cast table (actor, character, role), crew table (name, role),
+  then the key.
+- Scenes: each starts a new page with a scene number, title and a details
+  panel (location, on stage, props, set changes). Lines in a two-column
+  script layout: speaker in small capitals on the left, text on the right.
+  Directions in italics with their heading; songs teal and sound effects
+  magenta with an edge like the site; requests greyed "Coming soon"; optional
+  lines with the gold edge.
+- Running header: show title left, scene title right. Footer: page "3 of 24".
+  No header on the title page.
+- Pagination: a line never splits across pages if it fits on one; a speaker
+  name or scene heading never sits alone at the foot of a page.
+- Appendix: crew prop checklist, props with the scenes that use them.
+- Colours are the site's paper values (already checked at 4.5:1 or better on
+  white). Meaning never relies on colour alone: each cue carries its label
+  ("Song", "Sound effect") and optional lines their edge and a label.
+
+## The key on paper
+The site's key (show.json `legend`) is written for the screen ("play
+button", "Turn on Sound cues only"). The editor's Show tab gets an optional
+"Wording in the PDF" box per key row; blank means the screen wording is used.
+Nothing about the key is hard-coded.
+
+## Build list
+- [x] 1. Vendor Paged.js (pinned version, licence file kept)
+- [x] 2. script.html / script.css / script.js: render from show.json and `?draft`
+- [x] 3. Title, company, scenes, appendix; running header and page numbers
+- [x] 4. "Export PDF" in the top bar and the Options sheet
+- [x] 5. Editor: "Wording in the PDF" per key row; the editor's Preview menu can open the PDF preview of the draft
+- [x] 6. sw.js: new files cached so export works offline too
+- [x] 7. Test in Chrome and Safari: page breaks, fonts embedded, text selectable, black-and-white print legible; file size
+- [ ] 8. Review loop until clean, then pull request
+
+## Built differently from the plan (and why)
+- Layout library: `vendor/paged-0.4.3.min.js` (global `PagedModule`), not
+  the auto-running polyfill, so the page decides when to lay out (after the
+  fonts and the photo have loaded).
+- Paged.js throws away text that is only spaces. Where a space sits between
+  two styled runs, the export moves it inside the first run, and a
+  location's note goes on its own line, so no words run together.
+- Paged.js reports "Cannot read properties of null" in the console while
+  it lays out (it happens with no stylesheet at all, so it is inside the
+  library). Checked: every one of the 91 script rows appears once, none
+  split, so the output is complete. Left alone rather than patch a vendored
+  library.
+- Title page uses the web photo (158 KB) rather than the 2.6 MB PNG fallback.
+  A full export is about 2.9 MB, mostly the embedded fonts.
+- Site button: "Export PDF" pill in the top bar; between 901px and 1,060px
+  it shows only its icon (name kept for screen readers) so the search field
+  keeps its room. On phones it is a row in the Options sheet.
+- The editor's key rows now have column headings (Look, Sample, Meaning on
+  the site, Wording in the PDF). New: "Preview the PDF with my changes" in
+  the editor's ⋯ menu.
+- sw.js cache bumped to mhh-v12; the export files are precached, so Export
+  PDF works offline on a device that has never opened it (about 0.5 MB more
+  on first visit).
+- Speaker names: bold capitals in the body face at 9pt, not true small
+  capitals. The site's font subsets have no small-capital letters, and
+  browsers fake them thin; capitals close to body size read as well and
+  match the site's speaker labels.
+- Scene details panel: two fixed columns (on stage and props on the left,
+  location and set changes on the right), so each item sits in the same
+  place in every scene.
+- Crew checklist in running order (by the first scene that needs each
+  prop), not in the order props were created.
+- Title page: an optional "Introduction in the PDF" in the editor's Show
+  tab, since the site's introduction mentions the character picker. The
+  page keeps inside the printable area (no edge-to-edge colour).
+
+## Risks
+- The site's fonts are subsets. Any character missing from them (for example
+  the music note) falls back to a system font; checked in testing, and the
+  subset widened if needed.
+- Browsers add their own date and URL headers unless "Headers and footers"
+  is switched off in the print window. The page sets zero margins for those
+  boxes, which suppresses them in Chrome and Edge; Safari may still need the
+  box unticked, so the tip bar says so.
+- Paged.js is about 500 KB. It runs only on the export page, but the
+  offline cache downloads it (with the other export files) on a visitor's
+  first visit.
+- Directions have the site's dashed grey edge. Pending song and sound-effect
+  requests are also dashed, told apart by colour (teal, magenta) and their
+  "Song" / "Sound effect" label and "Coming soon" text.

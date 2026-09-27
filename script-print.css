@@ -1,0 +1,478 @@
+/* Script export: the A4 page layout. Paged.js reads this file to build
+   the pages, so it can use paged-media CSS (@page margin boxes, running
+   strings, page counters) that browsers do not support on their own.
+
+   Colours are the site's paper values, each already checked at 4.5:1 or
+   better on white. Meaning never rests on colour alone: every cue says
+   "Song" or "Sound effect", optional lines carry a label as well as the
+   gold edge. */
+
+:root {
+  --ink: #27221d;
+  --ink-dim: #45403a;
+  --muted: #69645d;
+  --rule: #d9cfc0;
+  --panel: #faf5ec;
+  --marigold: #8b6000;
+  --sindoor: #af3029;
+  --sindoor-strong: #8f241e;
+  --magenta: #9f1d5a;
+  --teal: #006d64;
+  --gold: #c9962e;
+  --gold-ink: #5c4200;
+  --display: "Bricolage Grotesque", system-ui, sans-serif;
+  --body: "Hanken Grotesk", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
+@page {
+  size: A4;
+  margin: 20mm 18mm 20mm 20mm;
+  @top-left {
+    content: string(show-title);
+    font-family: var(--mono);
+    font-size: 7.5pt;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    vertical-align: bottom;
+    padding-bottom: 5mm;
+  }
+  @top-right {
+    content: string(part-title);
+    font-family: var(--mono);
+    font-size: 7.5pt;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    vertical-align: bottom;
+    padding-bottom: 5mm;
+  }
+  @bottom-center {
+    content: counter(page) " of " counter(pages);
+    font-family: var(--mono);
+    font-size: 7.5pt;
+    color: var(--muted);
+    vertical-align: top;
+    padding-top: 6mm;
+  }
+}
+/* the title page carries no running header or number */
+@page cover {
+  /* kept inside the area every printer can reach */
+  margin: 14mm 22mm;
+  @top-left {
+    content: none;
+  }
+  @top-right {
+    content: none;
+  }
+  @bottom-center {
+    content: none;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: var(--body);
+  font-size: 10.5pt;
+  line-height: 1.45;
+  color: var(--ink);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+p {
+  margin: 0;
+  orphans: 2;
+  widows: 2;
+}
+h1,
+h2 {
+  break-after: avoid;
+}
+
+/* ---------- title page ---------- */
+.cover {
+  page: cover;
+  height: 269mm;
+  padding: 16mm 0 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 2.5mm solid var(--sindoor);
+}
+.running-title {
+  string-set: show-title content(text);
+  font-size: 0;
+  line-height: 0;
+  color: transparent;
+}
+.cover-eyebrow {
+  font-family: var(--mono);
+  font-size: 9pt;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--marigold);
+  margin-bottom: 6mm;
+}
+.cover-title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 54pt;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin: 0 0 7mm;
+}
+.cover-accent {
+  color: var(--sindoor);
+}
+.cover-tagline {
+  font-size: 12.5pt;
+  line-height: 1.5;
+  color: var(--ink-dim);
+  max-width: 140mm;
+}
+.cover-photo {
+  margin: 10mm 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+}
+.cover-photo img {
+  display: block;
+  width: 100%;
+  max-height: 150mm;
+  object-fit: cover;
+  border-radius: 4mm;
+  box-shadow: 0 2mm 6mm rgba(60, 40, 10, 0.18);
+}
+.cover-foot {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 6mm;
+  border-top: 0.4mm solid var(--gold);
+  padding-top: 4mm;
+  font-family: var(--mono);
+  font-size: 8pt;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.cover-foot span:nth-child(2) {
+  text-align: center;
+}
+.cover-foot span:last-child {
+  text-align: right;
+}
+
+/* ---------- part titles, tables ---------- */
+/* One selector sets the running title. Paged.js carries a string onto
+   later pages per selector, so two selectors setting it would disagree. */
+.running-part {
+  string-set: part-title content(text);
+}
+.part-title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 24pt;
+  line-height: 1.1;
+  margin: 0 0 6mm;
+  padding-bottom: 3mm;
+  border-bottom: 0.4mm solid var(--gold);
+}
+.company,
+.appendix {
+  break-before: page;
+}
+.table-title {
+  font-family: var(--mono);
+  font-size: 8pt;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--sindoor-strong);
+  margin: 8mm 0 2.5mm;
+}
+.table-title:first-of-type {
+  margin-top: 2mm;
+}
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10pt;
+}
+.tbl th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 7pt;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 3mm 1.5mm 0;
+  border-bottom: 0.3mm solid var(--rule);
+}
+.tbl td {
+  padding: 2mm 3mm 2mm 0;
+  border-bottom: 0.2mm solid var(--rule);
+  vertical-align: top;
+}
+.tbl tr {
+  break-inside: avoid;
+}
+.t-strong {
+  font-weight: 700;
+}
+.sub {
+  color: var(--muted);
+  font-style: italic;
+  font-weight: 400;
+}
+.sub-block {
+  display: block;
+}
+.tbl-key td:first-child {
+  width: 40mm;
+}
+.key-sample {
+  display: inline-block;
+  padding: 0.3mm 2mm;
+  font-weight: 700;
+}
+.key-optional {
+  border-left: 1mm solid var(--gold);
+  background: #fbf3dc;
+  color: var(--gold-ink);
+}
+.key-song {
+  border-left: 1mm solid var(--teal);
+  color: var(--teal);
+}
+.key-sfx {
+  border-left: 1mm solid var(--magenta);
+  color: var(--magenta);
+}
+.key-direction {
+  border-left: 1mm dashed #b5ab9c;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--ink-dim);
+}
+
+/* ---------- scenes ---------- */
+.scene {
+  break-before: page;
+}
+.scene-head {
+  display: flex;
+  align-items: center;
+  gap: 5mm;
+  margin-bottom: 5mm;
+  break-after: avoid;
+}
+.scene-num {
+  flex: 0 0 auto;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 14pt;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: var(--sindoor);
+  border-radius: 1.5mm;
+  padding: 1.5mm 3mm;
+  line-height: 1.2;
+}
+.scene-num span {
+  font-size: 7pt;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  vertical-align: 0.25em;
+}
+.scene-title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 22pt;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 8mm;
+  background: var(--panel);
+  border: 0.3mm solid var(--rule);
+  border-radius: 2mm;
+  padding: 4mm 5mm;
+  margin-bottom: 7mm;
+  font-size: 9.5pt;
+  break-inside: avoid;
+}
+.meta-item + .meta-item {
+  margin-top: 3mm;
+}
+.meta-item .label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 6.8pt;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.8mm;
+}
+.meta-item .main {
+  font-weight: 700;
+}
+/* a note after a location name goes on its own line (Paged.js drops the
+   space that would otherwise separate them) */
+.meta-item .main + .sub {
+  display: block;
+}
+.meta ul,
+.meta ol {
+  margin: 0;
+  padding-left: 4.5mm;
+}
+.meta li + li {
+  margin-top: 0.6mm;
+}
+.who {
+  color: var(--sindoor-strong);
+}
+.meta .who {
+  font-family: var(--mono);
+  font-size: 7.5pt;
+}
+
+/* ---------- the running order ---------- */
+.row {
+  display: grid;
+  grid-template-columns: 38mm 1fr;
+  column-gap: 6mm;
+  padding: 1.6mm 0 1.6mm 3mm;
+  border-left: 0.9mm solid transparent;
+  break-inside: avoid;
+}
+.row + .row {
+  margin-top: 1.4mm;
+}
+.row > .who {
+  font-size: 9pt;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.3;
+  padding-top: 0.5mm;
+  overflow-wrap: anywhere;
+}
+.who-note {
+  display: block;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--muted);
+}
+.row .text p + p {
+  margin-top: 1.4mm;
+}
+.direction > .who {
+  color: var(--muted);
+  font-weight: 600;
+}
+.direction .text {
+  font-style: italic;
+  color: var(--ink-dim);
+}
+/* dashed grey edge, as on the site */
+.direction {
+  border-left-color: #b5ab9c;
+  border-left-style: dashed;
+}
+.cue-song {
+  border-left-color: var(--teal);
+}
+.cue-sfx {
+  border-left-color: var(--magenta);
+}
+.cue-song > .who {
+  color: var(--teal);
+}
+.cue-sfx > .who {
+  color: var(--magenta);
+}
+.cue-title {
+  font-weight: 700;
+}
+.cue-song .cue-title {
+  color: var(--teal);
+}
+.cue-sfx .cue-title {
+  color: var(--magenta);
+}
+.cue-note {
+  font-style: italic;
+  color: var(--ink-dim);
+}
+/* asked for, audio not made yet */
+.cue.is-pending {
+  border-left-style: dashed;
+}
+.cue-pending {
+  font-style: italic;
+  color: var(--muted);
+}
+/* could be cut if the show runs long */
+.is-optional {
+  border-left-color: var(--gold);
+  background: #fdf8ea;
+}
+.opt-tag {
+  display: block;
+  margin-top: 0.8mm;
+  font-size: 6.5pt;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--gold-ink);
+}
+/* words inside a line */
+.w-italic {
+  font-style: italic;
+}
+.w-song {
+  color: var(--teal);
+  font-weight: 600;
+}
+.w-sfx {
+  color: var(--magenta);
+  font-weight: 600;
+}
+
+/* ---------- appendix ---------- */
+.appendix-intro {
+  color: var(--ink-dim);
+  margin-bottom: 5mm;
+}
+.tbl-check .tick {
+  width: 7mm;
+}
+.tbl-check td:nth-child(2) {
+  width: 50mm;
+}
+.tbl-check td {
+  padding-top: 1.4mm;
+  padding-bottom: 1.4mm;
+}
+.tbl-check td.tick::before {
+  content: "";
+  display: inline-block;
+  width: 3.5mm;
+  height: 3.5mm;
+  border: 0.3mm solid var(--muted);
+  border-radius: 0.6mm;
+  margin-top: 0.5mm;
+}
