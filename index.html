@@ -2720,9 +2720,10 @@
          reachable from anywhere in a scene and also answers "where am I?",
          which the old links never did.
 
-         Eight dashes, one per scene, in order. The current one is longer and
-         in the accent colour; a short stub is a scene the active filter has
-         emptied. Fades back while you read and returns on the next scroll.
+         One number per scene, in order. The current one is bold in the
+         accent colour on a small pill; a struck-through grey number is a
+         scene the active filter has emptied. Fades back while you read and
+         returns on the next scroll.
 
          DELIBERATELY TINY. The first version carried scene titles and sat in
          a glass panel, and the reading column was inset to clear it. That cost
@@ -2767,13 +2768,7 @@
         flex-direction: column;
         align-items: center;
         gap: 0.3rem;
-        /* Sized to the gutter the layout already leaves: .app has 1.5rem of
-           right padding at every width, so 22px of rail plus its 2px offset
-           sits inside that margin and never covers the reading column. The
-           first slim version was 43px, which put the step buttons 16px over
-           the dialogue cards on tablet and in landscape.
-
-           A whisper of a backing, not the old glass panel: the dashes need
+        /* A whisper of a backing, not the old glass panel: the numbers need
            something behind them to stay legible over both the page and the
            dark line cards, but a full tier-3 panel is what made the rail wide
            enough to squeeze the script in the first place. */
@@ -2814,7 +2809,7 @@
          answer "which scene am I in" at a glance without being tapped. Only a
          light touch, because on a touch device this is the RESTING state (no
          hover, no focus), and it multiplies with every opacity below it. An
-         earlier 0.55 here compounded with a 0.5 on the dash and a 0.55 on a
+         earlier 0.55 here compounded with a 0.5 on the old dash and a 0.55 on a
          disabled tick, taking the dimmest marks to about 1.2:1. */
       .scene-rail.is-shown.is-idle {
         opacity: 0.82;
@@ -2856,51 +2851,58 @@
         border: 0;
         background: none;
         cursor: pointer;
-        /* --ink-dim, not --muted. These are 2px marks seen through the rail's
-           idle fade, so the token has to start well above the 3:1 floor to
-           still clear it after that multiply: --muted measured 2.3 to 2.6:1 on
-           screen, --ink-dim measures 4.5:1 or better in both themes. */
+        /* --ink-dim for a live scene number: seen through the rail's idle
+           fade (0.82) it stays at 4.5:1 or better in both themes. A scene the
+           filters have emptied uses --muted below, which works out at about
+           3.5:1 (light) and 4.3:1 (dark) through the same fade: above the 3:1
+           floor for these marks, and the strike-through carries the meaning
+           as well. (The old 2px dashes measured 2.3 to 2.6:1 in --muted, but
+           that was with a 0.5 opacity on the dash stacked on top.) */
         color: var(--ink-dim);
       }
-      /* Every state below changes WIDTH and COLOUR, never opacity. Opacity on
-         a mark this small compounds with the rail's own idle fade, and that is
-         what took the dimmest dashes to roughly 1.2:1 against the page. */
-      .sr-tick .sr-dash {
-        display: block;
-        width: 10px;
-        height: 2px;
-        border-radius: 2px;
-        background: currentColor;
+      /* Each tick is the scene's number. "10" to "99" measure about 26px
+         with the current-scene pill, inside the 30px the rail leaves, so
+         a show with more than nine scenes needs no change. Every state
+         below changes weight, colour or line, never opacity: opacity on
+         marks this small compounds with the rail's own idle fade. */
+      .sr-tick .sr-num {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        font-weight: 600;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+        padding: 0.22rem 0.38rem;
+        border-radius: 999px;
+        white-space: nowrap;
         transition:
-          width var(--motion-2) var(--ease),
+          color var(--motion-2) var(--ease),
           background var(--motion-2) var(--ease);
       }
       .sr-tick.is-current {
         color: var(--accent-strong);
       }
-      .sr-tick.is-current .sr-dash {
-        width: 16px;
-        height: 3px;
+      .sr-tick.is-current .sr-num {
+        font-weight: 800;
+        background: color-mix(in srgb, var(--accent) 16%, transparent);
       }
-      /* A scene the current filter has emptied. Distinguished by LENGTH, not
-         by fading: a third the width of a live tick is unmistakable at a
-         glance, and measured on screen it still clears the 3:1 non-text floor,
-         which a dimmed colour at this size did not (1.5:1). The running order
-         is information even when a scene has nothing in it, so these have to
-         stay visible. The button is also genuinely inert, not merely faded
-         while still accepting a tap that scrolls nowhere. */
+      /* A scene the current filter has emptied: struck through and in the
+         quieter grey, and genuinely inert rather than a tap that scrolls
+         nowhere. The running order is information even when a scene has
+         nothing in it, so the number stays. */
       .sr-tick[disabled] {
         cursor: default;
+        color: var(--muted);
       }
-      .sr-tick[disabled] .sr-dash {
-        width: 5px;
+      /* If the filters empty the scene you are reading, "emptied" wins:
+         no current-scene pill behind a struck-through number. */
+      .sr-tick[disabled] .sr-num {
+        font-weight: 600;
+        text-decoration: line-through;
+        background: none;
       }
       @media (hover: hover) {
         .sr-tick:hover:not([disabled]) {
           color: var(--accent-strong);
-        }
-        .sr-tick:hover:not([disabled]) .sr-dash {
-          width: 16px;
         }
       }
       .sr-tick:focus-visible {
@@ -4704,9 +4706,9 @@
                 : false;
             sec.classList.toggle("all-hidden", !any || actorAbsent);
           });
-          // the rail dims scenes the filters have emptied, and disables a step
-          // button when there is nothing that way to step to; the sidebar
-          // links to those scenes are disabled the same way
+          // the rail strikes through scenes the filters have emptied, and
+          // disables a step button when there is nothing that way to step
+          // to; the sidebar links to those scenes are disabled the same way
           if (typeof syncRailAvailability === "function")
             syncRailAvailability();
           if (typeof syncNavAvailability === "function") syncNavAvailability();
@@ -5722,7 +5724,10 @@
             // the rail as wide as the longest scene title and squeezed the
             // dialogue; the Scenes sheet is the labelled route now.
             btn.setAttribute("aria-label", railTickLabel(num, sec, false));
-            btn.innerHTML = '<span class="sr-dash" aria-hidden="true"></span>';
+            // The scene number, so a tap goes to a scene you can name. The
+            // title stays in the aria-label.
+            btn.innerHTML =
+              '<span class="sr-num" aria-hidden="true">' + num + "</span>";
             btn.addEventListener("click", function () {
               goToScene(num);
             });
@@ -5748,8 +5753,9 @@
           });
           syncRailSteps();
         }
-        // Dim the scenes the current filter has emptied, and disable a step
-        // button when there is nothing in that direction to step to.
+        // Strike through the scenes the current filter has emptied, and
+        // disable a step button when there is nothing in that direction to
+        // step to.
         //
         // An emptied tick is genuinely disabled, not merely faded: the scene
         // it points at is display:none, so a tap would scroll nowhere while
