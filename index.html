@@ -4719,6 +4719,7 @@
         // end and is suppressed under reduced-motion by the CSS.
         function landOn(el, block) {
           if (!el) return;
+          cancelArrival();
           el.scrollIntoView({
             // Same guard as goToScene(): reduced-motion readers get an
             // instant jump. The landing pulse itself is already suppressed
@@ -5332,6 +5333,7 @@
         // place. Reduced-motion readers get an instant jump.
         function scrollToPicker() {
           var picker = document.querySelector(".picker");
+          cancelArrival();
           if (picker)
             picker.scrollIntoView({
               behavior: prefersReducedMotion() ? "auto" : "smooth",
@@ -5534,6 +5536,7 @@
             applyActorState();
             updateJumpBtn();
             var firstScene = document.getElementById("scene-1");
+            cancelArrival();
             if (firstScene)
               firstScene.scrollIntoView({ behavior: "smooth", block: "start" });
           });
@@ -5628,6 +5631,7 @@
             if (currentMode === "read" && !actorSelect.value) {
               // nothing to rehearse against yet: send them to the picker
               var picker = document.querySelector(".picker");
+              cancelArrival();
               if (picker)
                 picker.scrollIntoView({ behavior: "smooth", block: "center" });
               return;
@@ -5710,6 +5714,51 @@
             (empty ? " (nothing to show under the current filters)" : "")
           );
         }
+        // A tap on the rail counts when the finger lifts, not only on the
+        // click that follows. A phone that is still gliding after a flick
+        // uses the first tap to stop the glide and sends no click, so the
+        // button looked pressed but nothing happened until a second tap. A
+        // drag or a long press is not a tap. The click still works for a
+        // mouse and the keyboard, and is ignored straight after a handled
+        // tap so the jump never runs twice.
+        function onRailTap(el, fn) {
+          var start = null;
+          var tappedAt = 0;
+          el.addEventListener(
+            "touchstart",
+            function (e) {
+              // one finger only: a pinch that starts here is not a tap
+              if (e.touches.length !== 1) {
+                start = null;
+                return;
+              }
+              var t = e.touches[0];
+              start = { x: t.clientX, y: t.clientY, at: Date.now() };
+            },
+            { passive: true },
+          );
+          el.addEventListener("touchend", function (e) {
+            var s = start;
+            start = null;
+            if (!s || el.disabled || e.touches.length) return;
+            var t = e.changedTouches[0];
+            var moved = Math.abs(t.clientX - s.x) + Math.abs(t.clientY - s.y);
+            if (moved > 10 || Date.now() - s.at > 600) return;
+            // no click to follow (Chrome may refuse while the page glides)
+            if (e.cancelable) e.preventDefault();
+            tappedAt = Date.now();
+            // A touch tap moves no focus now, so let go of whatever had it
+            // (the search box and its keyboard, or another rail button).
+            var had = document.activeElement;
+            if (had && had !== el && had !== document.body && had.blur)
+              had.blur();
+            fn();
+          });
+          el.addEventListener("click", function () {
+            if (Date.now() - tappedAt < 800) return;
+            fn();
+          });
+        }
         function buildRail() {
           if (!railTicks) return;
           railTicks.innerHTML = "";
@@ -5728,7 +5777,7 @@
             // title stays in the aria-label.
             btn.innerHTML =
               '<span class="sr-num" aria-hidden="true">' + num + "</span>";
-            btn.addEventListener("click", function () {
+            onRailTap(btn, function () {
               goToScene(num);
             });
             railTicks.appendChild(btn);
@@ -5885,12 +5934,12 @@
           goToScene(target.getAttribute("data-scene"));
         }
         if (railPrev) {
-          railPrev.addEventListener("click", function () {
+          onRailTap(railPrev, function () {
             stepScene(-1);
           });
         }
         if (railNext) {
-          railNext.addEventListener("click", function () {
+          onRailTap(railNext, function () {
             stepScene(1);
           });
         }
@@ -6150,6 +6199,7 @@
         );
         onScrollFrame();
         toTop.addEventListener("click", function () {
+          cancelArrival();
           window.scrollTo({ top: 0, behavior: "smooth" });
         });
 
@@ -6238,10 +6288,78 @@
           var barUp = top - barH - PAD < HIDE_AFTER || top <= y;
           var offset = barUp ? barH + PAD : PAD;
           setBarHidden(!barUp);
+          var dest = Math.max(0, top - offset);
           window.scrollTo({
-            top: Math.max(0, top - offset),
+            top: dest,
             behavior: prefersReducedMotion() ? "auto" : "smooth",
           });
+          ensureArrival(dest);
+        }
+
+        // A jump can be swallowed or cut short: a phone still gliding from
+        // a flick (and the rail only appears while you scroll, so that is
+        // the usual moment to tap it) cancels a smooth scroll, or ignores
+        // it. Watch the jump until the page settles; if it never started,
+        // ask again, and if it stopped short, finish it. The reader always
+        // wins: a touch, a click or a key hands control back to them, and so
+        // does the page moving away from the scene for any reason (the
+        // scrollbar, a trackpad's glide, another jump).
+        var lastReaderInput = 0;
+        function readerActed() {
+          lastReaderInput = Date.now();
+        }
+        document.addEventListener("touchstart", readerActed, {
+          passive: true,
+        });
+        document.addEventListener("mousedown", readerActed, true);
+        // capture phase: runs before the page's own shortcut keys, so the
+        // key that starts a jump (such as "]") is never read as the reader
+        // taking over from it
+        document.addEventListener("keydown", readerActed, true);
+        var arrivalTimer = null;
+        // Every other jump the page makes (back to top, to your next line,
+        // to the character picker) calls this first, so a scene jump still
+        // being watched never pulls the page back from where it went.
+        function cancelArrival() {
+          window.clearTimeout(arrivalTimer);
+        }
+        function ensureArrival(dest) {
+          window.clearTimeout(arrivalTimer);
+          var began = Date.now();
+          var startY = window.pageYOffset || 0;
+          var prevY = startY;
+          var asked = 1;
+          var polls = 0;
+          function check() {
+            if (lastReaderInput > began) return;
+            var max =
+              document.documentElement.scrollHeight - window.innerHeight;
+            var goal = Math.min(dest, Math.max(0, max));
+            var y = window.pageYOffset || 0;
+            if (Math.abs(y - goal) <= 4 || ++polls > 25) return;
+            // moving away from the scene: something else has the page now
+            if (Math.abs(y - goal) > Math.abs(prevY - goal) + 2) return;
+            if (Math.abs(y - prevY) > 1) {
+              // still on its way
+              prevY = y;
+              arrivalTimer = window.setTimeout(check, 150);
+              return;
+            }
+            if (Math.abs(y - startY) <= 1 && asked < 2) {
+              // never started: ask once more, the same way
+              asked++;
+              window.scrollTo({
+                top: goal,
+                behavior: prefersReducedMotion() ? "auto" : "smooth",
+              });
+            } else {
+              // settled short of the scene: finish in one step
+              window.scrollTo({ top: goal, behavior: "instant" });
+              return;
+            }
+            arrivalTimer = window.setTimeout(check, 150);
+          }
+          arrivalTimer = window.setTimeout(check, 200);
         }
 
         // ---- search ----
@@ -6467,6 +6585,7 @@
               hideSheet();
               var picker = document.querySelector(".picker");
               if (picker) {
+                cancelArrival();
                 picker.scrollIntoView({ behavior: "smooth", block: "center" });
               }
               return;
