@@ -2548,3 +2548,18 @@ Status: approved (mock-up seen by the user), built, tested and reviewed
   struck numbers about 3.5:1 (light) and 4.3:1 (dark).
 - Screen readers unchanged: each number is hidden from them and the button
   still says "Scene 5, The Wedding".
+
+### 2026-09-28: rail taps that did nothing
+Reported: tapping a scene number sometimes highlighted it but did not move
+the page; a second tap worked. Cause: the rail appears while scrolling, so
+people tap it while the page is still gliding after a flick. Phones use
+that tap to stop the glide and send no click, or cancel the smooth scroll.
+- Rail numbers and arrows act when the finger lifts (a still, one-finger
+  tap), not only on the click; the click still works for mouse and
+  keyboard, and never runs twice.
+- Every scene jump is watched until the page settles: re-asked if it never
+  started, finished if it stopped short. It gives way at once to the
+  reader (touch, click, key), to the page moving elsewhere, and to the
+  page's own other jumps.
+- Tested with touch emulation; momentum scrolling itself can only be
+  checked on a real phone.
