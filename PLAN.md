@@ -2530,3 +2530,21 @@ Update automatically: the page reloads itself and returns to the same spot.
 - [x] 3. Restore after reload: position, filters, search
 - [x] 4. Test locally: publish a change to the served show.json while pages are open (phone and laptop sizes), mid-song, in a sheet, while searching, offline, in ?draft
 - [ ] 5. Review, then pull request
+
+# Round 14: scene numbers on the phone's scene rail
+
+Status: approved (mock-up seen by the user), built, tested and reviewed
+2026-09-28; in pull request.
+
+- The dashes on the right-hand rail (phones and tablets) are now scene
+  numbers. The current scene is bold in the accent colour on a small pill;
+  a scene the filters have emptied is struck through in grey and can't be
+  tapped (if that is the scene you are reading, "emptied" wins).
+- Layout unchanged: the rail stays 36px wide. "10" to "99" with the pill
+  measure about 26px, inside the rail's 30px; tested with a 15-scene copy of
+  the script (fits above the bottom bar on a 390x844 phone; with more rows
+  the rail scrolls in its own space, as the dashes did).
+- Contrast through the rail's idle fade: live numbers 4.5:1 or better;
+  struck numbers about 3.5:1 (light) and 4.3:1 (dark).
+- Screen readers unchanged: each number is hidden from them and the button
+  still says "Scene 5, The Wedding".
