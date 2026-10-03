@@ -344,6 +344,11 @@
    "id": "song-muse5ir3d4w4",
    "title": "Aaj Humare Dil Mein",
    "file": "Audio files/songs/aaj-humare-dil-mein-muse5gw3.mp3"
+  },
+  {
+   "id": "song-muspmldiw0m9",
+   "title": "Pan Parag",
+   "file": "Audio files/songs/pan-parag-muspmk8r.mp3"
   }
  ],
  "sfx": [
@@ -969,8 +974,8 @@
     {
      "id": "i-musplrpyi9w5",
      "type": "song",
-     "request": "Pan Parag jingle",
-     "note": ""
+     "note": "",
+     "songId": "song-muspmldiw0m9"
     },
     {
      "id": "i48",
