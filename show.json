@@ -1241,20 +1241,13 @@
      "type": "line",
      "characterId": "narrator",
      "note": "",
-     "text": "<p>Ghabrao nahi. Simran sach-much ki naagin nahi thi. Picture cinema theatre se jaate hi, Raj ke ghar se bhi yeh naagin ka bhoot utar gaya. Aur Sumitra Devi bhi khush thi, kyunki ek nanha Raj ghar mein aa gaya tha.</p>"
+     "text": "<p>Ghabrao nahi. Simran sach-much ki naagin nahi thi. Picture cinema theatre se jaate hi, Raj ke ghar se bhi yeh naagin ka bhoot utar gaya. Aur Sumitra Devi bhi khush thi, kyunki ek <mark class=\"sfx\">nanha Raj ghar mein aa gaya tha</mark>. Naam rakha Rocky. Yeh Rocky bhi kuch kam filmi nahi tha. Aao, dekhte hain Rocky ki ek jhalak.</p>"
     },
     {
      "id": "i-musssth91lgh",
      "type": "sfx",
      "note": "",
      "sfxId": "sfx-mussy80qfvlj"
-    },
-    {
-     "id": "i-musssk62dvt8",
-     "type": "line",
-     "characterId": "narrator",
-     "note": "",
-     "text": "<p>Naam rakha Rocky. Yeh Rocky bhi kuch kam filmi nahi tha. Aao, dekhte hain Rocky ki ek jhalak.</p>"
     },
     {
      "id": "i-hs-17",
