@@ -837,22 +837,16 @@
      "text": "<p>Simran dances around him.</p>"
     },
     {
-     "id": "i-hs-gag-3",
-     "type": "direction",
-     "label": "",
-     "text": "<p>Raj puts his hand to his forehead.</p>"
-    },
-    {
-     "id": "i-hs-fail-3",
-     "type": "sfx",
-     "sfxId": "sfx-muij4o9zev8y",
-     "note": ""
-    },
-    {
      "id": "i-hs-6",
      "type": "direction",
      "label": "",
      "text": "<p>Simran pulls Raj away and they leave together. As they exit, a person crosses the stage with two roses, which meet behind the couple rather than in front of their faces, so the children in the audience have no questions.</p>"
+    },
+    {
+     "id": "i-musroxxebsmj",
+     "type": "song",
+     "request": "Add a song Ek Mein Aur Ek Tu",
+     "note": ""
     }
    ],
    "onStage": [
