@@ -804,12 +804,6 @@
      "text": "<p>A park bench. Raj and Simran walk in while the Narrator speaks.</p>"
     },
     {
-     "id": "i-mujpfognltzz",
-     "type": "song",
-     "request": "The opening dings of ‘Naino mein sapna’.",
-     "note": ""
-    },
-    {
      "id": "i39",
      "type": "direction",
      "label": "",
@@ -819,12 +813,6 @@
      "id": "i39-s1",
      "type": "song",
      "songId": "song-04",
-     "note": ""
-    },
-    {
-     "id": "i-mujpg3q74f4w",
-     "type": "song",
-     "request": "The rest of ‘Naino mein sapna’, closing with ‘Ek main aur ek tu’.",
      "note": ""
     },
     {
