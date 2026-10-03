@@ -371,6 +371,11 @@
    "id": "sfx-muij4o9zev8y",
    "title": "Funny Fail",
    "file": "Audio files/sfx/fail-2-muij4mua.mp3"
+  },
+  {
+   "id": "sfx-mussy80qfvlj",
+   "title": "Baby crying",
+   "file": "Audio files/sfx/baby-crying-mussy71j.mp3"
   }
  ],
  "scenes": [
@@ -1241,8 +1246,8 @@
     {
      "id": "i-musssth91lgh",
      "type": "sfx",
-     "request": "Baby crying...",
-     "note": ""
+     "note": "",
+     "sfxId": "sfx-mussy80qfvlj"
     },
     {
      "id": "i-musssk62dvt8",
