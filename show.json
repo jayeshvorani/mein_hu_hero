@@ -835,6 +835,20 @@
      "text": "<p>Raj sits on the bench.</p>"
     },
     {
+     "id": "i-musrttnnkvrh",
+     "type": "line",
+     "characterId": "simran",
+     "note": "",
+     "text": "<p>Placeholder for dialogue</p>"
+    },
+    {
+     "id": "i-musruddgxl84",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p>Placeholder for dialogue</p>"
+    },
+    {
      "id": "i39-s1",
      "type": "song",
      "songId": "song-04",
