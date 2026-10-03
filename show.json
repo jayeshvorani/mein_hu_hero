@@ -1361,7 +1361,7 @@
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Talks to the audience- Aap soch rahe hinge ki kya ethe sallo baad hi mere pari Aarti vale Sudhir gaye. Aao dekhte hain.</p>"
+     "text": "<p>Talks to the audience- Aap soch rahe honge ki kya ethe sallo baad bhi mere pariwar sudhar gaya. Aao dekhte hain.</p>"
     },
     {
      "id": "i67",
@@ -1374,7 +1374,7 @@
      "type": "line",
      "characterId": "dharamchand",
      "note": "",
-     "text": "<p>Aakhir beta kiska hain</p>"
+     "text": "<p>Raj kitna hon har Bacchae hain. Aakhir beta kiska hain</p>"
     },
     {
      "id": "i69",
@@ -1384,68 +1384,49 @@
      "text": "<p>Ha. Aape ki hain. Par bahu Aachen</p><p>Naahi mele. Aap dekhana wo ek naagin he hain.</p>"
     },
     {
-     "id": "i70",
-     "type": "line",
-     "characterId": "raj",
-     "note": "",
-     "text": "<p><i>(confused)</i> Is samay?</p>"
-    },
-    {
      "id": "i71",
      "type": "direction",
      "label": "",
-     "text": "<p>The lamp flickers and goes out.</p>"
-    },
-    {
-     "id": "i72",
-     "type": "line",
-     "characterId": "everyone",
-     "note": "",
-     "text": "<p>Nahiii!</p>"
+     "text": "<p>Simran walks in in her naagin dance pose</p>"
     },
     {
      "id": "i-hs-20",
      "type": "direction",
      "label": "",
-     "text": "<p>Simran tries to break her bangles, but fails.</p>"
+     "text": "<p>Rocky walks in with some mark sheet and places it in Dharamchand's hands.</p>"
     },
     {
      "id": "i73",
      "type": "line",
-     "characterId": "simran",
+     "characterId": "rocky",
      "note": "",
-     "text": "<p>Mujhe chhodkar kyun chale gaye?</p>"
-    },
-    {
-     "id": "i-hs-21",
-     "type": "direction",
-     "label": "",
-     "text": "<p>Raj gets up and starts beating everyone with his stick.</p>"
+     "text": "<p>Pass to naahi huva par aashirvad dejeye daadaji. All is well.</p>"
     },
     {
      "id": "i74",
      "type": "line",
-     "characterId": "raj",
+     "characterId": "sumitradevi",
      "note": "",
-     "text": "<p>Chup karo, sab log! Diya bujh gaya. Main abhi bhi zinda hoon.</p>"
+     "text": "<p>Ther beta mein gajar Kadai halwa late huin.</p>"
     },
     {
      "id": "i-hs-22",
      "type": "direction",
      "label": "",
-     "text": "<p>Raj’s hand starts towards his forehead, but he shrugs it off.</p>"
+     "text": "<p>Raj walks towards them</p>"
     },
     {
-     "id": "i-hs-23",
-     "type": "song",
-     "request": "An ‘I’m back’ song with attitude: don’t worry, just live and have fun.",
-     "note": ""
+     "id": "i-muszqn8yy2my",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p>Bas karo ye filmi drama</p>"
     },
     {
      "id": "i-hs-24",
      "type": "direction",
      "label": "",
-     "text": "<p>Raj breaks into a dance and invites the family to join him.</p>"
+     "text": "<p>Rocky starts with 'bum chiki chicki bum' followed by Simran, mum and dad. Simran's parents, Ramju kaka and narrator also join.. raj too joins them .</p>"
     },
     {
      "id": "i75-s1",
