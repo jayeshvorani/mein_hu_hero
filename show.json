@@ -339,6 +339,11 @@
    "id": "song-mukeiygavmxj",
    "title": "Jaha teri ye nazar hai",
    "file": "Audio files/songs/jaha-teri-ye-nazar-hai-mukeix5i.mp3"
+  },
+  {
+   "id": "song-muse5ir3d4w4",
+   "title": "Aaj Humare Dil Mein",
+   "file": "Audio files/songs/aaj-humare-dil-mein-muse5gw3.mp3"
   }
  ],
  "sfx": [
@@ -1011,8 +1016,8 @@
     {
      "id": "i-muse4v67sr0e",
      "type": "song",
-     "request": "Aaj humare dil mein",
-     "note": ""
+     "note": "",
+     "songId": "song-muse5ir3d4w4"
     },
     {
      "id": "i49-s1",
