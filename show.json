@@ -349,6 +349,11 @@
    "id": "song-muspmldiw0m9",
    "title": "Pan Parag",
    "file": "Audio files/songs/pan-parag-muspucyy.mp3"
+  },
+  {
+   "id": "song-musrhzxy00rl",
+   "title": "Jaha Teri Ye Nazar - Short",
+   "file": "Audio files/songs/jaha-teri-ye-nazar-short-musrhyph.mp3"
   }
  ],
  "sfx": [
@@ -667,8 +672,7 @@
      "id": "i-mujpsvzptwrm",
      "type": "song",
      "note": "",
-     "request": "Need to also add... jaha teri ye nazar hai at the end...",
-     "replaces": "Jaha teri ye nazar hai"
+     "songId": "song-musrhzxy00rl"
     },
     {
      "id": "i-hs-3",
