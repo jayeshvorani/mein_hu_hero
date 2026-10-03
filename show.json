@@ -1348,7 +1348,7 @@
      "id": "i-hs-19",
      "type": "direction",
      "label": "Setting",
-     "text": "<p>Many years later, at the Malhotras’ home. Raj, now old, walks with a stick. Simran and a grown-up Rocky are with him.</p>"
+     "text": "<p>Many years later, at the Malhotras’ home. Raj, now old, walks with a stick. He opens the fridge door and is eating something. He breaks into a song.</p>"
     },
     {
      "id": "i65-s1",
@@ -1357,37 +1357,31 @@
      "note": ""
     },
     {
-     "id": "i65",
-     "type": "direction",
-     "label": "",
-     "text": "<p>Raj sings along to the old Bajaj jingle, then starts coughing.</p>"
-    },
-    {
      "id": "i66",
      "type": "line",
-     "characterId": "rocky",
+     "characterId": "raj",
      "note": "",
-     "text": "<p>Dad, aapko letna chahiye.</p>"
+     "text": "<p>Talks to the audience- Aap soch rahe hinge ki kya ethe sallo baad hi mere pari Aarti vale Sudhir gaye. Aao dekhte hain.</p>"
     },
     {
      "id": "i67",
      "type": "direction",
      "label": "",
-     "text": "<p>Simran and Rocky get Raj to lie down on the bed. They light a small lamp.</p>"
+     "text": "<p>Raj walks into the room where his mum and dad are sitting</p>"
     },
     {
      "id": "i68",
      "type": "line",
-     "characterId": "raj",
+     "characterId": "dharamchand",
      "note": "",
-     "text": "<p>Yeh kis liye? Electricity chali gayi kya?</p>"
+     "text": "<p>Aakhir beta kiska hain</p>"
     },
     {
      "id": "i69",
      "type": "line",
-     "characterId": "simran",
+     "characterId": "sumitradevi",
      "note": "",
-     "text": "<p>Nahi!!! Is samay par aisa hi karte hain.</p>"
+     "text": "<p>Ha. Aape ki hain. Par bahu Aachen</p><p>Naahi mele. Aap dekhana wo ek naagin he hain.</p>"
     },
     {
      "id": "i70",
