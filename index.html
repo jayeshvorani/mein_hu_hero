@@ -2464,7 +2464,9 @@
         border: 0;
         border-top: 2px solid var(--marigold);
         border-bottom: 2px solid var(--marigold);
-        border-radius: 0;
+        /* the row's rounded corners bend the ends of the two rules, which
+           the user chose over straight rules (the PDF stays straight) */
+        border-radius: 0.85rem;
         /* a heading stays with the stretch of scene it opens */
         break-after: avoid;
       }
