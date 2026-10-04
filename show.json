@@ -1361,7 +1361,7 @@
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Talks to the audience- Aap soch rahe honge ki kya ethne sallo baad mere pariwar sudhar gaya. Aao dekhte hain.</p>"
+     "text": "<p>(Talks to the audience-) Aap soch rahe honge ki kya ethne sallo baad mere pariwar sudhar gaya. Aao dekhte hain.</p>"
     },
     {
      "id": "i67",
@@ -1381,13 +1381,33 @@
      "type": "line",
      "characterId": "sumitradevi",
      "note": "",
-     "text": "<p>Ha. Aape ki hain. Par bahu Aachen</p><p>Naahi mele. Mein kah rahe hun vo ek naagin he hain.</p>"
+     "text": "<p>Ha. Aape ki hain. Par bahu Aachen</p><p>Naahi mele. Mein kah rahe hun vo ek naagin nahi to Dayan zarror hain.</p>"
     },
     {
      "id": "i71",
      "type": "direction",
      "label": "",
-     "text": "<p>Simran walks in in her naagin dance pose</p>"
+     "text": "<p>Simran walks in</p>"
+    },
+    {
+     "id": "i-mutg8evdvi6g",
+     "type": "line",
+     "characterId": "simran",
+     "note": "",
+     "text": "<p>Kya Mummy ji</p>"
+    },
+    {
+     "id": "i-mutg9fuefs6c",
+     "type": "line",
+     "characterId": "sumitradevi",
+     "note": "",
+     "text": "<p>Nahi re. Tu meri achhe bahu hain.</p>"
+    },
+    {
+     "id": "i-mutgapjpq75q",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Simran goes to Sumitra Devi and hugs her</p>"
     },
     {
      "id": "i-hs-20",
@@ -1410,6 +1430,45 @@
      "text": "<p>Ther beta mein gajar Ka halwa late huin.</p>"
     },
     {
+     "id": "i-mutgbxcxfaf8",
+     "type": "line",
+     "characterId": "sumitradevi",
+     "note": "",
+     "text": "<p>Ramu kaha mar gaya</p>"
+    },
+    {
+     "id": "i-mutgcn31l1gb",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Ramu walks in</p>"
+    },
+    {
+     "id": "i-mutgcx883m9h",
+     "type": "line",
+     "characterId": "ramu",
+     "note": "",
+     "text": "<p>Aaya maaji</p>"
+    },
+    {
+     "id": "i-mutgedkbgb3s",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Deendayal and Sharda devi walk in. Deendayal pulls out paan parag from his pocket.</p>"
+    },
+    {
+     "id": "i-mutgfm5djmxd",
+     "type": "line",
+     "characterId": "deendayal",
+     "note": "",
+     "text": "<p>Hum aaj bhi samdhe yo ki ghar paan parag leke jaate hain.</p>"
+    },
+    {
+     "id": "i-mutggzwxftt6",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Simran hugs Sharada devi calling her 'Mummy'</p>"
+    },
+    {
      "id": "i-hs-22",
      "type": "direction",
      "label": "",
@@ -1420,13 +1479,13 @@
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Bas karo ye filmi drama</p>"
+     "text": "<p>Bas karo. Kaab Katham hoga ye aap loogon ka ye filmi drama</p>"
     },
     {
      "id": "i-hs-24",
      "type": "direction",
      "label": "",
-     "text": "<p>Rocky starts with 'bum chiki chicki bum' followed by Simran, mum and dad. Simran's parents, Ramju kaka and narrator also join.. raj too joins them .</p>"
+     "text": "<p>Rocky starts with 'bum chiki chicki bum' pulling his ears in apology, followed by same action by Simran, mum and dad. Simran's parents, Ramju kaka and narrator also join.. raj too joins them .</p>"
     },
     {
      "id": "i75-s1",
