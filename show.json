@@ -302,6 +302,11 @@
    "id": "prop-musrski6xaer",
    "name": "Gandhi topi",
    "description": ""
+  },
+  {
+   "id": "prop-muttnq4zuct1",
+   "name": "Laptop bag",
+   "description": ""
   }
  ],
  "songs": [
@@ -819,13 +824,13 @@
      "type": "line",
      "characterId": "narrator",
      "note": "",
-     "text": "<p>Raj aur Simran aksar ek dusre se milne lage hain.</p>"
+     "text": "<p>Raj aur Simran aksar ek dusre se milne lage hain. Aaj park me chal ke dekhte hain en dono mein kya scene hain.</p>"
     },
     {
      "id": "i-hs-4",
      "type": "direction",
      "label": "Setting",
-     "text": "<p>A park bench. Raj and Simran walk in while the Narrator speaks.</p>"
+     "text": "<p>A park bench. Raj and Simran are sitting on the park bench while the Narrator speaks.</p>"
     },
     {
      "id": "i39",
@@ -838,14 +843,28 @@
      "type": "line",
      "characterId": "simran",
      "note": "",
-     "text": "<p>Placeholder for dialogue</p>"
+     "text": "<p>Raj, tumne suna kuch</p>"
     },
     {
      "id": "i-musruddgxl84",
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Placeholder for dialogue</p>"
+     "text": "<p>Kya?</p>"
+    },
+    {
+     "id": "i-muttw8fqq3ui",
+     "type": "line",
+     "characterId": "simran",
+     "note": "",
+     "text": "<p>Matki.</p>"
+    },
+    {
+     "id": "i-muttwxkysznh",
+     "type": "line",
+     "characterId": "raj",
+     "note": "",
+     "text": "<p>Matki?</p>"
     },
     {
      "id": "i39-s1",
@@ -911,7 +930,7 @@
      "id": "i-hs-7",
      "type": "direction",
      "label": "Setting",
-     "text": "<p>The Malhotras’ drawing room. Dharamchand, Sumitra Devi and Raj welcome Deendayal, Sharda Devi and Simran.</p>"
+     "text": "<p>The Malhotras’ drawing room. Dharamchand, Sumitra Devi and Raj welcome Deendayal, Sharda Devi and Simran. They ring the bell. Sumitra Devi moves to open the door.</p>"
     },
     {
      "id": "i41",
@@ -977,7 +996,7 @@
      "id": "i-hs-10",
      "type": "direction",
      "label": "",
-     "text": "<p>Deendayal looks worried.</p>"
+     "text": "<p>Deendayal and Sharada Devi look worried.</p>"
     },
     {
      "id": "i-hs-11",
@@ -1118,7 +1137,7 @@
      "id": "i51",
      "type": "direction",
      "label": "Setting",
-     "text": "<p>The Malhotras’ drawing room. Sumitra Devi is at home. Raj comes back from the office and loosens his tie.</p>"
+     "text": "<p>The Malhotras’ drawing room. Sumitra Devi is at home. Raj comes back from the office and loosens his tie and is sitting next to Simran and chatting with her.</p>"
     },
     {
      "id": "i52",
@@ -1126,6 +1145,12 @@
      "characterId": "sumitradevi",
      "note": "",
      "text": "<p>Aaj hamare ghar ek bahut bade Baba aa rahe hain.</p>"
+    },
+    {
+     "id": "i-mutu2qlcb815",
+     "type": "direction",
+     "label": "",
+     "text": "<p>Simran and Raj look perplexed. The door bell rings and Sumitra devi opens the door</p>"
     },
     {
      "id": "i-hs-13",
@@ -1177,7 +1202,7 @@
      "id": "i-hs-16",
      "type": "direction",
      "label": "",
-     "text": "<p>Simran comes down the stairs and dances, tongue out, hissing like a snake.</p>"
+     "text": "<p>Simran starts dancing.</p>"
     },
     {
      "id": "i-hs-gag-6",
@@ -1345,6 +1370,13 @@
    "title": "The Finale",
    "items": [
     {
+     "id": "i-mutu78tz05t6",
+     "type": "line",
+     "characterId": "narrator",
+     "note": "",
+     "text": "<p>Ab hain hamare drama ka aakhri scene.</p>"
+    },
+    {
      "id": "i-hs-19",
      "type": "direction",
      "label": "Setting",
@@ -1460,7 +1492,7 @@
      "type": "line",
      "characterId": "deendayal",
      "note": "",
-     "text": "<p>Hum aaj bhi samdhe yo ki ghar paan parag leke jaate hain.</p>"
+     "text": "<p>Hum aaj bhi samdhe yo ke ghar paan parag leke jaate hain.</p>"
     },
     {
      "id": "i-mutggzwxftt6",
@@ -1479,7 +1511,7 @@
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Bas karo. Kaab Katham hoga ye aap loogon ka ye filmi drama</p>"
+     "text": "<p>Bas karo. Kaab Katham hoga aap loogon ka ye filmi drama</p>"
     },
     {
      "id": "i-hs-24",
