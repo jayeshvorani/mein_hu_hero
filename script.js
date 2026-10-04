@@ -345,6 +345,7 @@
       if (it.type === "direction") {
         return (
           '<div class="row direction' +
+          (/^setting$/i.test(String(it.label || "").trim()) ? " is-setting" : "") +
           cut +
           '"><div class="who">' +
           esc(it.label || "Stage direction") +

@@ -987,9 +987,17 @@
     return h + "</div>";
   }
 
+  // a direction headed "Setting" shows as a heading on the site and in the PDF
+  function isSettingLabel(label) {
+    return /^setting$/i.test(String(label || "").trim());
+  }
   function cardHtml(it) {
     var id = esc(it.id);
-    var cls = "card card--" + it.type + (it.optional ? " is-optional" : "");
+    var cls =
+      "card card--" +
+      it.type +
+      (it.type === "direction" && isSettingLabel(it.label) ? " is-setting" : "") +
+      (it.optional ? " is-optional" : "");
     var h =
       '<article class="' +
       cls +
@@ -1881,7 +1889,13 @@
     }
     else if (f === "note" && it) it.item.note = v.trim() ? v : "";
     else if (f === "request" && it) it.item.request = v.trim() ? v : "";
-    else if (f === "label" && it) it.item.label = v;
+    else if (f === "label" && it) {
+      it.item.label = v;
+      // mark the card as a Setting in place, without a re-render that would
+      // move the caret the user is about to place
+      var card = t.closest(".card");
+      if (card) card.classList.toggle("is-setting", isSettingLabel(v));
+    }
     else if (f === "actor-name") {
       var a = byId(sh.actors, t.getAttribute("data-actor"));
       if (a) a.name = v;

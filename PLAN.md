@@ -2563,3 +2563,17 @@ that tap to stop the glide and send no click, or cancel the smooth scroll.
   page's own other jumps.
 - Tested with touch emulation; momentum scrolling itself can only be
   checked on a real phone.
+
+### 2026-10-04: Setting rows look different from stage directions
+The user found Settings and stage directions hard to tell apart (both grey,
+italic, dashed edge), judged a framed panel too subtle, and chose the
+"ruled heading" from three mock-ups.
+- A direction headed "Setting" (any case, spaces ignored) now shows as a
+  heading: centred, bold, upright, "SETTING" in gold capitals, between two
+  gold rules. Stage directions are unchanged.
+- Same look in the PDF export; the editor gives Setting cards a gold edge
+  and gold heading.
+- Search, "Sound cues only", "Hide optional cuts" and the actor filter
+  still hide Settings as before; Rehearse mode does not dim them; a
+  heading never sits alone at the foot of a printed page; an optional
+  Setting keeps its yellow tint on screen and its gold edge on paper.
