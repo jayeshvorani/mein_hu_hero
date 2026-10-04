@@ -390,9 +390,40 @@ h2 {
 }
 /* dashed grey edge, as on the site; an optional direction keeps the solid
    gold edge of every optional row */
-.direction:not(.is-optional) {
+.direction:not(.is-optional):not(.is-setting) {
   border-left-color: #b5ab9c;
   border-left-style: dashed;
+}
+/* A Setting opens a stretch of the scene: centred, bold and upright between
+   two gold rules, as on the site. */
+.direction.is-setting {
+  display: block;
+  text-align: center;
+  margin: 4mm 0;
+  padding: 3mm 2mm;
+  border-left: 0;
+  border-top: 0.5mm solid var(--marigold);
+  border-bottom: 0.5mm solid var(--marigold);
+  break-after: avoid;
+  page-break-after: avoid;
+}
+/* an optional Setting keeps the gold edge every optional row has */
+.direction.is-setting.is-optional {
+  border-left: 0.9mm solid var(--gold);
+}
+.row.direction.is-setting + .row {
+  margin-top: 0;
+}
+.direction.is-setting > .who {
+  color: var(--marigold);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  margin-bottom: 1.5mm;
+}
+.direction.is-setting .text {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--ink);
 }
 .cue-song {
   border-left-color: var(--teal);

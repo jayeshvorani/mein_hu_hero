@@ -2448,8 +2448,57 @@
         font-style: italic;
         color: var(--ink-dim);
       }
-      .line.stage-dir:not(.has-music):not(.is-cut) {
+      .line.stage-dir:not(.has-music):not(.is-cut):not(.is-setting) {
         border-left: 3px dashed var(--muted);
+      }
+      /* A Setting (the stage picture at lights up, or a change of place)
+         reads as a heading that opens a stretch of the scene: centred, bold
+         and upright between two gold rules, like a screenplay's scene line.
+         Nothing else in the script is centred or ruled, so it cannot be
+         mistaken for a stage direction (grey, italic, dashed edge). */
+      .line.is-setting {
+        display: block;
+        text-align: center;
+        margin: 1.2rem 0;
+        padding: 0.9rem 0.6rem;
+        border: 0;
+        border-top: 2px solid var(--marigold);
+        border-bottom: 2px solid var(--marigold);
+        border-radius: 0;
+        /* a heading stays with the stretch of scene it opens */
+        break-after: avoid;
+      }
+      /* Stacked, not the two-column grid. Every filter that hides a row
+         still hides a Setting: the display above would otherwise win. */
+      .line.is-setting.search-hidden,
+      .line.is-setting.actor-hidden,
+      body.music-only .line.is-setting:not(.has-music),
+      body.hide-cuts .line.is-setting.is-cut {
+        display: none;
+      }
+      /* an optional Setting keeps its gold tint (its only mark on screen) */
+      .line.is-setting.is-cut {
+        border-top-color: var(--gold-border);
+        border-bottom-color: var(--gold-border);
+      }
+      @media (hover: hover) {
+        .line.is-setting:not(.is-cut):hover {
+          background: none;
+          border-color: var(--marigold);
+        }
+      }
+      .line.is-setting .speaker {
+        color: var(--marigold);
+        font-weight: 700;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-bottom: 0.4rem;
+      }
+      .line.is-setting .content {
+        font-style: normal;
+        font-weight: 700;
+        color: var(--ink);
+        text-wrap: balance;
       }
 
       body.rehearse-mode .line {
@@ -2469,7 +2518,7 @@
       }
 
       /* stage directions: recessive, still legible */
-      body.rehearse-mode .line.is-direction {
+      body.rehearse-mode .line.is-direction:not(.is-setting) {
         opacity: 0.72;
       }
       body.rehearse-mode .line.is-direction .content {
@@ -3338,6 +3387,10 @@
         .line.actor-hidden {
           display: grid !important;
         }
+        .line.is-setting.search-hidden,
+        .line.is-setting.actor-hidden {
+          display: block !important;
+        }
         section.scene.all-hidden {
           display: block !important;
         }
@@ -3364,6 +3417,17 @@
            sound cue sheet */
         .line.has-music {
           border-left: 3px solid #0f6d6a !important;
+        }
+        /* a Setting is marked by its two rules, on paper as on screen:
+           no cue edge, and an optional one keeps its rule only */
+        .line.is-setting.has-music {
+          border-left: 0 !important;
+        }
+        /* the same marigold rules whether or not it is optional, as in the
+           PDF; the optional mark is the dark left rule above */
+        .line.is-setting.is-cut {
+          border-top-color: var(--marigold) !important;
+          border-bottom-color: var(--marigold) !important;
         }
       }
     </style>
@@ -7061,8 +7125,14 @@
               // Every direction is labelled, like a song or a line, so it
               // reads as a direction at a glance. The generic label stays out
               // of search, or "stage" would match every one of them.
+              // A Setting (the stage picture at lights up, or a change of
+              // place) is set apart as a heading between two rules.
+              var setting = /^setting$/i.test(String(item.label || "").trim())
+                ? " is-setting"
+                : "";
               return (
                 '<div class="line stage-dir' +
+                setting +
                 cut +
                 '" data-search="' +
                 esc(((item.label ? item.label + " " : "") + r.text).toLowerCase()) +

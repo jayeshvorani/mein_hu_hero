@@ -658,6 +658,15 @@ main {
   background: var(--direction-bg);
   border-left-color: var(--muted);
 }
+/* A direction headed "Setting" is shown as one on the site and in the PDF
+   (centred between gold rules), so the editor marks it in gold too. */
+.card--direction.is-setting {
+  border-left-color: var(--marigold);
+}
+.card--direction.is-setting .note-input[data-field="label"] {
+  color: var(--marigold);
+  font-weight: 700;
+}
 .card--song {
   border-left-color: var(--teal);
   background: color-mix(in srgb, var(--teal) 6%, var(--paper));
