@@ -369,6 +369,11 @@
    "id": "song-musrhzxy00rl",
    "title": "Jaha Teri Ye Nazar - Short",
    "file": "Audio files/songs/jaha-teri-ye-nazar-extended-mv1dyjhg.mp3"
+  },
+  {
+   "id": "song-mv1fx8086tc4",
+   "title": "Ek Mein Aur Ek Tu",
+   "file": "Audio files/songs/ek-mein-aur-ek-tu-mv1fx6cv.mp3"
   }
  ],
  "sfx": [
@@ -887,8 +892,8 @@
     {
      "id": "i-musroxxebsmj",
      "type": "song",
-     "request": "Add a song Ek Mein Aur Ek Tu",
-     "note": "Others will also sing along whilst this is played"
+     "note": "Others will also sing along whilst this is played",
+     "songId": "song-mv1fx8086tc4"
     }
    ],
    "onStage": [
