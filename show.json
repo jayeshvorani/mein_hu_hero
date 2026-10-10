@@ -741,8 +741,7 @@
      "id": "i-muidte4s8o1c",
      "type": "song",
      "note": "Reduce the duration",
-     "request": "Reduce the duration of the song",
-     "replaces": "Tujhe dekha - Instrumental"
+     "songId": "song-muidty0wkpj2"
     },
     {
      "id": "i-muidu8an0fte",
