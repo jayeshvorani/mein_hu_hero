@@ -1398,7 +1398,7 @@
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>(Talks to the audience-) Aap soch rahe honge ki kya ethne sallo baad mere pariwar sudhar gaya. Aao dekhte hain.</p>"
+     "text": "<p>(Talks to the audience-) Aap soch rahe honge ki kya itne salo baad mere pariwar sudhar gaya. Aao dekhte hain.</p>"
     },
     {
      "id": "i67",
@@ -1411,14 +1411,14 @@
      "type": "line",
      "characterId": "dharamchand",
      "note": "",
-     "text": "<p>Raj kitna hon har Baccha hain. Aakhir beta kiska hain</p>"
+     "text": "<p>Raj kitna hon har baccha hain. Aakhir beta kiska hain</p>"
     },
     {
      "id": "i69",
      "type": "line",
      "characterId": "sumitradevi",
      "note": "",
-     "text": "<p>Ha. Aape ki hain. Par bahu Aachen</p><p>Naahi mele. Mein kah rahe hun vo ek naagin nahi to Dayan zarror hain.</p>"
+     "text": "<p>Ha, ha, aap hi ka hain. Par bahu acchi nahi mili.</p><p>Mein kah rahe hun vo ek naagin nahi to Dayan zarror hain.</p>"
     },
     {
      "id": "i71",
@@ -1457,21 +1457,21 @@
      "type": "line",
      "characterId": "rocky",
      "note": "",
-     "text": "<p>Pass to es baar bhi naahi huva par aashirvad dejeye daadaji. All is well.</p>"
+     "text": "<p>Pass to is baar bhi naahi huva par aashirvad dejeye, daadaji. All is well, All is well. All is well (<i>while acting Three Idiots scene</i>)</p>"
     },
     {
      "id": "i74",
      "type": "line",
      "characterId": "sumitradevi",
      "note": "",
-     "text": "<p>Ther beta mein gajar Ka halwa late huin.</p>"
+     "text": "<p>Theher beta mein gajar ka halwa late huin.</p>"
     },
     {
      "id": "i-mutgbxcxfaf8",
      "type": "line",
      "characterId": "sumitradevi",
      "note": "",
-     "text": "<p>Ramu kaha mar gaya</p>"
+     "text": "<p>Ramu kaha mar gaya?</p>"
     },
     {
      "id": "i-mutgcn31l1gb",
@@ -1497,7 +1497,7 @@
      "type": "line",
      "characterId": "deendayal",
      "note": "",
-     "text": "<p>Hum aaj bhi samdhe yo ke ghar paan parag leke jaate hain.</p>"
+     "text": "<p>Hum aaj bhi samdhiyo ke ghar paan parag leke jaate hain.</p>"
     },
     {
      "id": "i-mutggzwxftt6",
@@ -1516,13 +1516,13 @@
      "type": "line",
      "characterId": "raj",
      "note": "",
-     "text": "<p>Bas karo. Kaab Katham hoga aap loogon ka ye filmi drama</p>"
+     "text": "<p>Bas karo. Kaab khatam hoga aap loogon ka ye filmi drama</p>"
     },
     {
      "id": "i-hs-24",
      "type": "direction",
      "label": "",
-     "text": "<p>Rocky starts with 'bum chiki chicki bum' pulling his ears in apology, followed by same action by Simran, mum and dad. Simran's parents, Ramju kaka and narrator also join.. raj too joins them .</p>"
+     "text": "<p>Rocky starts with 'bum chiki chicki bum' pulling his ears in apology, followed by same action by Simran, mum and dad. Simran's parents, Ramju kaka and narrator also join.. Raj too joins them .</p>"
     },
     {
      "id": "i75-s1",
