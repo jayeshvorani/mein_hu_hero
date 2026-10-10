@@ -1072,6 +1072,13 @@
    "title": "The Wedding",
    "items": [
     {
+     "id": "i-mv2q7v2i1n8w",
+     "type": "line",
+     "characterId": "narrator",
+     "note": "",
+     "text": "<p>Narrator's lines to be decided.</p>"
+    },
+    {
      "id": "i49",
      "type": "direction",
      "label": "Setting",
