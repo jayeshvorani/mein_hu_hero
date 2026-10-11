@@ -18,6 +18,7 @@
   --sindoor-strong: #8f241e;
   --magenta: #9f1d5a;
   --teal: #006d64;
+  --neel: #3a45a8;
   --gold: #c9962e;
   --gold-ink: #5c4200;
   --display: "Bricolage Grotesque", system-ui, sans-serif;
@@ -509,31 +510,24 @@ h2 {
   margin-top: 0.5mm;
 }
 
-/* Words to say exactly as written: bold and underlined, as on the site;
-   reads the same in black and white. */
+/* Words to say exactly as written: indigo, as on the site. */
 .w-exact {
-  font-weight: 750;
-  text-decoration: underline;
-  text-decoration-thickness: 0.35mm;
-  text-underline-offset: 0.8mm;
+  color: var(--neel);
 }
 .exact-tag {
   display: block;
   width: max-content;
   margin-top: 1mm;
   padding: 0.2mm 1.6mm;
-  border: 0.25mm solid var(--ink);
+  border: 0.25mm solid var(--neel);
   border-radius: 3mm;
   font-size: 6.5pt;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: var(--ink);
+  color: var(--neel);
 }
 .key-exact {
-  font-weight: 750;
-  text-decoration: underline;
-  text-decoration-thickness: 0.35mm;
-  text-underline-offset: 0.8mm;
+  color: var(--neel);
 }
 /* a mark left in a stage direction reads as plain direction text */
 .direction .w-exact {
