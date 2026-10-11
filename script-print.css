@@ -508,3 +508,35 @@ h2 {
   border-radius: 0.6mm;
   margin-top: 0.5mm;
 }
+
+/* Words to say exactly as written: bold and underlined, as on the site;
+   reads the same in black and white. */
+.w-exact {
+  font-weight: 750;
+  text-decoration: underline;
+  text-decoration-thickness: 0.35mm;
+  text-underline-offset: 0.8mm;
+}
+.exact-tag {
+  display: block;
+  width: max-content;
+  margin-top: 1mm;
+  padding: 0.2mm 1.6mm;
+  border: 0.25mm solid var(--ink);
+  border-radius: 3mm;
+  font-size: 6.5pt;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+}
+.key-exact {
+  font-weight: 750;
+  text-decoration: underline;
+  text-decoration-thickness: 0.35mm;
+  text-underline-offset: 0.8mm;
+}
+/* a mark left in a stage direction reads as plain direction text */
+.direction .w-exact {
+  font-weight: inherit;
+  text-decoration: none;
+}

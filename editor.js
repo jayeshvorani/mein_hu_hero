@@ -136,6 +136,8 @@
     down: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>',
   };
 
+  ICONS.lock =
+    '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
   ICONS.note =
     '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
   ICONS.speaker =
@@ -149,7 +151,7 @@
   };
 
   // ------------------------------------------------------------------
-  // rich text: the stored subset is <p>, <i>, <mark>, <br>
+  // rich text: the stored subset is <p>, <i>, <mark>, <strong>, <br>
   // ------------------------------------------------------------------
   // Turns whatever the browser's contenteditable produced (divs, spans,
   // pasted fragments) into that subset. Same whitelist the site renders
@@ -170,7 +172,8 @@
         cur = null;
       }
     }
-    function walk(node, it, mu) {
+    // ex: inside <strong> (or bold), words to say exactly as written
+    function walk(node, it, mu, ex) {
       Array.prototype.forEach.call(node.childNodes, function (n) {
         if (n.nodeType === 3) {
           var t = n.nodeValue.replace(/[\s ]+/g, " ");
@@ -181,6 +184,7 @@
           if (mu)
             t =
               (mu === "sfx" ? '<mark class="sfx">' : "<mark>") + t + "</mark>";
+          if (ex) t = "<strong>" + t + "</strong>";
           cur += t;
         } else if (n.nodeType === 1) {
           var tag = n.tagName;
@@ -190,7 +194,7 @@
             cur += "<br>";
           } else if (tag === "P" || tag === "DIV" || tag === "LI") {
             close();
-            walk(n, it, mu);
+            walk(n, it, mu, ex);
             close();
           } else {
             walk(
@@ -206,17 +210,22 @@
                     ? "sfx"
                     : "song"
                   : ""),
+              ex ||
+                tag === "STRONG" ||
+                tag === "B" ||
+                /font-weight:\s*(bold|[6-9]00)/.test(style),
             );
           }
         }
       });
     }
-    walk(tpl.content, false, "");
+    walk(tpl.content, false, "", false);
     close();
     return paras
       .map(function (p) {
         p = p
           .replace(/<\/i><i>/g, "")
+          .replace(/<\/strong><strong>/g, "")
           .replace(/^(<br>|\s)+|(<br>|\s)+$/g, "");
         return p.trim();
       })
@@ -1426,6 +1435,7 @@
     song: "Song words (teal)",
     sfx: "Sound effect words (magenta)",
     direction: "Stage direction (grey italic)",
+    exact: "Word for word (bold, underlined)",
   };
   function showField(key, label, value, opts) {
     opts = opts || {};
@@ -1908,6 +1918,19 @@
       if (tr) tr.title = v;
     }
   }
+  // Ctrl/Cmd+B is "Word for word" on a spoken line, and does nothing in a
+  // stage direction (the browser's own bold would be stored as the mark).
+  app.addEventListener("keydown", function (e) {
+    var r = e.target.closest && e.target.closest(".rich");
+    if (!r || !(e.metaKey || e.ctrlKey) || e.key.toLowerCase() !== "b") return;
+    e.preventDefault();
+    if (r.closest(".card--direction")) return;
+    var sel = window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed) return;
+    fmtTarget = r;
+    toggleExact(sel);
+    r.dispatchEvent(new Event("input", { bubbles: true }));
+  });
   // Enter in a single-line input just finishes the edit
   app.addEventListener("keydown", function (e) {
     if (
@@ -1938,6 +1961,7 @@
     '<button type="button" class="fmt-i" data-fmt="italic" title="Stage direction style: italic and dimmer, for actions inside a line (Ctrl+I)">Stage direction</button>' +
     '<button type="button" class="fmt-m" data-fmt="music" title="Song style: words describing music, shown in teal on the site">' + ICONS.note + 'Song</button>' +
     '<button type="button" class="fmt-s" data-fmt="sfx" title="Sound effect style: words describing a sound effect, shown in magenta on the site">' + ICONS.speaker + 'Sound effect</button>' +
+    '<button type="button" class="fmt-x" data-fmt="exact" title="Word for word: these words must be said exactly as written. Shown bold and underlined on the site, with a tag next to the name (Ctrl+B)">' + ICONS.lock + 'Word for word</button>' +
     '<button type="button" data-fmt="plain" title="Remove formatting from the selected words">Plain</button>';
   document.body.appendChild(fmtBar); // moved into a card when editing
   var fmtTarget = null;
@@ -1981,6 +2005,7 @@
     if (fmt === "italic") document.execCommand("italic");
     else if (fmt === "music") toggleMark(sel, "song");
     else if (fmt === "sfx") toggleMark(sel, "sfx");
+    else if (fmt === "exact") toggleExact(sel);
     else {
       document.execCommand("removeFormat");
       unwrapMarks(sel);
@@ -2001,9 +2026,31 @@
   function unwrapMarks(sel) {
     var range = sel.getRangeAt(0);
     var root = fmtTarget;
-    $all("mark", root).forEach(function (m) {
+    $all("mark, strong, b", root).forEach(function (m) {
       if (range.intersectsNode(m)) unwrap(m);
     });
+  }
+  // Word for word: pressing it on marked words removes the mark.
+  function toggleExact(sel) {
+    var range = sel.getRangeAt(0);
+    var root = fmtTarget;
+    var node = range.commonAncestorContainer;
+    while (node && node !== root) {
+      if (node.nodeType === 1 && /^(STRONG|B)$/.test(node.tagName)) {
+        unwrap(node);
+        return;
+      }
+      node = node.parentNode;
+    }
+    var frag = range.extractContents();
+    $all("strong, b", frag).forEach(unwrap);
+    var strong = document.createElement("strong");
+    strong.appendChild(frag);
+    range.insertNode(strong);
+    sel.removeAllRanges();
+    var r2 = document.createRange();
+    r2.selectNodeContents(strong);
+    sel.addRange(r2);
   }
   // kind is "song" or "sfx". Pressing the same style again removes it;
   // pressing the other one switches the marked words over.

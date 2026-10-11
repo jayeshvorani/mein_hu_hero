@@ -36,7 +36,8 @@
   }
 
   // Stored text is a tiny HTML subset: <p>, <i> (stage business), <mark>
-  // (song words), <mark class="sfx"> (sound-effect words), <br>. Anything
+  // (song words), <mark class="sfx"> (sound-effect words), <strong> (words to
+  // say exactly), <br>. Anything
   // else is dropped to its text. Same rules as index.html.
   function rich(src) {
     var tpl = document.createElement("template");
@@ -49,7 +50,8 @@
         paras.push(cur);
       }
     }
-    function walk(node, it, mu, top) {
+    // ex: inside <strong>, words to say exactly as written
+    function walk(node, it, mu, top, ex) {
       Array.prototype.forEach.call(node.childNodes, function (n) {
         if (n.nodeType === 3) {
           if (top && !n.nodeValue.trim()) return;
@@ -58,6 +60,7 @@
           var cls = [];
           if (mu) cls.push(mu === "sfx" ? "w-sfx" : "w-song");
           if (it) cls.push("w-italic");
+          if (ex && n.nodeValue.trim()) cls.push("w-exact");
           cur.html += cls.length
             ? '<span class="' + cls.join(" ") + '">' + t + "</span>"
             : t;
@@ -69,7 +72,7 @@
           } else if (tag === "P" || tag === "DIV") {
             cur = null;
             open();
-            walk(n, it, mu, false);
+            walk(n, it, mu, false, ex);
             cur = null;
           } else {
             walk(
@@ -82,12 +85,13 @@
                     : "song"
                   : ""),
               false,
+              ex || tag === "STRONG" || tag === "B",
             );
           }
         }
       });
     }
-    walk(tpl.content, false, "", true);
+    walk(tpl.content, false, "", true, false);
     return paras
       .filter(function (p) {
         return p.html.replace(/<br \/>/g, "").trim();
@@ -212,6 +216,7 @@
       song: '<span class="key-sample key-song">',
       sfx: '<span class="key-sample key-sfx">',
       direction: '<span class="key-sample key-direction">',
+      exact: '<span class="key-sample key-exact">',
     };
     var keyRows = (show.legend || [])
       .filter(function (row) {
@@ -356,6 +361,7 @@
         );
       }
       var c = chars[it.characterId] || { name: "Unassigned" };
+      var text = rich(it.text);
       return (
         '<div class="row line' +
         cut +
@@ -365,8 +371,11 @@
           ? '<span class="who-note">(' + esc(it.note) + ")</span>"
           : "") +
         optionalTag(it) +
+        (/class="[^"]*w-exact/.test(text)
+          ? '<span class="exact-tag">Word for word</span>'
+          : "") +
         '</div><div class="text">' +
-        rich(it.text) +
+        text +
         "</div></div>"
       );
     }

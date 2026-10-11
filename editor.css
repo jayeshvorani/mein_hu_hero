@@ -811,6 +811,14 @@ main {
 .rich mark.sfx {
   color: var(--magenta);
 }
+/* words to say exactly as written, as on the site */
+.rich strong,
+.rich b {
+  font-weight: 750;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.22em;
+}
 
 .cue-body {
   display: flex;
@@ -980,6 +988,14 @@ main {
 }
 .fmt-bar .fmt-m {
   color: var(--teal-on-dark);
+}
+.fmt-bar .fmt-x {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+/* only spoken lines can be word for word */
+.card--direction .fmt-bar .fmt-x {
+  display: none;
 }
 
 /* ---------- popover menu ---------- */

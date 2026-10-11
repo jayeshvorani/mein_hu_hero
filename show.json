@@ -39,6 +39,11 @@
    "style": "direction",
    "sample": "(stage direction)",
    "meaning": "What happens on stage, in grey italics with a dashed edge. The first one in each scene, labelled **Setting**, is the stage picture at lights up."
+  },
+  {
+   "style": "exact",
+   "sample": "Word for word",
+   "meaning": "Words in **bold and underlined** must be said exactly as written: a catchphrase, a punchline or the words someone else waits for. A **Word for word** tag next to the name shows the line has some. Everything else you can say in your own words."
   }
  ],
  "actors": [

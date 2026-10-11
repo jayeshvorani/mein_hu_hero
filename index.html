@@ -2502,6 +2502,70 @@
         color: var(--ink);
         text-wrap: balance;
       }
+      /* Words that must be said exactly as written: bold and underlined,
+         in the line's own colour, so the mark survives a black-and-white
+         printout. Nothing else in the script is underlined. Everything not
+         marked may be said in the actor's own words. */
+      .exact {
+        font-weight: 750;
+        text-decoration: underline;
+        text-decoration-thickness: 2px;
+        text-underline-offset: 0.22em;
+        text-decoration-skip-ink: auto;
+      }
+      /* the tag beside the name of anyone with exact words in the line */
+      .exact-tag {
+        display: flex;
+        width: max-content;
+        align-items: center;
+        gap: 0.25rem;
+        margin-top: 0.35rem;
+        padding: 0.12rem 0.45rem;
+        border: 1px solid currentColor;
+        border-radius: 999px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      .exact-tag svg {
+        width: 11px;
+        height: 11px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2.4;
+      }
+      body.exact-only .line:not(.has-exact) {
+        display: none;
+      }
+      /* Cue mode under "Word for word only": the line that cues yours stays
+         on screen, or your cue would vanish with it */
+      body.exact-only .line.cue-line {
+        display: grid;
+      }
+      body.exact-only .line.cue-line.is-setting {
+        display: block;
+      }
+      /* the switches are hidden while nothing is marked word for word; their
+         own display rules would otherwise override [hidden] */
+      .pill[hidden],
+      .sheet-toggle[hidden] {
+        display: none !important;
+      }
+      /* Only spoken words can be word for word: a mark that survives a line
+         being turned into a stage direction reads as plain direction text. */
+      .line.stage-dir .exact {
+        font-weight: inherit;
+        text-decoration: none;
+      }
+      /* in Cue mode the line before yours shows only its last words, so its
+         tag would point at words that are not on screen */
+      body.cue-mode .line.cue-line .exact-tag {
+        display: none;
+      }
 
       body.rehearse-mode .line {
         transition:
@@ -3187,6 +3251,12 @@
           grid-template-columns: 1fr;
           gap: 0.25rem;
         }
+        /* on a phone the "Word for word" tag sits beside the name */
+        .exact-tag {
+          display: inline-flex;
+          margin: 0 0 0 0.5rem;
+          vertical-align: 1px;
+        }
         .speaker {
           padding-top: 0;
         }
@@ -3386,7 +3456,8 @@
           break-inside: avoid;
         }
         .line.search-hidden,
-        .line.actor-hidden {
+        .line.actor-hidden,
+        body.exact-only .line:not(.has-exact) {
           display: grid !important;
         }
         .line.is-setting.search-hidden,
@@ -3697,6 +3768,21 @@
             <span class="st-title">Cue mode</span>
             <span class="st-note"
               >Show just the end of the line before yours</span
+            >
+          </span>
+          <span class="st-switch" aria-hidden="true"></span>
+        </button>
+
+        <button
+          type="button"
+          class="sheet-toggle"
+          id="exactToggleSheet"
+          aria-pressed="false"
+        >
+          <span class="st-body">
+            <span class="st-title">Word for word only</span>
+            <span class="st-note"
+              >Just the lines with words to say exactly as written</span
             >
           </span>
           <span class="st-switch" aria-hidden="true"></span>
@@ -4021,6 +4107,26 @@
                 <circle cx="12" cy="12" r="7" />
               </svg>
               <span class="pill-text">Cue mode</span>
+            </button>
+            <button
+              class="pill desk-only"
+              id="exactToggle"
+              type="button"
+              aria-pressed="false"
+              title="Show only the lines with words that must be said exactly as written"
+            >
+              <svg
+                class="pill-ico"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                aria-hidden="true"
+              >
+                <rect x="5" y="11" width="14" height="10" rx="2" />
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+              </svg>
+              <span class="pill-text">Word for word only</span>
             </button>
             <button class="jump-btn" id="jumpBtn" type="button" disabled>
               <span class="jb-text">Jump to their lines</span>
@@ -4735,7 +4841,9 @@
           })();
         }
 
-        function isLineVisible(line) {
+        // forCue: choosing the line that cues yours ignores "Word for word
+        // only", which hides lines but does not change who speaks before you
+        function isLineVisible(line, forCue) {
           if (line.classList.contains("search-hidden")) return false;
           if (line.classList.contains("actor-hidden")) return false;
           if (
@@ -4746,6 +4854,12 @@
           if (
             document.body.classList.contains("hide-cuts") &&
             line.classList.contains("is-cut")
+          )
+            return false;
+          if (
+            !forCue &&
+            document.body.classList.contains("exact-only") &&
+            !line.classList.contains("has-exact")
           )
             return false;
           return true;
@@ -4835,6 +4949,26 @@
           refreshCueStepper();
         });
 
+        // ---- word for word only ----
+        // Just the lines with words that must be said exactly, for revising
+        // them before a run. Works with "Viewing as" like the other filters.
+        var exactBtn = document.getElementById("exactToggle");
+        // Until the director marks some words there is nothing to filter to,
+        // and the switch would only empty every scene: keep it out of sight.
+        if (!document.querySelector(".line.has-exact")) {
+          exactBtn.hidden = true;
+          var exactSheet = document.getElementById("exactToggleSheet");
+          if (exactSheet) exactSheet.hidden = true;
+        }
+        exactBtn.addEventListener("click", function () {
+          var on = document.body.classList.toggle("exact-only");
+          exactBtn.setAttribute("aria-pressed", on ? "true" : "false");
+          setPillLabel(exactBtn, on ? "Show all lines" : "Word for word only");
+          refreshSceneVisibility();
+          applyCueState();
+          refreshCueStepper();
+        });
+
         // ---- music cues only (sound operator view) ----
         var musicBtn = document.getElementById("musicOnlyToggle");
         musicBtn.addEventListener("click", function () {
@@ -4889,11 +5023,14 @@
         }
         function highlightIn(el, q) {
           if (!el) return;
-          var walker = document.createTreeWalker(
-            el,
-            NodeFilter.SHOW_TEXT,
-            null,
-          );
+          // the "Word for word" tag is a label, not script text
+          var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+            acceptNode: function (n) {
+              return n.parentNode.closest && n.parentNode.closest(".exact-tag")
+                ? NodeFilter.FILTER_REJECT
+                : NodeFilter.FILTER_ACCEPT;
+            },
+          });
           var textNodes = [];
           var node;
           while ((node = walker.nextNode())) textNodes.push(node);
@@ -5198,10 +5335,16 @@
         // the actor filter had hidden, so two of Apurva's lines showed a blank
         // where their cue should be whenever "Hide optional cuts" was on.
         function pickCueFor(index) {
+          // Under "Word for word only" the scene before is usually hidden,
+          // and its last line with it, so a cue stays within the scene.
+          var scene = document.body.classList.contains("exact-only")
+            ? lines[index].closest("section.scene")
+            : null;
           for (var j = index - 1; j >= 0; j--) {
             var cand = lines[j];
+            if (scene && cand.closest("section.scene") !== scene) return null;
             if (cand.classList.contains("is-practicing")) return null;
-            if (!isLineVisible(cand)) continue;
+            if (!isLineVisible(cand, true)) continue;
             return cand;
           }
           return null;
@@ -5215,6 +5358,8 @@
           var used = [];
           for (var i = 0; i < lines.length; i++) {
             if (!lines[i].classList.contains("is-practicing")) continue;
+            // a line the filters hide needs no cue on screen
+            if (!isLineVisible(lines[i])) continue;
             var prev = pickCueFor(i);
             if (!prev || used.indexOf(prev) !== -1) continue;
             var contentEl = prev.querySelector(".content");
@@ -5252,6 +5397,7 @@
             setMode("read");
           }
           var count = 0;
+          var exactCount = 0;
           // Sound cues only is the sound operator's view and outranks the
           // actor filter: it must show every cue in the show, not just the
           // ones near the selected character's lines. Without this the actor
@@ -5264,6 +5410,7 @@
             if (practicing && actor && val && actor === val) {
               line.classList.add("is-practicing");
               count++;
+              if (line.classList.contains("has-exact")) exactCount++;
             }
             if (!musicOnly && (!practicing || ownOnly)) {
               if (actor && val && actor !== val) {
@@ -5288,6 +5435,9 @@
               " line" +
               (count === 1 ? "" : "s") +
               " blurred" +
+              (exactCount
+                ? " · " + exactCount + " word for word"
+                : "") +
               scopeNote;
             practiceStatus.hidden = false;
           } else {
@@ -6663,6 +6813,7 @@
         mirrorPracticeLike("practiceToggleSheet", practiceToggle);
         mirrorPracticeLike("cueToggleSheet", cueToggle);
         mirrorClick("hideCutsToggleSheet", cutsBtn);
+        mirrorClick("exactToggleSheet", exactBtn);
         mirrorClick("musicOnlyToggleSheet", musicBtn);
         mirrorClick("scopeToggleSheet", scopeToggle);
         mirrorClick("textSmallerSheet", document.getElementById("textSmaller"));
@@ -6674,6 +6825,7 @@
             ["practiceToggleSheet", practiceToggle],
             ["cueToggleSheet", cueToggle],
             ["hideCutsToggleSheet", cutsBtn],
+            ["exactToggleSheet", exactBtn],
             ["musicOnlyToggleSheet", musicBtn],
             ["scopeToggleSheet", scopeToggle],
           ].forEach(function (pair) {
@@ -6691,6 +6843,7 @@
           if (filtersDot) {
             var active =
               (cutsBtn && cutsBtn.getAttribute("aria-pressed") === "true") ||
+              (exactBtn && exactBtn.getAttribute("aria-pressed") === "true") ||
               (musicBtn && musicBtn.getAttribute("aria-pressed") === "true");
             filtersDot.hidden = !active;
           }
@@ -6809,7 +6962,8 @@
         }
 
         // Stored text is a tiny HTML subset: <p>, <i> (stage business),
-        // <mark> (song words), <mark class="sfx"> (sound-effect words), <br>. Anything else is dropped to its text,
+        // <mark> (song words), <mark class="sfx"> (sound-effect words),
+        // <strong> (words to say exactly), <br>. Anything else is dropped to its text,
         // so a stray tag in show.json can never inject markup into the page.
         // Returns the page markup and the plain text used for search.
         function rich(src) {
@@ -6824,8 +6978,10 @@
               paras.push(cur);
             }
           }
-          // mu: "" (none), "song" (<mark>) or "sfx" (<mark class="sfx">)
-          function walk(node, it, mu, top) {
+          var exact = false;
+          // mu: "" (none), "song" (<mark>) or "sfx" (<mark class="sfx">);
+          // ex: inside <strong>, words to say exactly as written
+          function walk(node, it, mu, top, ex) {
             Array.prototype.forEach.call(node.childNodes, function (n) {
               if (n.nodeType === 3) {
                 if (top && !n.nodeValue.trim()) return;
@@ -6835,6 +6991,10 @@
                 var cls = [];
                 if (mu) cls.push(mu === "sfx" ? "c-sfx" : "c-music");
                 if (it) cls.push("is-italic");
+                if (ex) {
+                  cls.push("exact");
+                  if (n.nodeValue.trim()) exact = true;
+                }
                 cur.html += cls.length
                   ? '<span class="' + cls.join(" ") + '">' + t + "</span>"
                   : t;
@@ -6846,7 +7006,7 @@
                 } else if (tag === "P" || tag === "DIV") {
                   cur = null;
                   open();
-                  walk(n, it, mu, false);
+                  walk(n, it, mu, false, ex);
                   cur = null;
                   plain.push(" ");
                 } else {
@@ -6860,13 +7020,15 @@
                           : "song"
                         : ""),
                     false,
+                    ex || tag === "STRONG" || tag === "B",
                   );
                 }
               }
             });
           }
-          walk(tpl.content, false, "", true);
+          walk(tpl.content, false, "", true, false);
           return {
+            exact: exact,
             html: paras
               .filter(function (p) {
                 return p.html.replace(/<br \/>/g, "").trim();
@@ -6934,6 +7096,7 @@
             song: ["legend-swatch c-music", ""],
             sfx: ["legend-swatch c-sfx", ""],
             direction: ["legend-swatch is-italic", ""],
+            exact: ["legend-swatch exact", ""],
           };
           // rows in a look that no longer exists (the retired song and SFX
           // badges) are skipped rather than drawn wrong
@@ -7066,6 +7229,11 @@
           );
           renderFront(show, scenesData.length);
 
+          // Beside the name of anyone with words to say exactly. A padlock
+          // and the words, so it reads on paper and without colour.
+          var EXACT_TAG =
+            '<span class="exact-tag"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></svg>Word for word</span>';
+
           function cueRow(item) {
             var isSfx = item.type === "sfx";
             var track = (isSfx ? sfx : songs)[isSfx ? item.sfxId : item.songId];
@@ -7151,12 +7319,14 @@
             return (
               '<div class="line' +
               cut +
+              (r.exact ? " has-exact" : "") +
               '" data-search="' +
               esc((speaker + " " + r.text).toLowerCase()) +
               '"' +
               (actor ? ' data-actor="' + esc(actor) + '"' : "") +
               '><div class="speaker">' +
               esc(speaker) +
+              (r.exact ? EXACT_TAG : "") +
               '</div><div class="content">' +
               r.html +
               "</div>" +
@@ -7435,6 +7605,7 @@
                 offset: spot ? spot.getBoundingClientRect().top : 0,
                 cuts: document.body.classList.contains("hide-cuts"),
                 music: document.body.classList.contains("music-only"),
+                exact: document.body.classList.contains("exact-only"),
                 q: search ? search.value : "",
                 // lines revealed in practice mode stay revealed
                 peek: Array.prototype.map.call(
@@ -7486,6 +7657,14 @@
           if (saved.music !== document.body.classList.contains("music-only")) {
             var m = document.getElementById("musicOnlyToggleSheet");
             if (m) m.click();
+          }
+          // only if there is still something marked to filter to
+          if (
+            document.querySelector(".line.has-exact") &&
+            !!saved.exact !== document.body.classList.contains("exact-only")
+          ) {
+            var x = document.getElementById("exactToggleSheet");
+            if (x) x.click();
           }
           var search = document.getElementById("searchInput");
           if (search && saved.q) {
