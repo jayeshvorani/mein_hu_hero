@@ -2613,3 +2613,19 @@ The round button only played and stopped. Now:
   close button. On phones it sits above the bottom bar.
 - A paused cue holds off automatic updates, like a playing one.
 - Not changed: the editor's own play buttons.
+
+### 2026-10-11: cues fade out when stopped by hand
+- Pausing, closing the player, switching to another cue, dragging to the
+  end and leaving "Sound cues only" fade the cue out over 1.5 s instead of
+  cutting it. A cue that reaches its own end, or fails, just stops.
+- Pressing again during a fade-to-pause brings it straight back.
+- Switching cues: the new cue starts at once while the old one fades
+  underneath it.
+- iPhones ignore a page setting an audio element's volume, so the fade uses
+  the Web Audio API, but only from the moment a fade starts and only when
+  it is ready (otherwise the cue just stops after the 1.5 s). Ordinary
+  playback is untouched, so the silent switch and screen lock behave as
+  before. A cue resumed after a fade-to-pause plays the rest through Web
+  Audio; on iOS 16.4+ the page asks for "playback" audio so the silent
+  switch does not mute it. Needs one check on a real iPhone.
+- Automatic updates wait while a stopped cue is still fading.

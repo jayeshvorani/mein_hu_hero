@@ -4753,10 +4753,10 @@
         // ============================================================
         // Cue playback.
         //
-        // Each .cue-play button in the markup names its own file. One shared
-        // Audio element serves all of them: only one cue is ever wanted at a
-        // time, and pressing a second button should cut the first rather than
-        // layer on top of it (a rehearsal plays cues in sequence).
+        // Each .cue-play button in the markup names its own file. One cue
+        // plays at a time (a rehearsal plays cues in sequence), on one audio
+        // element. Pressing a second cue hands the first element over to fade
+        // out underneath the new one, which gets a fresh element.
         //
         // The files are prefetched when "Sound cues only" is switched on,
         // rather than on first press. See prefetchCueAudio below for why.
@@ -4764,9 +4764,9 @@
         var cueButtons = Array.prototype.slice.call(
           document.querySelectorAll(".cue-play"),
         );
-        var cuePlayer = null; // the shared Audio, created on first use
+        var cuePlayer = null; // the current cue's Audio, made on first use
         var cuePlaying = null; // the button whose track is currently sounding
-        // The absolute URL the shared element is currently pointed at. The
+        // The absolute URL the current cue's element is pointed at. The
         // error event says nothing about which load failed, so this is what
         // tells a genuine failure apart from the abort that fires when a
         // second press replaces the src.
@@ -4812,7 +4812,159 @@
           btn.setAttribute("aria-label", verb + " " + name);
           syncCueBars();
         }
-        function stopCue() {
+        // ---- fading out ----
+        // A cue stopped or paused by hand fades out over a second and a half
+        // instead of cutting off: stopped early because something on stage
+        // went off script, it should still sound deliberate. A cue that
+        // reaches its own end, or fails, simply stops.
+        //
+        // iPhones and iPads ignore a web page setting an audio element's
+        // volume, so the fade goes through the Web Audio API there. That is
+        // done only when a fade starts: Web Audio is silenced by the phone's
+        // ring/silent switch and stops when the screen locks, and ordinary
+        // playback should not inherit either. Asking for a "playback" audio
+        // session (newer iOS) keeps even a fading cue audible on silent.
+        var FADE_SECS = 1.5;
+        // a little extra before pausing, so the audio clock has reached 0
+        var FADE_MS = FADE_SECS * 1000 + 80;
+        var audioCtx = null;
+        var pauseFadeTimer = 0;
+        var fadingOut = 0; // cues still dying away after being stopped
+        try {
+          if (navigator.audioSession) navigator.audioSession.type = "playback";
+        } catch (e) {
+          /* not supported */
+        }
+        function ensureAudioCtx() {
+          var AC = window.AudioContext || window.webkitAudioContext;
+          if (!AC) return null;
+          if (!audioCtx) {
+            try {
+              audioCtx = new AC();
+            } catch (e) {
+              audioCtx = null;
+            }
+          }
+          // started suspended until a tap, and iOS "interrupts" it after a
+          // call or a lock: anything but running needs waking
+          if (audioCtx && audioCtx.state !== "running")
+            audioCtx.resume().catch(function () {});
+          return audioCtx;
+        }
+        document.addEventListener("visibilitychange", function () {
+          if (document.visibilityState === "visible" && audioCtx)
+            ensureAudioCtx();
+        });
+        // The element's volume control through Web Audio, made on first need
+        // and kept on the element (an element can be connected only once).
+        function gainFor(el) {
+          if (el.__fadeGain) return el.__fadeGain;
+          // Routing an element moves its sound into Web Audio at once. If
+          // the audio context is not running yet, that would cut the cue to
+          // silence (the abrupt stop this exists to avoid), so it is used
+          // only when it is ready; otherwise the plain volume is used.
+          if (!ensureAudioCtx() || audioCtx.state !== "running") return null;
+          try {
+            var src = audioCtx.createMediaElementSource(el);
+            var gain = audioCtx.createGain();
+            src.connect(gain);
+            gain.connect(audioCtx.destination);
+            el.__fadeSrc = src;
+            el.__fadeGain = gain;
+            return gain;
+          } catch (e) {
+            return null;
+          }
+        }
+        // Move a cue's volume to `to` (0 to 1) over `secs`. Volume only ever
+        // needs moving down for a fade; moving it back up is only needed on
+        // an element that has already been faded.
+        function rampTo(el, to, secs) {
+          if (!el) return;
+          var gain = to < 1 ? gainFor(el) : el.__fadeGain;
+          if (gain && audioCtx) {
+            var p = gain.gain;
+            var now = audioCtx.currentTime;
+            // hold the level it has reached, mid-ramp or not
+            if (p.cancelAndHoldAtTime) p.cancelAndHoldAtTime(now);
+            else {
+              p.cancelScheduledValues(now);
+              p.setValueAtTime(p.value, now);
+            }
+            if (secs > 0) p.linearRampToValueAtTime(to, now + secs);
+            else p.setValueAtTime(to, now);
+            return;
+          }
+          // no Web Audio: the element's own volume (works off iOS)
+          window.clearInterval(el.__fadeTimer);
+          var from = 1;
+          try {
+            from = el.volume;
+          } catch (e) {
+            /* unreadable */
+          }
+          if (!(secs > 0)) {
+            try {
+              el.volume = to;
+            } catch (e) {
+              /* read-only here */
+            }
+            return;
+          }
+          var start = Date.now();
+          el.__fadeTimer = window.setInterval(function () {
+            var k = Math.min(1, (Date.now() - start) / (secs * 1000));
+            try {
+              el.volume = from + (to - from) * k;
+            } catch (e) {
+              /* read-only here */
+            }
+            if (k >= 1) window.clearInterval(el.__fadeTimer);
+          }, 40);
+        }
+        function cancelPauseFade() {
+          if (!pauseFadeTimer) return false;
+          window.clearTimeout(pauseFadeTimer);
+          pauseFadeTimer = 0;
+          return true;
+        }
+
+        // fade: true when someone stopped it by hand (see above)
+        function stopCue(fade) {
+          cancelPauseFade();
+          var fading = cuePlayer;
+          // Only something already sounding fades; a cue still loading (a
+          // double tap, say) is simply cut, or it could start up under its
+          // replacement.
+          if (
+            fade === true &&
+            fading &&
+            !fading.paused &&
+            fading.readyState >= 3 &&
+            !(cuePlaying && cuePlaying.classList.contains("is-loading"))
+          ) {
+            // Hand the sounding element over to fade out on its own; the
+            // next cue gets a fresh one, so a new cue can start at once
+            // while the old one dies away underneath it.
+            cuePlayer = null;
+            stopBarLoop();
+            fadingOut++;
+            document.body.classList.add("cue-fading");
+            rampTo(fading, 0, FADE_SECS);
+            window.setTimeout(function () {
+              fading.pause();
+              fading.removeAttribute("src");
+              fading.load();
+              // let the audio graph and the element go
+              if (fading.__fadeGain) fading.__fadeGain.disconnect();
+              if (fading.__fadeSrc) fading.__fadeSrc.disconnect();
+              fading.__fadeGain = fading.__fadeSrc = null;
+              if (--fadingOut <= 0) {
+                fadingOut = 0;
+                document.body.classList.remove("cue-fading");
+              }
+            }, FADE_MS);
+          }
           if (cuePlayer) {
             cuePlayer.pause();
             try {
@@ -4838,81 +4990,131 @@
           }
           syncCueBars();
         }
+        // Listeners for a cue's audio element. An element handed over to
+        // fade out keeps sending events, so each one acts only while its
+        // element is still the current cue's.
+        function newCueElement() {
+          var el = new Audio();
+          function own(fn) {
+            return function (e) {
+              if (e.target === cuePlayer) fn(e);
+            };
+          }
+          var onEnded = own(function () {
+            stopCue();
+          });
+          var onPause = own(function () {
+            stopBarLoop();
+            if (cuePlaying && cuePlayer.src && !cuePlayer.ended)
+              setCueState(cuePlaying, "paused");
+          });
+          var onPlaying = own(function () {
+            // still fading towards a pause: stay shown as paused
+            if (pauseFadeTimer) return;
+            if (cuePlaying) setCueState(cuePlaying, "playing");
+            startBarLoop();
+          });
+          var onError = own(function () {
+            // Only speak for the cue this error actually belongs to. The
+            // event carries no identity of its own, so the test is against
+            // the SOURCE the element is pointed at: comparing button
+            // references would blame a newly started cue for the failure of
+            // the one it replaced.
+            var current = cuePlayer.currentSrc || cuePlayer.src || "";
+            if (!cuePlaying || current !== cueLoadingSrc) return;
+            setCueState(cuePlaying, "unavailable");
+            cuePlaying = null;
+            cueLoadingSrc = "";
+            syncCueBars();
+          });
+          var onTime = own(function () {
+            // the bar holds still while a pause is fading in
+            if (!pauseFadeTimer) paintCueTime();
+          });
+          el.addEventListener("ended", onEnded);
+          el.addEventListener("pause", onPause);
+          el.addEventListener("playing", onPlaying);
+          el.addEventListener("error", onError);
+          el.addEventListener("timeupdate", onTime);
+          el.addEventListener("durationchange", onTime);
+          el.addEventListener("loadedmetadata", onTime);
+          return el;
+        }
         function playCue(btn) {
           // Pressing the current cue again pauses it, and once more resumes
           // it from the same point. The bar under the cue (and the docked one)
           // can move it anywhere; dragging to the end finishes it.
           if (cuePlaying === btn && !btn.classList.contains("is-loading")) {
-            if (cuePlayer.paused) {
-              var r = cuePlayer.play();
+            var el = cuePlayer;
+            if (el.__fadeGain) ensureAudioCtx();
+            if (cancelPauseFade()) {
+              // pressed again while it was fading to a pause: bring it back
+              rampTo(el, 1, 0.25);
+              setCueState(btn, "playing");
+              startBarLoop();
+            } else if (el.paused) {
+              rampTo(el, 1, 0);
+              var r = el.play();
               if (r && r.catch) r.catch(function () {});
-            } else cuePlayer.pause();
+            } else {
+              // pause by fading out, then pausing where it got to
+              setCueState(btn, "paused");
+              stopBarLoop();
+              rampTo(el, 0, FADE_SECS);
+              pauseFadeTimer = window.setTimeout(function () {
+                pauseFadeTimer = 0;
+                el.pause();
+                rampTo(el, 1, 0);
+              }, FADE_MS);
+            }
             return;
           }
-          stopCue();
+          // another cue was sounding: it fades out under this one
+          stopCue(true);
           // A cue that failed once is not dead for the session. Venue wifi
           // drops a request, or the browser refuses the very first play()
           // because it has not seen a gesture yet; either way the operator
           // presses again and it should try again, not sit there inert.
           btn.classList.remove("is-unavailable");
-          if (!cuePlayer) {
-            cuePlayer = new Audio();
-            cuePlayer.addEventListener("ended", function () {
-              stopCue();
-            });
-            cuePlayer.addEventListener("pause", function () {
-              stopBarLoop();
-              if (cuePlaying && cuePlayer.src && !cuePlayer.ended)
-                setCueState(cuePlaying, "paused");
-            });
-            cuePlayer.addEventListener("playing", function () {
-              if (cuePlaying) setCueState(cuePlaying, "playing");
-              startBarLoop();
-            });
-            ["timeupdate", "durationchange", "loadedmetadata"].forEach(
-              function (ev) {
-                cuePlayer.addEventListener(ev, paintCueTime);
-              },
-            );
-            cuePlayer.addEventListener("error", function () {
-              // Only speak for the cue this error actually belongs to.
-              //
-              // The listener is attached once to the shared element and the
-              // event carries no identity of its own, so the test has to be
-              // against the SOURCE the element is currently pointed at.
-              // Comparing two button references cannot work: replacing the src
-              // updates both of them in the same breath, so they are always
-              // equal and the test collapses to "is anything playing", which
-              // is what blamed the newly started cue for the aborted one's
-              // failure.
-              var current = cuePlayer.currentSrc || cuePlayer.src || "";
-              if (!cuePlaying || current !== cueLoadingSrc) return;
-              setCueState(cuePlaying, "unavailable");
-              cuePlaying = null;
-              cueLoadingSrc = "";
-              syncCueBars();
-            });
+          // Wake the audio context now, from this tap, so that a later fade
+          // finds it running. Nothing is routed through it until then.
+          ensureAudioCtx();
+          // An element that has faded once stays routed through Web Audio,
+          // which the iPhone silent switch can mute: a new cue starts on a
+          // fresh element instead.
+          if (cuePlayer && cuePlayer.__fadeGain) {
+            var old = cuePlayer;
+            old.removeAttribute("src");
+            old.load();
+            old.__fadeGain.disconnect();
+            if (old.__fadeSrc) old.__fadeSrc.disconnect();
+            old.__fadeGain = old.__fadeSrc = null;
+            cuePlayer = null;
           }
+          if (!cuePlayer) cuePlayer = newCueElement();
+          else rampTo(cuePlayer, 1, 0);
+          var me = cuePlayer;
           cuePlaying = btn;
           setCueState(btn, "loading");
-          cuePlayer.src = cueSrc(btn);
+          me.src = cueSrc(btn);
           // Read back what the element resolved the src to (an absolute URL),
           // so the error listener compares like with like.
-          cueLoadingSrc = cuePlayer.src;
-          var p = cuePlayer.play();
+          cueLoadingSrc = me.src;
+          var p = me.play();
           if (p && typeof p.then === "function") {
             p.then(function () {
-              // Still the intended cue? A second press may already have moved
-              // on, in which case this resolution is stale and must not paint.
-              if (cuePlaying === btn) setCueState(btn, "playing");
+              // Still the intended cue, on this element? A second press may
+              // have moved on (or restarted it on a fresh element), in which
+              // case this resolution is stale and must not paint.
+              if (cuePlaying === btn && cuePlayer === me)
+                setCueState(btn, "playing");
             }).catch(function () {
               // Autoplay refusal, a bad file, or an AbortError because a
               // second press replaced the src while this play() was pending.
-              // Every branch of that is only ours to act on if this button is
-              // still the current one: clearing cuePlaying unconditionally
-              // would strand the cue that superseded us in its loading state
-              // and leave nothing able to stop it.
-              if (cuePlaying === btn) {
+              // Only ours to act on if this button and this element are
+              // still the current ones: otherwise it would strand the cue
+              // that superseded us with nothing able to stop it.
+              if (cuePlaying === btn && cuePlayer === me) {
                 setCueState(btn, "unavailable");
                 cuePlaying = null;
                 syncCueBars();
@@ -5108,7 +5310,8 @@
             el &&
             (el === document.activeElement ||
               el.contains(document.activeElement));
-          stopCue();
+          // stopped by hand, so it fades out
+          stopCue(true);
           if (!had || !back) return;
           // the button, or its row when Cue mode has hidden the button
           var target =
@@ -5533,7 +5736,7 @@
           } else {
             // leaving the view stops whatever is sounding: the operator has
             // moved on, and a cue playing under the full script is confusing
-            stopCue();
+            stopCue(true);
           }
           // the progress note belongs to the music view; repaint either way
           paintCuePrefetch();
@@ -8317,6 +8520,8 @@
               )
             )
               return true;
+            // a stopped cue still dying away
+            if (document.body.classList.contains("cue-fading")) return true;
             // typing, or a picker such as "Viewing as" open
             var a = document.activeElement;
             if (a && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)) return true;
