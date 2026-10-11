@@ -139,6 +139,7 @@
         --magenta: #df6c98; /* 6.38:1 */
         --teal: #44d0c1; /* 10.41:1 */
         --terracotta: #f49665; /* 8.86:1 */
+        --neel: #a9b1ff; /* 9.3:1  word-for-word words */
 
         /* softer companions for large display type and fills */
         --marigold-soft: #ffd27a;
@@ -242,6 +243,7 @@
         --magenta: #9f1d5a; /* 6.39:1 */
         --teal: #006d64; /* 5.32:1 */
         --terracotta: #9f4500; /* 5.39:1 */
+        --neel: #3a45a8; /* 7.1:1  word-for-word words */
 
         --marigold-soft: #6f4d00;
         --sindoor-strong: #8f241e;
@@ -2502,14 +2504,14 @@
         color: var(--ink);
         text-wrap: balance;
       }
-      /* Words that must be said exactly as written: bold and underlined,
-         in the line's own colour, so the mark survives a black-and-white
-         printout. Nothing else in the script is underlined. Everything not
-         marked may be said in the actor's own words. */
+      /* Words that must be said exactly as written. Everything not marked
+         may be said in the actor's own words. */
+      /* Neel (indigo), a hue nothing else in the script uses, with a thin
+         underline so the mark still reads on a black-and-white printout. */
       .exact {
-        font-weight: 750;
+        color: var(--neel);
         text-decoration: underline;
-        text-decoration-thickness: 2px;
+        text-decoration-thickness: 1.5px;
         text-underline-offset: 0.22em;
         text-decoration-skip-ink: auto;
       }
@@ -2528,7 +2530,7 @@
         font-weight: 700;
         letter-spacing: 0.06em;
         text-transform: uppercase;
-        color: var(--ink);
+        color: var(--neel);
         white-space: nowrap;
       }
       .exact-tag svg {
@@ -3394,6 +3396,7 @@
           --magenta: #9f1d5a;
           --teal: #006d64;
           --terracotta: #9f4500;
+          --neel: #3a45a8;
           --accent-contrast: #fff;
           --gold-bg: #fff;
           --gold-border: #999;

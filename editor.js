@@ -1446,7 +1446,7 @@
     song: "Song words (teal)",
     sfx: "Sound effect words (magenta)",
     direction: "Stage direction (grey italic)",
-    exact: "Word for word (bold, underlined)",
+    exact: "Word for word (indigo, underlined)",
   };
   function showField(key, label, value, opts) {
     opts = opts || {};
@@ -1976,7 +1976,7 @@
     '<button type="button" class="fmt-i" data-fmt="italic" title="Stage direction style: italic and dimmer, for actions inside a line (Ctrl+I)">Stage direction</button>' +
     '<button type="button" class="fmt-m" data-fmt="music" title="Song style: words describing music, shown in teal on the site">' + ICONS.note + 'Song</button>' +
     '<button type="button" class="fmt-s" data-fmt="sfx" title="Sound effect style: words describing a sound effect, shown in magenta on the site">' + ICONS.speaker + 'Sound effect</button>' +
-    '<button type="button" class="fmt-x" data-fmt="exact" title="Word for word: these words must be said exactly as written. Shown bold and underlined on the site, with a tag next to the name (Ctrl+B)">' + ICONS.lock + 'Word for word</button>' +
+    '<button type="button" class="fmt-x" data-fmt="exact" title="Word for word: these words must be said exactly as written. Shown in indigo, underlined, on the site, with a tag next to the name (Ctrl+B)">' + ICONS.lock + 'Word for word</button>' +
     '<button type="button" data-fmt="plain" title="Remove formatting from the selected words">Plain</button>';
   document.body.appendChild(fmtBar); // moved into a card when editing
   var fmtTarget = null;
