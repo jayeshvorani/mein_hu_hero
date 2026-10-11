@@ -2577,3 +2577,27 @@ italic, dashed edge), judged a framed panel too subtle, and chose the
   still hide Settings as before; Rehearse mode does not dim them; a
   heading never sits alone at the foot of a printed page; an optional
   Setting keeps its yellow tint on screen and its gold edge on paper.
+
+# Round 15: word-for-word lines
+
+Status: agreed with the user (mock-up approved 2026-10-11); built, tested
+and reviewed (three rounds); in pull request.
+
+Some words must be said exactly as written (a catchphrase, a punchline, the
+words another actor waits for); everything else may be paraphrased.
+- Stored as <strong> inside a line's text, so the director can mark part of
+  a line or all of it. Editor: a "Word for word" button on the formatting
+  bar (or Ctrl/Cmd+B), on spoken lines only.
+- Site and PDF: the exact words bold and underlined (reads in black and
+  white too), a padlock "Word for word" tag next to the speaker's name.
+- Options: "Word for word only" (laptop: in the "Viewing as" bar; phone: the
+  Options sheet). Hidden until something is marked. With cue mode on, each
+  shown line keeps its real cue, within the scene.
+- Practice mode's status line counts them ("· 2 word for word").
+- Key: a new "Word for word" row in show.json's legend (the only data
+  change).
+- Editor: line cards show the same "Word for word" tag under the name,
+  updated as words are marked or unmarked.
+- Open for the user:
+  whether the laptop filter should sit in the top bar, which stays on
+  screen, rather than the "Viewing as" bar, which scrolls away.
