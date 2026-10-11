@@ -510,13 +510,9 @@ h2 {
   margin-top: 0.5mm;
 }
 
-/* Words to say exactly as written: indigo and underlined, as on the site;
-   reads the same in black and white. */
+/* Words to say exactly as written: indigo, as on the site. */
 .w-exact {
   color: var(--neel);
-  text-decoration: underline;
-  text-decoration-thickness: 0.25mm;
-  text-underline-offset: 0.8mm;
 }
 .exact-tag {
   display: block;
@@ -532,9 +528,6 @@ h2 {
 }
 .key-exact {
   color: var(--neel);
-  text-decoration: underline;
-  text-decoration-thickness: 0.25mm;
-  text-underline-offset: 0.8mm;
 }
 /* a mark left in a stage direction reads as plain direction text */
 .direction .w-exact {

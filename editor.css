@@ -818,9 +818,6 @@ main {
 .rich b {
   font-weight: inherit;
   color: var(--neel);
-  text-decoration: underline;
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 0.22em;
 }
 
 .cue-body {
@@ -993,8 +990,7 @@ main {
   color: var(--teal-on-dark);
 }
 .fmt-bar .fmt-x {
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+  color: #a9b1ff;
 }
 /* only spoken lines can be word for word */
 .card--direction .fmt-bar .fmt-x {
