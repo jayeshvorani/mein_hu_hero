@@ -1000,6 +1000,10 @@
   function isSettingLabel(label) {
     return /^setting$/i.test(String(label || "").trim());
   }
+  // a line with words to say exactly as written (non-blank <strong>)
+  function hasExact(html) {
+    return /<(strong|b)\b[^>]*>(?:\s*<[^>]+>)*\s*[^<\s]/i.test(html || "");
+  }
   function cardHtml(it) {
     var id = esc(it.id);
     var cls =
@@ -1041,7 +1045,14 @@
         id +
         '" value="' +
         esc(it.note || "") +
-        '" placeholder="+ note, e.g. Old" aria-label="Note shown after the name" />';
+        '" placeholder="+ note, e.g. Old" aria-label="Note shown after the name" />' +
+        // the same tag the site shows next to the name; kept up to date as
+        // words are marked or unmarked (see the input handler)
+        '<span class="exact-tag"' +
+        (hasExact(it.text) ? "" : " hidden") +
+        ">" +
+        ICONS.lock +
+        "Word for word</span>";
     } else if (it.type === "direction") {
       h +=
         '<span class="kind">Stage direction</span>' +
@@ -1829,6 +1840,10 @@
       applyField(t);
       saveDraft();
       if (t.tagName === "TEXTAREA") fitTextarea(t);
+      if (t.classList.contains("rich")) {
+        var tag = t.closest(".card") && t.closest(".card").querySelector(".exact-tag");
+        if (tag) tag.hidden = !hasExact(t.innerHTML);
+      }
     }
   });
   function labelForField(t) {

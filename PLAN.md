@@ -2596,6 +2596,8 @@ words another actor waits for); everything else may be paraphrased.
 - Practice mode's status line counts them ("· 2 word for word").
 - Key: a new "Word for word" row in show.json's legend (the only data
   change).
-- Open for the user: an indicator on the editor's card beside the name;
+- Editor: line cards show the same "Word for word" tag under the name,
+  updated as words are marked or unmarked.
+- Open for the user:
   whether the laptop filter should sit in the top bar, which stays on
   screen, rather than the "Viewing as" bar, which scrolls away.

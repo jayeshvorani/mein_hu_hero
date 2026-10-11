@@ -1492,3 +1492,32 @@ main {
 .row.legend-edit-row.row-head > span {
   justify-self: start;
 }
+
+/* "Word for word" tag under the speaker, as on the site */
+.who .exact-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: max-content;
+  margin-top: 0.4rem;
+  padding: 0.12rem 0.45rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.who .exact-tag[hidden] {
+  display: none;
+}
+.who .exact-tag svg {
+  width: 11px;
+  height: 11px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+}
