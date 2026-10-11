@@ -4861,11 +4861,13 @@
               stopCue();
             });
             cuePlayer.addEventListener("pause", function () {
+              stopBarLoop();
               if (cuePlaying && cuePlayer.src && !cuePlayer.ended)
                 setCueState(cuePlaying, "paused");
             });
             cuePlayer.addEventListener("playing", function () {
               if (cuePlaying) setCueState(cuePlaying, "playing");
+              startBarLoop();
             });
             ["timeupdate", "durationchange", "loadedmetadata"].forEach(
               function (ev) {
@@ -5123,6 +5125,25 @@
             );
           }
           target.focus({ preventScroll: true });
+        }
+        // The audio reports its position only about four times a second, so a
+        // bar redrawn on those reports moves in visible jumps. While a cue
+        // plays, it is redrawn on every frame instead.
+        var barFrame = 0;
+        function startBarLoop() {
+          if (barFrame) return;
+          (function frame() {
+            if (!cuePlayer || cuePlayer.paused || !cuePlaying) {
+              barFrame = 0;
+              return;
+            }
+            paintCueTime();
+            barFrame = window.requestAnimationFrame(frame);
+          })();
+        }
+        function stopBarLoop() {
+          if (barFrame) window.cancelAnimationFrame(barFrame);
+          barFrame = 0;
         }
         function paintCueTime() {
           var d =
