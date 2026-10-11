@@ -2601,3 +2601,15 @@ words another actor waits for); everything else may be paraphrased.
 - Open for the user:
   whether the laptop filter should sit in the top bar, which stays on
   screen, rather than the "Viewing as" bar, which scrolls away.
+
+### 2026-10-11: a play bar for songs and sound effects
+The round button only played and stopped. Now:
+- The button plays, pauses and resumes.
+- The current cue's row shows a bar from start to end with the time
+  (0:42 / 3:10): drag to any point, back to the start to restart, or to the
+  end to finish. Keys: arrows 1 s, Page Up/Down 5 s, Home, End.
+- While that row is scrolled out of view (or shrunk to a cue stub in Cue
+  mode), the same controls sit in a slim bar docked at the bottom, with a
+  close button. On phones it sits above the bottom bar.
+- A paused cue holds off automatic updates, like a playing one.
+- Not changed: the editor's own play buttons.

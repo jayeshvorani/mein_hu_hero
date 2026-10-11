@@ -2414,6 +2414,233 @@
         outline: 2px solid var(--accent);
         outline-offset: 2px;
       }
+      /* playing shows a pause sign (two bars); paused shows the play
+         triangle again, on the filled disc, so you can see which cue holds */
+      .cue-play[aria-pressed="true"]::after {
+        width: 0.5em;
+        height: 0.55em;
+        border-style: solid;
+        border-width: 0 0.16em;
+        border-color: currentColor;
+        border-radius: 0;
+        background: none;
+      }
+      .cue-play.is-paused {
+        background: color-mix(in srgb, var(--c-music) 30%, transparent);
+        border-color: var(--c-music);
+      }
+      .cue-play.is-sfx.is-paused {
+        background: color-mix(in srgb, var(--c-sfx) 30%, transparent);
+        border-color: var(--c-sfx);
+      }
+
+      /* ---- the play bar under the current cue, and the docked copy ---- */
+      .cue-bar {
+        --bar: var(--c-music);
+        grid-column: -2 / -1;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        margin-top: 0.15rem;
+      }
+      .cue-bar.is-sfx,
+      .cue-dock.is-sfx {
+        --bar: var(--c-sfx);
+      }
+      .cue-seek {
+        --pct: 0%;
+        flex: 1;
+        min-width: 0;
+        height: 28px;
+        margin: 0;
+        background: none;
+        -webkit-appearance: none;
+        appearance: none;
+        cursor: pointer;
+      }
+      .cue-seek:disabled {
+        cursor: default;
+      }
+      /* the track: played part in the cue's colour, the rest a hairline */
+      .cue-seek::-webkit-slider-runnable-track {
+        height: 4px;
+        border-radius: 999px;
+        background: linear-gradient(
+          to right,
+          var(--bar) var(--pct),
+          var(--hairline-strong) var(--pct)
+        );
+      }
+      .cue-seek::-moz-range-track {
+        height: 4px;
+        border-radius: 999px;
+        background: var(--hairline-strong);
+      }
+      .cue-seek::-moz-range-progress {
+        height: 4px;
+        border-radius: 999px;
+        background: var(--bar);
+      }
+      .cue-seek::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        margin-top: -6px;
+        border-radius: 999px;
+        border: 2px solid var(--bar);
+        background: var(--bg);
+      }
+      .cue-seek::-moz-range-thumb {
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        border: 2px solid var(--bar);
+        background: var(--bg);
+      }
+      .cue-seek:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+        border-radius: 4px;
+      }
+      .cue-time {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        font-variant-numeric: tabular-nums;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .cue-dock {
+        --bar: var(--c-music);
+        --tier-bg: var(--glass-2-bg);
+        --tier-blur: var(--glass-2-blur);
+        --tier-shadow: var(--glass-2-shadow);
+        position: fixed;
+        left: 50%;
+        bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+        z-index: 63;
+        transform: translateX(-50%);
+        width: min(34rem, calc(100% - 2rem));
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.45rem 0.6rem;
+        border: 1px solid var(--hairline);
+        border-left: 3px solid var(--bar);
+        border-radius: var(--radius-sm);
+        background: var(--tier-bg);
+        backdrop-filter: var(--tier-blur);
+        -webkit-backdrop-filter: var(--tier-blur);
+        box-shadow: var(--tier-shadow);
+      }
+      .cue-dock[hidden] {
+        display: none;
+      }
+      /* a row given focus after its cue was closed from the dock */
+      .line:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      .cue-seek:disabled {
+        opacity: 0.45;
+      }
+      /* in Cue mode the line's text (and its play button) is replaced by a
+         short cue stub; the bar goes with them */
+      .line.cue-line:not(.peek-cue) > .cue-bar {
+        display: none;
+      }
+      /* practice mode moves a blurred line's play button to its bottom right
+         corner; keep the time readout clear of it */
+      .line:has(> .cue-play.is-detached) > .cue-bar {
+        padding-right: 2.4rem;
+      }
+      .cue-dock-main {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .cue-dock-title {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: var(--bar);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .cue-dock-seek {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .cue-dock-seek .cue-seek {
+        height: 22px;
+      }
+      .cue-dock-toggle,
+      .cue-dock-close {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border: 0;
+        border-radius: 999px;
+        background: none;
+        color: var(--ink-dim);
+        cursor: pointer;
+      }
+      .cue-dock-toggle {
+        width: 38px;
+        height: 38px;
+        margin: 3px;
+        background: var(--bar);
+        color: var(--accent-contrast);
+      }
+      /* play triangle, or two pause bars while playing */
+      .cue-dock-toggle::after {
+        content: "";
+        margin-left: 0.15em;
+        border-style: solid;
+        border-width: 0.4em 0 0.4em 0.65em;
+        border-color: transparent transparent transparent currentColor;
+      }
+      .cue-dock-toggle.is-playing::after {
+        margin-left: 0;
+        width: 0.55em;
+        height: 0.65em;
+        border-width: 0 0.18em;
+        border-color: currentColor;
+      }
+      .cue-dock-toggle[aria-disabled="true"] {
+        opacity: 0.5;
+        cursor: default;
+      }
+      .cue-dock-close svg {
+        width: 18px;
+        height: 18px;
+      }
+      .cue-dock-toggle:focus-visible,
+      .cue-dock-close:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+      @media (max-width: 900px) {
+        /* above the phone's bottom bar */
+        .cue-dock {
+          bottom: calc(
+            var(--bottombar-h, 72px) + 0.6rem +
+              env(safe-area-inset-bottom, 0px)
+          );
+        }
+      }
+      /* on phones and tablets back-to-top moves up out of the docked
+         player's way (on a laptop the dock is centred and never meets it) */
+      @media (max-width: 900px) {
+        body.cue-docked .to-top.is-shown {
+          transform: translateY(-4.4rem);
+        }
+      }
       /* A cue line already reserves room on the right for the MUSIC badge. The
          buttons are inline in the text, so nothing more is needed there, but
          under reduced motion the spinner must not spin. */
@@ -3339,6 +3566,8 @@
         .cast-bar,
         .reveal-btn,
         .cue-play,
+        .cue-bar,
+        .cue-dock,
         .scene-rail,
         .read-progress,
         .bottombar,
@@ -4560,6 +4789,7 @@
             // an unpressed play button that cannot be pressed. Phrased as a
             // sentence: "Unavailable: X" reads as a stumble mid-name.
             btn.removeAttribute("aria-pressed");
+            btn.classList.remove("is-paused");
             btn.setAttribute(
               "aria-label",
               name + ", audio unavailable, press to retry",
@@ -4570,13 +4800,17 @@
             "aria-pressed",
             state === "playing" ? "true" : "false",
           );
+          btn.classList.toggle("is-paused", state === "paused");
           var verb =
             state === "playing"
-              ? "Stop"
+              ? "Pause"
               : state === "loading"
                 ? "Loading"
-                : "Play";
+                : state === "paused"
+                  ? "Resume"
+                  : "Play";
           btn.setAttribute("aria-label", verb + " " + name);
+          syncCueBars();
         }
         function stopCue() {
           if (cuePlayer) {
@@ -4602,11 +4836,17 @@
             cuePlayer.removeAttribute("src");
             cuePlayer.load();
           }
+          syncCueBars();
         }
         function playCue(btn) {
-          // pressing the sounding cue again stops it
-          if (cuePlaying === btn) {
-            stopCue();
+          // Pressing the current cue again pauses it, and once more resumes
+          // it from the same point. The bar under the cue (and the docked one)
+          // can move it anywhere; dragging to the end finishes it.
+          if (cuePlaying === btn && !btn.classList.contains("is-loading")) {
+            if (cuePlayer.paused) {
+              var r = cuePlayer.play();
+              if (r && r.catch) r.catch(function () {});
+            } else cuePlayer.pause();
             return;
           }
           stopCue();
@@ -4620,6 +4860,18 @@
             cuePlayer.addEventListener("ended", function () {
               stopCue();
             });
+            cuePlayer.addEventListener("pause", function () {
+              if (cuePlaying && cuePlayer.src && !cuePlayer.ended)
+                setCueState(cuePlaying, "paused");
+            });
+            cuePlayer.addEventListener("playing", function () {
+              if (cuePlaying) setCueState(cuePlaying, "playing");
+            });
+            ["timeupdate", "durationchange", "loadedmetadata"].forEach(
+              function (ev) {
+                cuePlayer.addEventListener(ev, paintCueTime);
+              },
+            );
             cuePlayer.addEventListener("error", function () {
               // Only speak for the cue this error actually belongs to.
               //
@@ -4636,6 +4888,7 @@
               setCueState(cuePlaying, "unavailable");
               cuePlaying = null;
               cueLoadingSrc = "";
+              syncCueBars();
             });
           }
           cuePlaying = btn;
@@ -4660,12 +4913,288 @@
               if (cuePlaying === btn) {
                 setCueState(btn, "unavailable");
                 cuePlaying = null;
+                syncCueBars();
               }
             });
           } else {
             setCueState(btn, "playing");
           }
         }
+        // ---- the play bar ----
+        // The current cue (playing or paused) gets a bar under it: drag it to
+        // any point, back to the start to restart, or to the end to finish.
+        // While that row is scrolled out of sight, the same controls sit in a
+        // slim bar docked at the bottom of the screen, so a cue can be paused
+        // from anywhere in the script.
+        function fmtTime(t) {
+          if (!isFinite(t) || t < 0) t = 0;
+          var m = Math.floor(t / 60);
+          var sec = Math.floor(t % 60);
+          return m + ":" + (sec < 10 ? "0" : "") + sec;
+        }
+        function makeSeek(cls) {
+          var wrap = document.createElement("div");
+          wrap.className = cls;
+          wrap.innerHTML =
+            '<input type="range" class="cue-seek" min="0" max="0" step="any" ' +
+            'value="0" aria-label="Position in the cue" />' +
+            '<span class="cue-time" aria-hidden="true">0:00 / 0:00</span>';
+          var range = wrap.querySelector("input");
+          // While a finger or the mouse holds the thumb, playback updates
+          // must not pull it back (iOS does not report :active reliably).
+          function hold() {
+            range.setAttribute("data-dragging", "1");
+          }
+          function release() {
+            range.removeAttribute("data-dragging");
+          }
+          range.addEventListener("pointerdown", function (e) {
+            hold();
+            // keep receiving the release even if it happens off the bar
+            if (range.setPointerCapture) range.setPointerCapture(e.pointerId);
+          });
+          // Keys: arrows move a second, Page Up/Down five, Home restarts,
+          // End finishes the cue.
+          range.addEventListener("keydown", function (e) {
+            if (!cuePlayer || !cuePlaying || range.disabled) return;
+            var step = {
+              ArrowLeft: -1,
+              ArrowDown: -1,
+              ArrowRight: 1,
+              ArrowUp: 1,
+              PageDown: -5,
+              PageUp: 5,
+            }[e.key];
+            if (e.key === "End") {
+              e.preventDefault();
+              finishFromBar(range);
+              return;
+            }
+            if (e.key === "Home") step = -Infinity;
+            if (!step) return;
+            e.preventDefault();
+            var to = Math.max(
+              0,
+              Math.min(Number(range.max), cuePlayer.currentTime + step),
+            );
+            try {
+              cuePlayer.currentTime = to;
+            } catch (err) {
+              /* not seekable yet */
+            }
+            paintCueTime();
+          });
+          range.addEventListener("touchstart", hold, { passive: true });
+          ["pointerup", "pointercancel", "touchend", "change"].forEach(
+            function (ev) {
+              range.addEventListener(ev, release);
+            },
+          );
+          range.addEventListener("input", function () {
+            if (!cuePlayer || !cuePlaying) return;
+            // dragged to the very end: the cue is finished
+            var max = Number(range.max);
+            if (max && Number(range.value) >= max - 0.25) {
+              release();
+              finishFromBar(range);
+              return;
+            }
+            try {
+              cuePlayer.currentTime = Number(range.value);
+            } catch (e) {
+              /* not seekable yet */
+            }
+            paintCueTime();
+          });
+          // A click or drag on the bar must not reach the practice-mode peek
+          // handler or the line underneath.
+          wrap.addEventListener("click", function (e) {
+            e.stopPropagation();
+          });
+          return wrap;
+        }
+        document.addEventListener("pointerup", function () {
+          Array.prototype.forEach.call(
+            document.querySelectorAll(".cue-seek[data-dragging]"),
+            function (r) {
+              r.removeAttribute("data-dragging");
+            },
+          );
+        });
+        var cueInline = makeSeek("cue-bar");
+        var cueDock = document.createElement("div");
+        cueDock.className = "cue-dock";
+        cueDock.hidden = true;
+        cueDock.setAttribute("role", "region");
+        cueDock.setAttribute("aria-label", "Now playing");
+        cueDock.innerHTML =
+          '<button type="button" class="cue-dock-toggle" ' +
+          'aria-label="Pause"></button>' +
+          '<div class="cue-dock-main">' +
+          '<span class="cue-dock-title"></span></div>' +
+          '<button type="button" class="cue-dock-close" ' +
+          'aria-label="Stop and close">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+          'stroke-width="2.2" aria-hidden="true">' +
+          '<path d="M6 6l12 12M18 6 6 18" /></svg></button>';
+        var cueDockSeek = makeSeek("cue-dock-seek");
+        cueDock.querySelector(".cue-dock-main").appendChild(cueDockSeek);
+        document.body.appendChild(cueDock);
+        cueDock
+          .querySelector(".cue-dock-toggle")
+          .addEventListener("click", function () {
+            if (!cuePlaying || cuePlaying.classList.contains("is-loading"))
+              return;
+            playCue(cuePlaying);
+          });
+        cueDock
+          .querySelector(".cue-dock-close")
+          .addEventListener("click", function () {
+            finishFromBar(cueDock);
+          });
+        var cueRowInView = true;
+        // "In view" means clear of the fixed top bar and the phone's bottom
+        // bar, which would otherwise hide a row the page counts as visible.
+        function chromeMargin() {
+          var cs = getComputedStyle(document.documentElement);
+          var top = parseFloat(cs.getPropertyValue("--header-h")) || 0;
+          var bb = document.querySelector(".bottombar");
+          var bottom =
+            bb && getComputedStyle(bb).display !== "none"
+              ? parseFloat(cs.getPropertyValue("--bottombar-h")) || 0
+              : 0;
+          return (
+            "-" + Math.round(top) + "px 0px -" + Math.round(bottom) + "px 0px"
+          );
+        }
+        var cueRowObserver = null;
+        // turning the phone or resizing across 900px changes the bars
+        // Waits a moment so the page has re-measured its bars first, and
+        // only rebuilds when the margins really changed (iOS fires resize
+        // repeatedly while its address bar slides).
+        var observedMargin = "";
+        var resizeTimer = null;
+        window.addEventListener("resize", function () {
+          window.clearTimeout(resizeTimer);
+          resizeTimer = window.setTimeout(function () {
+            if (!observedRow || chromeMargin() === observedMargin) return;
+            if (cueRowObserver) cueRowObserver.disconnect();
+            cueRowObserver = makeRowObserver();
+            if (cueRowObserver) cueRowObserver.observe(observedRow);
+          }, 250);
+        });
+        function makeRowObserver() {
+          if (!("IntersectionObserver" in window)) return null;
+          observedMargin = chromeMargin();
+          return new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (en) {
+                if (en.target === observedRow)
+                  cueRowInView = en.isIntersecting;
+              });
+              syncCueDock();
+            },
+            { rootMargin: observedMargin },
+          );
+        }
+        var observedRow = null;
+        // Stopping removes the bar (and hides the dock) that may hold the
+        // keyboard focus: hand it to the cue's own play button instead.
+        function finishFromBar(el) {
+          var back = cuePlaying;
+          var had =
+            el &&
+            (el === document.activeElement ||
+              el.contains(document.activeElement));
+          stopCue();
+          if (!had || !back) return;
+          // the button, or its row when Cue mode has hidden the button
+          var target =
+            back.offsetParent !== null ? back : back.closest(".line");
+          if (!target) return;
+          if (target !== back) {
+            target.setAttribute("tabindex", "-1");
+            target.addEventListener(
+              "blur",
+              function () {
+                target.removeAttribute("tabindex");
+              },
+              { once: true },
+            );
+          }
+          target.focus({ preventScroll: true });
+        }
+        function paintCueTime() {
+          var d =
+            cuePlayer && isFinite(cuePlayer.duration) ? cuePlayer.duration : 0;
+          var t = cuePlayer ? cuePlayer.currentTime || 0 : 0;
+          [cueInline, cueDockSeek].forEach(function (w) {
+            var r = w.querySelector("input");
+            r.max = String(d || 0);
+            r.disabled = !d;
+            // leave the thumb alone while it is being dragged, and draw the
+            // fill from where it is held
+            var held = r.hasAttribute("data-dragging");
+            if (!held) r.value = String(t);
+            var shown = Number(r.value);
+            r.style.setProperty("--pct", d ? (shown / d) * 100 + "%" : "0%");
+            r.setAttribute("aria-valuetext", fmtTime(t) + " of " + fmtTime(d));
+            w.querySelector(".cue-time").textContent =
+              fmtTime(t) + " / " + fmtTime(d);
+          });
+        }
+        function syncCueDock() {
+          // In Cue mode the current cue's row may show only a cue stub, with
+          // its play button and bar hidden: the dock is then the control.
+          var row = cuePlaying && cuePlaying.closest(".line");
+          var stub =
+            !!row &&
+            row.classList.contains("cue-line") &&
+            !row.classList.contains("peek-cue");
+          var show = !!cuePlaying && (!cueRowInView || stub);
+          cueDock.hidden = !show;
+          document.body.classList.toggle("cue-docked", show);
+        }
+        function syncCueBars() {
+          var btn = cuePlaying;
+          var row = btn ? btn.closest(".line") : null;
+          if (!row) {
+            if (cueInline.parentNode) cueInline.remove();
+            if (cueRowObserver) cueRowObserver.disconnect();
+            cueRowObserver = null;
+            observedRow = null;
+            cueRowInView = true;
+            syncCueDock();
+            return;
+          }
+          var sfxCue = btn.classList.contains("is-sfx");
+          cueInline.classList.toggle("is-sfx", sfxCue);
+          cueDock.classList.toggle("is-sfx", sfxCue);
+          if (cueInline.parentNode !== row) row.appendChild(cueInline);
+          if (observedRow !== row) {
+            // a fresh observer each time picks up the bars' current heights
+            if (cueRowObserver) cueRowObserver.disconnect();
+            observedRow = row;
+            cueRowObserver = makeRowObserver();
+            if (cueRowObserver) cueRowObserver.observe(row);
+          }
+          cueDock.querySelector(".cue-dock-title").textContent = cueLabel(btn);
+          var playing = btn.getAttribute("aria-pressed") === "true";
+          var loading = btn.classList.contains("is-loading");
+          var t = cueDock.querySelector(".cue-dock-toggle");
+          t.classList.toggle("is-playing", playing);
+          // aria-disabled rather than disabled, so focus stays on it
+          if (loading) t.setAttribute("aria-disabled", "true");
+          else t.removeAttribute("aria-disabled");
+          t.setAttribute(
+            "aria-label",
+            (loading ? "Loading " : playing ? "Pause " : "Resume ") +
+              cueLabel(btn),
+          );
+          paintCueTime();
+          syncCueDock();
+        }
+
         cueButtons.forEach(function (btn) {
           setCueState(btn, "idle");
           btn.addEventListener("click", function (e) {
@@ -5349,6 +5878,9 @@
         }
         function applyCueState() {
           clearCueLines();
+          // the current cue's row may have just become (or stopped being) a
+          // cue stub: let the docked player follow
+          if (cuePlaying) window.setTimeout(syncCueDock, 0);
           var on =
             document.body.classList.contains("cue-mode") &&
             document.body.classList.contains("practice-mode");
@@ -5664,6 +6196,8 @@
           if (cueLine) {
             // the full text was never removed, so peeking is just a class
             cueLine.classList.add("peek-cue");
+            // the row's own button and bar are back: the dock can go
+            if (cuePlaying) syncCueDock();
           }
         });
 
@@ -7757,7 +8291,8 @@
             // a cue playing, or still buffering after being pressed
             if (
               document.querySelector(
-                '.cue-play[aria-pressed="true"], .cue-play.is-loading',
+                '.cue-play[aria-pressed="true"], .cue-play.is-loading, ' +
+                  ".cue-play.is-paused",
               )
             )
               return true;
