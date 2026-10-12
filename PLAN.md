@@ -2629,3 +2629,21 @@ The round button only played and stopped. Now:
   Audio; on iOS 16.4+ the page asks for "playback" audio so the silent
   switch does not mute it. Needs one check on a real iPhone.
 - Automatic updates wait while a stopped cue is still fading.
+
+### 2026-10-12: iPhone fade jumped ahead before stopping
+- Reported: on an iPhone the fade started well, then jumped a few seconds
+  ahead and cut off. Laptops were fine.
+- Cause: the cue was switched into Web Audio at the moment the fade
+  started, mid-cue. iOS has already decoded a few seconds ahead of what is
+  heard, and the switch makes the sound catch up with that.
+- Fix: where a page cannot set the volume (iPhones and iPads), each cue is
+  routed through Web Audio before it starts, so a fade needs no switch. The
+  audio is woken by any tap on the page (again after a call or a lock), so
+  it is ready by the next cue. A cue started by the very tap that wakes it
+  is not routed, and stops at once when stopped rather than fading. Laptops
+  unchanged.
+- Trade-off: on an iPhone every cue now plays through Web Audio. The page
+  asks for "playback" audio (iOS 16.4+), so the silent switch should not
+  mute it; a cue may stop if the screen locks mid-cue. Check both on a real
+  iPhone.
+- Service worker cache: mhh-v14.
