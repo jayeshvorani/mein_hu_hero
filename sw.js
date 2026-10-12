@@ -12,7 +12,7 @@
  * deleted on activate, so a stale font subset can never linger.
  */
 
-var CACHE_VERSION = "mhh-v13";
+var CACHE_VERSION = "mhh-v14";
 
 // The cue audio lives in its own cache, on its own version counter.
 //

@@ -4819,11 +4819,11 @@
         // reaches its own end, or fails, simply stops.
         //
         // iPhones and iPads ignore a web page setting an audio element's
-        // volume, so the fade goes through the Web Audio API there. That is
-        // done only when a fade starts: Web Audio is silenced by the phone's
-        // ring/silent switch and stops when the screen locks, and ordinary
-        // playback should not inherit either. Asking for a "playback" audio
-        // session (newer iOS) keeps even a fading cue audible on silent.
+        // volume, so the fade goes through the Web Audio API there, and the
+        // cue is routed through it from the start (see FIXED_VOLUME). Asking
+        // for a "playback" audio session (newer iOS) keeps it audible with
+        // the ring/silent switch on silent. Elsewhere the routing is done
+        // only when a fade starts.
         var FADE_SECS = 1.5;
         // a little extra before pausing, so the audio clock has reached 0
         var FADE_MS = FADE_SECS * 1000 + 80;
@@ -4855,14 +4855,43 @@
           if (document.visibilityState === "visible" && audioCtx)
             ensureAudioCtx();
         });
+        // True where a page cannot set an audio element's volume (iPhones
+        // and iPads): the fade can only go through Web Audio there.
+        var FIXED_VOLUME = (function () {
+          try {
+            var a = new Audio();
+            a.volume = 0.5;
+            return a.volume !== 0.5;
+          } catch (e) {
+            return true;
+          }
+        })();
+        // On those devices a cue is routed through Web Audio before it
+        // starts, never mid-cue: switching a sounding cue over makes iOS
+        // jump a few seconds ahead. Routing needs the audio context running,
+        // and waking it takes a moment, so every tap anywhere wakes it (it
+        // does nothing while running; iOS stops it after a call or a lock).
+        // A cue started by the very tap that wakes it cannot be routed in
+        // time: it plays normally and, if stopped, stops at once.
+        if (FIXED_VOLUME) {
+          var wakeAudio = function () {
+            if (!audioCtx || audioCtx.state !== "running") ensureAudioCtx();
+          };
+          document.addEventListener("touchend", wakeAudio, true);
+          document.addEventListener("click", wakeAudio, true);
+        }
         // The element's volume control through Web Audio, made on first need
         // and kept on the element (an element can be connected only once).
-        function gainFor(el) {
+        function gainFor(el, starting) {
           if (el.__fadeGain) return el.__fadeGain;
+          // see FIXED_VOLUME: on an iPhone, only before the cue starts
+          if (FIXED_VOLUME && !starting) return null;
           // Routing an element moves its sound into Web Audio at once. If
           // the audio context is not running yet, that would cut the cue to
           // silence (the abrupt stop this exists to avoid), so it is used
-          // only when it is ready; otherwise the plain volume is used.
+          // only when it is ready; otherwise the plain volume is used (on an
+          // iPhone, where that does nothing, the cue stops at once instead:
+          // see canFade).
           if (!ensureAudioCtx() || audioCtx.state !== "running") return null;
           try {
             var src = audioCtx.createMediaElementSource(el);
@@ -4922,6 +4951,11 @@
             if (k >= 1) window.clearInterval(el.__fadeTimer);
           }, 40);
         }
+        // Can this cue fade? Not on an iPhone if it was not routed at the
+        // start; it then stops at once rather than playing on for the fade.
+        function canFade(el) {
+          return !FIXED_VOLUME || !!el.__fadeGain;
+        }
         function cancelPauseFade() {
           if (!pauseFadeTimer) return false;
           window.clearTimeout(pauseFadeTimer);
@@ -4941,6 +4975,7 @@
             fading &&
             !fading.paused &&
             fading.readyState >= 3 &&
+            canFade(fading) &&
             !(cuePlaying && cuePlaying.classList.contains("is-loading"))
           ) {
             // Hand the sounding element over to fade out on its own; the
@@ -5056,6 +5091,8 @@
               rampTo(el, 1, 0);
               var r = el.play();
               if (r && r.catch) r.catch(function () {});
+            } else if (!canFade(el)) {
+              el.pause();
             } else {
               // pause by fading out, then pausing where it got to
               setCueState(btn, "paused");
@@ -5077,11 +5114,13 @@
           // presses again and it should try again, not sit there inert.
           btn.classList.remove("is-unavailable");
           // Wake the audio context now, from this tap, so that a later fade
-          // finds it running. Nothing is routed through it until then.
+          // finds it running. Off iPhones nothing is routed through it until
+          // then; on an iPhone the cue is routed just before it starts.
           ensureAudioCtx();
           // An element that has faded once stays routed through Web Audio,
-          // which the iPhone silent switch can mute: a new cue starts on a
-          // fresh element instead.
+          // and off iPhones a cue should not play through it unless it has
+          // to: a new cue starts on a fresh element instead. (On an iPhone
+          // the fresh element is routed again below.)
           if (cuePlayer && cuePlayer.__fadeGain) {
             var old = cuePlayer;
             old.removeAttribute("src");
@@ -5094,6 +5133,8 @@
           if (!cuePlayer) cuePlayer = newCueElement();
           else rampTo(cuePlayer, 1, 0);
           var me = cuePlayer;
+          // on an iPhone, routed now so that a later fade needs no switch
+          if (FIXED_VOLUME) gainFor(me, true);
           cuePlaying = btn;
           setCueState(btn, "loading");
           me.src = cueSrc(btn);
