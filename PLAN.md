@@ -2647,3 +2647,21 @@ The round button only played and stopped. Now:
   mute it; a cue may stop if the screen locks mid-cue. Check both on a real
   iPhone.
 - Service worker cache: mhh-v14.
+
+### 2026-11-01: the next cue's button stays under the mouse
+- Reported: with the mouse waiting over the next cue, the bar under the
+  finishing cue closed, everything below moved up, and the button moved
+  away from the mouse.
+- Fix: whenever the bar appears, closes or moves to another cue, the page
+  scrolls by the same amount at once. With no new cue (it ended or was
+  stopped), what follows the old row stays put on screen; when another cue
+  is pressed, that cue's button stays put, above or below the old one.
+  Switching cues moves the bar straight across, without closing it in
+  between. Nothing scrolls when the old row is off the bottom of the screen.
+  The browser's own scroll anchoring is paused for the moment of the change,
+  so the move is never corrected twice.
+- The bar appearing under a cue when nothing was playing still pushes what
+  is below it down, but the pressed button stays put (in practice mode a
+  blurred line's button sits at the foot of its row, so there the row moves
+  up instead).
+- Service worker cache: mhh-v15.
