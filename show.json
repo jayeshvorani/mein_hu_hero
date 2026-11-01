@@ -391,6 +391,11 @@
    "id": "sfx-mussy80qfvlj",
    "title": "Baby crying",
    "file": "Audio files/sfx/baby-crying-mussy71j.mp3"
+  },
+  {
+   "id": "sfx-mvyezki7fyzj",
+   "title": "Shainai",
+   "file": "Audio files/sfx/shainai-mvyeziuu.mp3"
   }
  ],
  "scenes": [
@@ -1086,8 +1091,8 @@
     {
      "id": "i-mvy62l5duo1v",
      "type": "sfx",
-     "request": "Add a Shainai here for about 20 seconds",
-     "note": ""
+     "note": "",
+     "sfxId": "sfx-mvyezki7fyzj"
     },
     {
      "id": "i49",
