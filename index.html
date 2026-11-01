@@ -5107,7 +5107,12 @@
             return;
           }
           // another cue was sounding: it fades out under this one
-          stopCue(true);
+          cueSwitching = true;
+          try {
+            stopCue(true);
+          } finally {
+            cueSwitching = false;
+          }
           // A cue that failed once is not dead for the session. Venue wifi
           // drops a request, or the browser refuses the very first play()
           // because it has not seen a gesture yet; either way the operator
@@ -5420,11 +5425,62 @@
           cueDock.hidden = !show;
           document.body.classList.toggle("cue-docked", show);
         }
+        // When the bar appears, leaves a row (the cue ended or was
+        // stopped) or moves to another cue, the script around it changes
+        // height. So that a play button waiting under the mouse does not
+        // move, the page is scrolled by the same amount at once. `where`
+        // reports the screen position to keep (null: nothing on screen
+        // would move). The browser's own scroll anchoring is paused
+        // meanwhile, so the two never correct the same move twice.
+        function holdStill(where, change) {
+          var before = where();
+          if (before === null) {
+            change();
+            return;
+          }
+          var root = document.documentElement;
+          root.style.overflowAnchor = "none";
+          change();
+          var after = where();
+          if (after !== null && Math.abs(after - before) >= 1)
+            window.scrollBy({ top: after - before, behavior: "instant" });
+          // back on once this change has been laid out and painted
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () {
+              root.style.overflowAnchor = "";
+            });
+          });
+        }
+        // set while one cue is replacing another, so the bar goes straight
+        // to the new cue instead of closing in between
+        var cueSwitching = false;
         function syncCueBars() {
           var btn = cuePlaying;
           var row = btn ? btn.closest(".line") : null;
+          var oldRow = cueInline.parentNode;
+          if (oldRow !== row && (oldRow || row) && (row || !cueSwitching)) {
+            // The bar is arriving or leaving. With a new cue, the button just
+            // pressed stays put (or its row, if the button is hidden).
+            // With none, what follows the old row stays put: its bottom
+            // edge is where that begins. Nothing is held if the old row is
+            // hidden or its bottom is below the screen, as then nothing on
+            // screen moves.
+            var target = row && btn.getClientRects().length ? btn : row;
+            var where = target
+              ? function () {
+                  return target.getBoundingClientRect().top;
+                }
+              : function () {
+                  if (!oldRow.getClientRects().length) return null;
+                  var b = oldRow.getBoundingClientRect().bottom;
+                  return b < window.innerHeight ? b : null;
+                };
+            holdStill(where, function () {
+              if (row) row.appendChild(cueInline);
+              else cueInline.remove();
+            });
+          }
           if (!row) {
-            if (cueInline.parentNode) cueInline.remove();
             if (cueRowObserver) cueRowObserver.disconnect();
             cueRowObserver = null;
             observedRow = null;
