@@ -15,6 +15,13 @@ button,input{font:inherit}.shell{position:relative;z-index:1;width:min(1500px,10
 h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgia,serif;letter-spacing:.045em;text-shadow:0 3px 26px #f4c96b30}h1 span{font-size:.45em;vertical-align:.27em;letter-spacing:.14em;color:#fff8e9}.subtitle{margin:10px 0 0;color:#c9c2d9;font-size:13px;letter-spacing:.035em}
 .top-actions{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:17px auto 0}.pill{border:1px solid #f4c96b55;border-radius:999px;padding:9px 14px;color:#f5e9d1;background:#ffffff08;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.pill.status{color:#b9f4c9;border-color:#7ad69a55}.btn{border:1px solid #f4c96b66;border-radius:999px;background:#ffffff08;color:#f4ead6;padding:11px 16px;min-height:40px;font-size:10px;font-weight:850;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:.18s}.btn:hover:not(:disabled){background:#f4c96b20;border-color:var(--gold);transform:translateY(-1px)}.btn:disabled{opacity:.35;cursor:not-allowed}.btn.gold{background:linear-gradient(135deg,#e9bd62,#c78932);border-color:#f8dc9b;color:#24162a;box-shadow:0 5px 20px #ca913530}.btn.danger{border-color:#fa929966;color:#ffb7bc}.btn:focus-visible,.prize:focus-visible,input:focus-visible{outline:3px solid var(--gold2);outline-offset:3px}
 .board{display:grid;grid-template-columns:minmax(220px,1fr) minmax(220px,.82fr) minmax(220px,1fr);gap:18px;align-items:stretch;flex:1}.prize-panel{position:relative;display:flex;flex-direction:column;padding:17px 16px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(155deg,rgba(37,32,75,.83),rgba(20,17,47,.86));box-shadow:0 18px 50px #0004,inset 0 1px #ffffff0e;overflow:hidden}.prize-panel:before{content:"";position:absolute;top:0;left:18px;right:18px;height:2px}.blue-panel:before{background:linear-gradient(90deg,transparent,var(--blue),transparent)}.red-panel:before{background:linear-gradient(90deg,transparent,var(--red),transparent)}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}.panel-kicker{display:block;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;margin-bottom:3px}.panel-title{font-size:16px;font-weight:900;letter-spacing:.1em;margin:0;text-transform:uppercase}.blue-panel .panel-title{color:var(--blue)}.red-panel .panel-title{color:var(--red)}.count{width:30px;height:30px;display:grid;place-items:center;border:1px solid currentColor;border-radius:50%;font-size:12px;font-weight:900;flex:none}.blue-panel .count{color:var(--blue);background:#419ee119}.red-panel .count{color:var(--red);background:#e1536b19}.prize-list{display:grid;grid-template-rows:repeat(5,minmax(53px,1fr));gap:8px;flex:1}.prize{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;padding:7px 12px;border-radius:11px;border:1px solid #ffffff20;background:linear-gradient(100deg,#ffffff12,#ffffff06);color:#a7ddff;cursor:pointer;transition:transform .18s,border-color .18s,background .18s,opacity .2s;min-height:48px}.red-panel .prize{color:#ffb0b2}.prize .amount{font-size:clamp(21px,2.1vw,29px);font-weight:900;letter-spacing:.01em;font-variant-numeric:tabular-nums;text-shadow:0 0 20px #56b1f233}.red-panel .prize .amount{text-shadow:0 0 20px #f85f6f30}.prize:hover:not(.removed){transform:translateY(-2px);border-color:currentColor;background:#ffffff13}.prize.removed{cursor:default;border-style:dashed;border-color:#ffffff18;background:#05041230;color:#d2cce055}.prize.removed .amount{display:none}.removed-label{display:none;color:#d9d2e65c;font-size:9px;font-weight:900;letter-spacing:.2em}.prize.removed .removed-label{display:inline}.host-view .prize:not(.removed):after{content:"REMOVE";position:absolute;right:10px;color:#ffffff78;font-size:8px;font-weight:900;letter-spacing:.11em;opacity:0;transition:opacity .15s}.host-view .prize:hover:not(.removed):after{opacity:1}
+.prize.final-locked{cursor:not-allowed;opacity:.82}.prize.final-locked:hover{transform:none;border-color:#ffffff20;background:linear-gradient(100deg,#ffffff12,#ffffff06)}
+.prize.winner-prize{border:2px solid var(--gold2);background:linear-gradient(120deg,#71552a88,#2e2447);color:var(--gold2);box-shadow:0 0 28px #f4c96b55,inset 0 0 18px #f4c96b20;animation:winnerGlow 1.8s ease-in-out infinite}
+@keyframes winnerGlow{0%,100%{box-shadow:0 0 18px #f4c96b35,inset 0 0 10px #f4c96b12}50%{box-shadow:0 0 36px #f4c96b85,inset 0 0 24px #f4c96b28}}
+.final-stage{border:1px solid #f4c96b55;border-radius:14px;padding:14px;background:linear-gradient(145deg,#f4c96b12,#ffffff04)}.final-stage .section-title{color:var(--gold2)}.final-stage-status{margin:0;color:#c9c2d9;font-size:10px;line-height:1.6}.final-stage-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.final-stage-actions .btn{border-radius:10px;padding:10px 8px}.final-prize-options{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.final-prize-options .btn{border-radius:10px;white-space:normal}.final-stage-complete{margin-top:10px;padding:10px;border-radius:10px;background:#f4c96b13;color:var(--gold2);font-size:12px;font-weight:900;text-align:center;line-height:1.5}
+.audience-view .prize.winner-prize{opacity:1}
+.audience-view .decision.winner{font:700 clamp(24px,3vw,38px)/1.1 Georgia,serif;color:var(--gold2);letter-spacing:.02em;text-shadow:0 0 28px #f4c96b88}
+
 .centre{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:17px 10px;text-align:center;min-height:400px}.centre:before{content:"";position:absolute;inset:8% 0;border-left:1px solid #f4c96b25;border-right:1px solid #f4c96b25;mask-image:linear-gradient(transparent,#000 18%,#000 82%,transparent);pointer-events:none}.rosette{position:relative;z-index:1;width:clamp(135px,14vw,195px);aspect-ratio:1;display:grid;place-items:center;border-radius:50%;margin:0 0 16px;background:radial-gradient(circle,#ffe09926 0 34%,transparent 35%),repeating-conic-gradient(#f4c96bbd 0deg 1deg,transparent 1deg 15deg);box-shadow:0 0 0 1px #f4c96b66,0 0 0 9px #f4c96b0b,0 0 60px #f4ae5222;animation:breathe 4s ease-in-out infinite}.rosette:before{content:"";position:absolute;inset:11%;border:1px solid #ffe1a099;border-radius:50%;box-shadow:inset 0 0 28px #f4c96b20}.question{position:relative;display:grid;place-items:center;width:68%;aspect-ratio:1;border:1px solid #ffe1a099;border-radius:50%;background:radial-gradient(circle at 35% 25%,#443054,#17112e 70%);color:var(--gold2);font:clamp(68px,8vw,105px)/1 Georgia,serif;text-shadow:0 0 28px #ffcd6b55;box-shadow:inset 0 0 22px #ffda8c1a,0 7px 30px #0005}.diya{font-size:25px;margin:0 0 8px;filter:drop-shadow(0 0 12px #ffb44b99)}.centre-kicker{color:var(--gold);font-size:9px;font-weight:900;letter-spacing:.23em;text-transform:uppercase}.centre-title{margin:7px 0;color:#fff4d8;font:700 clamp(20px,2vw,27px)/1.15 Georgia,serif}.centre-copy{max-width:245px;margin:0;color:#aaa3c4;font-size:11px;line-height:1.6}.centre-divider{display:flex;align-items:center;gap:9px;width:72%;margin:15px 0 12px;color:var(--gold)}.centre-divider:before,.centre-divider:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,#f4c96b80)}.centre-divider:after{transform:rotate(180deg)}.remaining{font:700 30px/1 Georgia,serif;color:var(--gold2);font-variant-numeric:tabular-nums}.remaining-caption{margin-top:5px;color:#aaa3c4;font-size:9px;font-weight:850;letter-spacing:.18em;text-transform:uppercase}
 .offer-banner{display:none;position:relative;z-index:2;width:min(100%,320px);margin-top:12px;padding:12px 16px;border:1px solid #f4c96b99;border-radius:14px;background:linear-gradient(135deg,#3b2b50,#1c1637);box-shadow:0 0 32px #f4c96b24}.offer-banner.show{display:block;animation:pop .35s ease-out}.offer-label{color:var(--gold);font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase}.offer-amount{margin-top:4px;color:var(--gold2);font:700 clamp(28px,4vw,42px)/1 Georgia,serif}.decision{display:none;margin-top:8px;color:var(--gold2);font-weight:950;font-size:clamp(15px,1.8vw,21px);letter-spacing:.15em;text-transform:uppercase}.decision.show{display:block}
 .host-layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.85fr);gap:18px;align-items:stretch}.host-board-wrap{min-width:0}.host-view .board{gap:14px}.host-view .prize-panel{padding:15px 13px}.host-view .prize-list{gap:7px}.host-view .prize .amount{font-size:clamp(18px,1.7vw,24px)}.host-view .centre{min-height:360px}.host-view .rosette{width:125px}.host-view .question{font-size:70px}.host-view .centre-title{font-size:20px}.host-view .centre-copy{font-size:10px}
@@ -66,6 +73,10 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
 @keyframes resetSpin{0%{transform:rotate(0) scale(.8);filter:brightness(1.8)}100%{transform:rotate(360deg) scale(1);filter:brightness(1)}}
 .audience-view .audience-layout.fx-reveal-good .blue-panel{animation:goodPulse .75s ease-out}
 .audience-view .audience-layout.fx-reveal-bad .red-panel{animation:badPulse .85s ease-out}
+.audience-view .audience-layout.fx-final-two .rosette{animation:rosetteCharge 1.6s ease-in-out}
+.audience-view .audience-layout.fx-final-winnings .centre{animation:dealGlow 1.2s ease-in-out 2}
+.audience-view .audience-layout.fx-final-winnings .winner-prize{animation:winnerGlow .8s ease-in-out 3}
+
 @keyframes goodPulse{0%,100%{box-shadow:0 18px 50px #0004,inset 0 1px #ffffff0e}35%{box-shadow:0 0 42px #82ceff55,inset 0 0 30px #82ceff18}}
 @keyframes badPulse{0%,100%{box-shadow:0 18px 50px #0004,inset 0 1px #ffffff0e}30%{box-shadow:0 0 48px #ff526b88,inset 0 0 35px #ff526b25}}
 .sound-ready .sound-gate-card{animation:gateIn .7s cubic-bezier(.2,.85,.25,1)}
@@ -100,15 +111,15 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
             <div class="rosette"><div class="question">?</div></div>
             <div class="diya">🪔</div><div class="centre-kicker">Banker's private view</div>
             <h2 class="centre-title">The game is in your hands</h2>
-            <p class="centre-copy">When an envelope is opened, select its amount here. The audience board updates automatically.</p>
-            <div class="centre-divider">✦</div><div class="remaining" id="host-remaining">10</div><div class="remaining-caption">Prizes still in play</div>
+            <p class="centre-copy">Select each opened amount here. At two remaining, normal reveals lock and the final Keep or Swap sequence begins.</p>
+            <div class="centre-divider">✦</div><div class="remaining" id="host-remaining">10</div><div class="remaining-caption" id="host-remaining-caption">Prizes still in play</div>
           </section>
           <section class="prize-panel red-panel">
             <div class="panel-head"><div><span class="panel-kicker">The life-changing fortunes</span><h2 class="panel-title">Red values</h2></div><span class="count" id="host-red-count">5</span></div>
             <div class="prize-list" id="host-red-list"></div>
           </section>
         </div>
-        <p class="host-note">PRIVATE BANKER SCREEN · Click an amount only after the corresponding physical envelope has been opened.</p>
+        <p class="host-note">PRIVATE BANKER SCREEN · Click opened amounts while more than two prizes remain. Use the final-stage controls for the last two envelopes.</p>
       </div>
 
       <aside class="console" aria-label="Banker controls">
@@ -125,6 +136,24 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
           <div class="offer-actions"><button class="btn gold" id="show-offer">Reveal offer</button><button class="btn" id="hide-offer" disabled>Hide offer</button></div>
           <p class="mini-note">Enter the offer and reveal it when the banker is ready. It will appear on the audience screen, not this private panel.</p>
           <div class="decision-actions"><button class="btn" id="deal-button" disabled>Deal</button><button class="btn danger" id="no-deal-button" disabled>No deal</button></div>
+        </div>
+        <div class="console-section final-stage" id="final-stage-panel" hidden>
+          <h3 class="section-title">The final two envelopes</h3>
+          <p class="final-stage-status" id="final-stage-status">Two amounts remain. Make the final offer before moving to the Keep or Swap decision.</p>
+          <div class="final-stage-actions" id="final-ready-actions" hidden><button class="btn gold" id="skip-final-offer" type="button">Skip final offer</button></div>
+          <div id="final-choice-controls" class="final-stage-actions" hidden>
+            <button class="btn gold" id="keep-envelope" type="button">Keep my envelope</button>
+            <button class="btn" id="swap-envelope" type="button">Swap envelopes</button>
+          </div>
+          <div id="final-other-reveal-controls" hidden>
+            <p class="mini-note">Open the envelope the contestant did not choose. Select its value below. This selection is private until you click it.</p>
+            <div class="final-prize-options" id="final-other-options"></div>
+          </div>
+          <div id="final-winner-reveal-controls" hidden>
+            <p class="mini-note">One amount remains. It belongs to the contestant's chosen envelope.</p>
+            <button class="btn gold" id="reveal-final-winnings" type="button" style="width:100%;margin-top:10px">Reveal final winnings</button>
+          </div>
+          <div class="final-stage-complete" id="final-stage-complete" hidden></div>
         </div>
         <div class="console-section">
           <h3 class="section-title">Opened envelopes</h3><ul class="log" id="reveal-log"><li class="empty">No envelopes opened yet</li></ul>
@@ -154,7 +183,7 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
           <div class="rosette"><div class="question" id="aud-question">?</div></div><div class="diya">🪔</div>
           <div class="centre-kicker" id="aud-kicker">The mystery envelope</div><h2 class="centre-title" id="aud-title">Will you make a deal?</h2>
           <p class="centre-copy" id="aud-copy">Ten envelopes. Ten fortunes. One very important question.</p>
-          <div class="centre-divider">✦</div><div class="remaining" id="aud-remaining">10</div><div class="remaining-caption">Prizes still in play</div>
+          <div class="centre-divider">✦</div><div class="remaining" id="aud-remaining">10</div><div class="remaining-caption" id="aud-remaining-caption">Prizes still in play</div>
           <div class="offer-banner" id="offer-banner"><div class="offer-label">The banker's offer</div><div class="offer-amount" id="aud-offer-amount">£0</div></div>
           <div class="decision" id="aud-decision"></div>
         </section>
@@ -181,7 +210,8 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
   const audienceMode = params.get('view') === 'audience';
   const app = document.getElementById('app');
   const $ = id => document.getElementById(id);
-  const state = {revealed:[], offer:'', offerVisible:false, decision:''};
+  const state = {revealed:[], offer:'', offerVisible:false, decision:'', finalPhase:'', finalChoice:'', finalOtherPrize:'', finalPrize:'', gameOver:false};
+  const actionHistory = [];
   let displayWindow = null;
   let toastTimer = null;
 
@@ -243,7 +273,7 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
       tone(110,.9,{type:'sine',volume:.13,endFreq:62,decay:.86});
       [392,523.25,659.25,783.99,1046.5].forEach((n,i)=>tone(n,.7,{type:'triangle',volume:.065,delay:.18+i*.12,decay:.58}));
       tone(1568,.9,{type:'sine',volume:.035,delay:.8,decay:.7});
-    }else if(type==='reveal'){
+    }else if(type==='reveal'||type==='final-other-reveal'){
       noise(.28,{filter:'highpass',frequency:2400,endFrequency:650,volume:.055});
       if(amount<=1000){ // a positive sparkle: a small amount leaves the board
         tone(587.33,.55,{type:'triangle',volume:.085,delay:.12,decay:.48});tone(739.99,.65,{type:'sine',volume:.07,delay:.22,decay:.55});tone(987.77,.78,{type:'sine',volume:.05,delay:.32,decay:.68});tone(1174.66,.72,{type:'triangle',volume:.035,delay:.43,decay:.62});
@@ -269,6 +299,18 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
       tone(660,.075,{type:'sine',volume:.022,decay:.06});noise(.045,{filter:'highpass',frequency:3200,volume:.012});
     }else if(type==='cancel'){
       tone(420,.12,{type:'sine',volume:.035,decay:.1});
+    }else if(type==='final-two'){
+      [0,.22,.48].forEach((d,i)=>tone([196,246.94,293.66][i],.9,{type:'triangle',volume:.07,delay:d,decay:.78}));
+      noise(.55,{delay:.15,filter:'bandpass',frequency:500,endFrequency:1800,volume:.025});
+    }else if(type==='final-choice'){
+      tone(65,.8,{type:'sine',volume:.12,endFreq:92,decay:.76});tone(130,.7,{type:'triangle',volume:.075,delay:.18,decay:.64});tone(195,.7,{type:'sine',volume:.05,delay:.36,decay:.62});
+    }else if(type==='keep'){
+      chord([261.63,329.63,392],.9,{type:'triangle',volume:.07,spacing:.06});tone(523.25,.8,{type:'sine',volume:.04,delay:.24,decay:.7});
+    }else if(type==='swap'){
+      [174.61,220,293.66,392,523.25].forEach((n,i)=>tone(n,.45,{type:'triangle',volume:.06,delay:i*.095,decay:.4}));noise(.35,{delay:.18,filter:'highpass',frequency:900,endFrequency:3400,volume:.025});
+    }else if(type==='final-winnings'){
+      [196,261.63,329.63,392,523.25,659.25,783.99].forEach((n,i)=>tone(n,1.25,{type:i<4?'triangle':'sine',volume:i<4?.075:.055,delay:i*.09,decay:1.12}));
+      [987.77,1174.66,1567.98].forEach((n,i)=>tone(n,1.05,{type:'sine',volume:.05,delay:.65+i*.12,decay:.95}));noise(1.1,{delay:.1,filter:'highpass',frequency:1800,endFrequency:5200,volume:.045});
     }else if(type==='invalid'){
       tone(185,.24,{type:'square',volume:.045,endFreq:145,decay:.2});
     }
@@ -287,17 +329,20 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
   }
   function runVisualFX(action){
     const layout=$('audience-layout');if(!layout||!audienceMode)return;
-    const classes=['fx-offer','fx-no-deal','fx-deal','fx-reset','fx-reveal-good','fx-reveal-bad'];layout.classList.remove(...classes);void layout.offsetWidth;
+    const classes=['fx-offer','fx-no-deal','fx-deal','fx-reset','fx-reveal-good','fx-reveal-bad','fx-final-two','fx-final-choice','fx-final-winnings'];layout.classList.remove(...classes);void layout.offsetWidth;
     const type=action.type;
     if(type==='offer')layout.classList.add('fx-offer');
-    if(type==='no-deal')layout.classList.add('fx-no-deal');
+    if(type==='no-deal'||type==='final-choice')layout.classList.add('fx-no-deal');
     if(type==='deal')layout.classList.add('fx-deal');
     if(type==='reset')layout.classList.add('fx-reset');
-    if(type==='reveal')layout.classList.add(action.amount<=1000?'fx-reveal-good':'fx-reveal-bad');
-    if(type==='deal')partyBurst();
+    if(type==='reveal'||type==='final-other-reveal')layout.classList.add(action.amount<=1000?'fx-reveal-good':'fx-reveal-bad');
+    if(type==='final-two'||type==='final-choice'||type==='keep'||type==='swap')layout.classList.add('fx-final-two');
+    if(type==='final-winnings')layout.classList.add('fx-final-winnings');
+    if(type==='deal'||type==='final-winnings')partyBurst();
     if(type==='reset')partyBurst('diwali');
-    if(type==='reveal'&&action.amount>1000)screenPulse('red');
-    if(type==='reveal'&&action.amount<=1000)screenPulse('blue');
+    if((type==='reveal'||type==='final-other-reveal')&&action.amount>1000)screenPulse('red');
+    if((type==='reveal'||type==='final-other-reveal')&&action.amount<=1000)screenPulse('blue');
+    if(type==='final-two'||type==='final-choice'||type==='keep'||type==='swap')screenPulse('gold');
     if(type==='offer')screenPulse('gold');
     if(type==='no-deal')screenPulse('red');
     setTimeout(()=>layout.classList.remove(...classes),1900);
@@ -315,21 +360,27 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
   }
 
   function renderPrizeLists(action=null){
+    const left=remaining();
+    const regularLocked=left.length<=2 || !!state.finalPhase || state.gameOver;
     for(const side of ['blue','red']){
       const list = PRIZES.filter(p=>p.side===side);
       const host = $('host-'+side+'-list');
       const aud = $('aud-'+side+'-list');
       if(host) host.innerHTML = list.map(p=>{
         const removed=state.revealed.includes(p.value);
-        const fresh=action?.type==='reveal' && action.prize===p.value;
+        const fresh=(action?.type==='reveal'||action?.type==='final-other-reveal') && action.prize===p.value;
         const restored=action?.type==='undo' && action.prize===p.value;
-        return `<button type="button" class="prize ${removed?'removed':''} ${fresh?'just-revealed':''} ${restored?'just-restored':''}" data-prize="${safeText(p.value)}" ${removed?'disabled':''} aria-label="${removed?'Revealed':'Remove '+safeText(p.value)+' from the board'}"><span class="amount">${p.value}</span><span class="removed-label">REVEALED</span></button>`;
+        const winner=state.finalPhase==='complete' && state.finalPrize===p.value;
+        const locked=regularLocked&&!removed;
+        const label=removed?'Revealed':winner?'Contestant wins '+p.value:locked?'Final stage control':'Remove '+p.value+' from the board';
+        return `<button type="button" class="prize ${removed?'removed':''} ${locked?'final-locked':''} ${winner?'winner-prize':''} ${fresh?'just-revealed':''} ${restored?'just-restored':''}" data-prize="${safeText(p.value)}" ${(removed||locked)?'disabled':''} aria-label="${safeText(label)}"><span class="amount">${p.value}</span><span class="removed-label">${winner?'WINNER':removed?'REVEALED':'FINAL TWO'}</span></button>`;
       }).join('');
       if(aud) aud.innerHTML = list.map(p=>{
         const removed=state.revealed.includes(p.value);
-        const fresh=action?.type==='reveal' && action.prize===p.value;
+        const fresh=(action?.type==='reveal'||action?.type==='final-other-reveal') && action.prize===p.value;
         const restored=action?.type==='undo' && action.prize===p.value;
-        return `<div class="prize ${removed?'removed':''} ${fresh?'just-revealed':''} ${restored?'just-restored':''}" aria-label="${removed?'Prize revealed':safeText(p.value)}"><span class="amount">${p.value}</span><span class="removed-label">REVEALED</span></div>`;
+        const winner=state.finalPhase==='complete' && state.finalPrize===p.value;
+        return `<div class="prize ${removed?'removed':''} ${winner?'winner-prize':''} ${fresh?'just-revealed':''} ${restored?'just-restored':''}" aria-label="${removed?'Prize revealed':winner?'Contestant wins '+safeText(p.value):safeText(p.value)}"><span class="amount">${p.value}</span><span class="removed-label">${winner?'WINNER':'REVEALED'}</span></div>`;
       }).join('');
     }
     const blue=PRIZES.filter(p=>p.side==='blue'&&!state.revealed.includes(p.value)).length;
@@ -340,6 +391,8 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
     if($('aud-red-count')) $('aud-red-count').textContent=red;
     if($('host-remaining')) $('host-remaining').textContent=blue+red;
     if($('aud-remaining')) $('aud-remaining').textContent=blue+red;
+    if($('host-remaining-caption')) $('host-remaining-caption').textContent=state.finalPhase==='complete'?'Winning amount':left.length===2?'Final two envelopes':'Prizes still in play';
+    if($('aud-remaining-caption')) $('aud-remaining-caption').textContent=state.finalPhase==='complete'?'Winning amount':left.length===2?'Final two envelopes':'Prizes still in play';
     document.querySelectorAll('.just-revealed,.just-restored').forEach(el=>el.addEventListener('animationend',()=>el.classList.remove('just-revealed','just-restored'),{once:true}));
   }
 
@@ -349,32 +402,79 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
     $('stat-opened').textContent=state.revealed.length;
     $('stat-lowest').textContent=left.length?left.reduce((a,b)=>a.amount<b.amount?a:b).value:'—';
     $('stat-highest').textContent=left.length?left.reduce((a,b)=>a.amount>b.amount?a:b).value:'—';
-    $('undo-button').disabled=state.revealed.length===0;
+    $('undo-button').disabled=actionHistory.length===0;
     $('reveal-log').innerHTML=state.revealed.length?state.revealed.map((v,i)=>`<li>${i+1}. ${safeText(v)}</li>`).join(''):'<li class="empty">No envelopes opened yet</li>';
-    $('offer-input').value=state.offer;
-    $('hide-offer').disabled=!state.offerVisible;
-    $('deal-button').disabled=!state.offerVisible || !!state.decision;
-    $('no-deal-button').disabled=!state.offerVisible || !!state.decision;
+    $('offer-input').disabled=state.gameOver||!!state.finalPhase;
+    $('show-offer').disabled=state.gameOver||!!state.finalPhase;
+    $('hide-offer').disabled=!state.offerVisible||state.gameOver;
+    $('deal-button').disabled=!state.offerVisible||!!state.decision||state.gameOver;
+    $('no-deal-button').disabled=!state.offerVisible||!!state.decision||state.gameOver;
+
+    const stagePanel=$('final-stage-panel');
+    const showStage=left.length<=2||!!state.finalPhase||state.gameOver;
+    stagePanel.hidden=!showStage;
+    $('final-ready-actions').hidden=!(left.length===2&&!state.finalPhase&&!state.gameOver&&!state.offerVisible);
+    $('final-choice-controls').hidden=state.finalPhase!=='choice';
+    $('final-other-reveal-controls').hidden=state.finalPhase!=='open-other';
+    $('final-winner-reveal-controls').hidden=state.finalPhase!=='reveal-winner';
+    $('final-stage-complete').hidden=!(state.finalPhase==='complete'||(state.gameOver&&state.decision==='deal'));
+    if(state.gameOver&&state.decision==='deal') $('final-stage-status').textContent='The contestant accepted the Banker’s offer. The game is over.';
+    else if(state.finalPhase==='choice') $('final-stage-status').textContent='The final offer has been rejected. Ask the contestant: keep the original envelope or swap for the last unopened envelope.';
+    else if(state.finalPhase==='open-other') $('final-stage-status').textContent=`The contestant chose to ${state.finalChoice==='swap'?'swap envelopes':'keep the original envelope'}. Open the envelope they did not choose, then select its value below.`;
+    else if(state.finalPhase==='reveal-winner') $('final-stage-status').textContent='The unchosen envelope has been opened. Only the contestant’s chosen envelope remains.';
+    else if(state.finalPhase==='complete') $('final-stage-status').textContent='The final envelope has been revealed. The game is complete.';
+    else if(left.length===2&&state.offerVisible) $('final-stage-status').textContent='The final Banker’s offer is on the audience screen. The contestant must choose Deal or No Deal.';
+    else $('final-stage-status').textContent='Two amounts remain: the contestant’s reserved envelope and the final unopened envelope. Make the final offer, or skip straight to the Keep or Swap decision.';
+    $('final-stage-complete').textContent=state.gameOver&&state.decision==='deal'?`DEAL ACCEPTED · ${formatMoney(Number(state.offer)||0)} secured`:`CONGRATULATIONS · ${state.finalChoice==='swap'?'Swapped envelopes':'Kept the original envelope'} · ${state.finalPrize} won`;
+    if(state.finalPhase==='open-other'){
+      $('final-other-options').innerHTML=left.map(p=>`<button class="btn" type="button" data-final-prize="${safeText(p.value)}">${safeText(p.value)}<br><small>Other envelope</small></button>`).join('');
+    }else $('final-other-options').innerHTML='';
   }
 
   function renderAudience(){
     const banner=$('offer-banner'), decision=$('aud-decision');
-    if(state.offerVisible){banner.classList.add('show');$('aud-offer-amount').textContent=formatMoney(Number(state.offer)||0)}else banner.classList.remove('show');
-    decision.classList.toggle('show',!!state.decision);
-    decision.textContent=state.decision==='deal'?'DEAL ACCEPTED!':state.decision==='no-deal'?'NO DEAL! THE GAME CONTINUES':'';
-    if(state.decision==='deal'){
-      $('aud-kicker').textContent='The banker has a deal';$('aud-title').textContent='Deal accepted!';$('aud-copy').textContent="The player has accepted the banker’s offer. What a Diwali moment!";
-    } else if(state.decision==='no-deal'){
-      $('aud-kicker').textContent='The player has decided';$('aud-title').textContent='No deal!';$('aud-copy').textContent='The offer is rejected. The game goes on!';
-    } else if(state.offerVisible){
+    const showOffer=state.offerVisible && !state.finalPhase;
+    if(showOffer){banner.classList.add('show');$('aud-offer-amount').textContent=formatMoney(Number(state.offer)||0)}else banner.classList.remove('show');
+    decision.classList.toggle('show',!!state.decision||state.finalPhase==='complete');
+    decision.classList.toggle('winner',state.finalPhase==='complete');
+    $('aud-question').textContent=state.gameOver?'£':'?';
+
+    if(state.gameOver&&state.decision==='deal'){
+      $('aud-kicker').textContent='The Banker’s offer accepted';$('aud-title').textContent='Deal secured!';$('aud-copy').textContent='The contestant has chosen certainty over the mystery envelope. Their winnings are secured.';
+      decision.textContent=`DEAL ACCEPTED · ${formatMoney(Number(state.offer)||0)}`;
+    }else if(state.finalPhase==='complete'){
+      $('aud-kicker').textContent='The final envelope is open';$('aud-title').textContent='Congratulations!';$('aud-copy').textContent=state.finalChoice==='swap'?'The contestant swapped envelopes and took the other box. Their final prize is revealed below.':'The contestant stayed with their original envelope. Their final prize is revealed below.';
+      decision.textContent=`YOU WIN ${state.finalPrize}`;
+    }else if(state.finalPhase==='choice'){
+      $('aud-kicker').textContent='The final two envelopes';$('aud-title').textContent='Keep or swap?';$('aud-copy').textContent='The final Banker’s offer has been rejected. Will the contestant stay with their original envelope or swap?';
+      decision.textContent='NO DEAL · KEEP OR SWAP';
+    }else if(state.finalPhase==='open-other'){
+      $('aud-kicker').textContent=state.finalChoice==='swap'?'The contestant has swapped':'The contestant is staying';$('aud-title').textContent='One last envelope';$('aud-copy').textContent='The envelope not chosen is being opened. One amount will remain for the contestant.';
+      decision.textContent=state.finalChoice==='swap'?'SWAP':'KEEP';
+    }else if(state.finalPhase==='reveal-winner'){
+      $('aud-kicker').textContent='The final envelope';$('aud-title').textContent='One amount remains';$('aud-copy').textContent='The contestant’s chosen envelope is all that remains. It is time to reveal the final prize.';
+      decision.textContent='THE FINAL REVEAL';
+    }else if(state.offerVisible){
       $('aud-kicker').textContent='The banker is calling';$('aud-title').textContent='Will you take the deal?';$('aud-copy').textContent='The banker has made an offer. Deal or no deal?';
-    } else {
+      decision.textContent=state.decision==='no-deal'?'NO DEAL!':'';
+    }else if(remaining().length===2){
+      $('aud-kicker').textContent='The final two envelopes';$('aud-title').textContent='The Banker is waiting';$('aud-copy').textContent='Only two amounts remain: the contestant’s envelope and the final unopened envelope. A final offer is next.';
+      decision.textContent='TWO LEFT';
+    }else if(state.decision==='no-deal'){
+      $('aud-kicker').textContent='The player has decided';$('aud-title').textContent='No deal!';$('aud-copy').textContent='The offer is rejected. The game goes on!';
+      decision.textContent='NO DEAL!';
+    }else{
       $('aud-kicker').textContent='The mystery envelope';$('aud-title').textContent='Will you make a deal?';$('aud-copy').textContent='Ten envelopes. Ten fortunes. One very important question.';
+      decision.textContent='';
     }
-    if(remaining().length===0){$('aud-kicker').textContent='The game is complete';$('aud-title').textContent='All prizes revealed!';$('aud-copy').textContent='That is the end of the game. Happy Diwali!'}
   }
 
-  function snapshot(){return {revealed:[...state.revealed],offer:state.offer,offerVisible:state.offerVisible,decision:state.decision}}
+  function snapshot(){return {revealed:[...state.revealed],offer:state.offer,offerVisible:state.offerVisible,decision:state.decision,finalPhase:state.finalPhase,finalChoice:state.finalChoice,finalOtherPrize:state.finalOtherPrize,finalPrize:state.finalPrize,gameOver:state.gameOver}}
+  function saveHistory(){actionHistory.push(snapshot())}
+  function restoreSnapshot(s){
+    state.revealed=[...s.revealed];state.offer=s.offer;state.offerVisible=!!s.offerVisible;state.decision=s.decision||'';
+    state.finalPhase=s.finalPhase||'';state.finalChoice=s.finalChoice||'';state.finalOtherPrize=s.finalOtherPrize||'';state.finalPrize=s.finalPrize||'';state.gameOver=!!s.gameOver;
+  }
   function sendState(action=null){
     if(displayWindow && !displayWindow.closed){
       try{displayWindow.postMessage({type:'diwali-game-state',state:snapshot(),action},'*')}catch(e){}
@@ -383,7 +483,11 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
   }
   function applyAudienceState(next,action=null){
     state.revealed=Array.isArray(next.revealed)?next.revealed.filter(v=>PRIZES.some(p=>p.value===v)):[];
-    state.offer=String(next.offer??'');state.offerVisible=!!next.offerVisible;state.decision=next.decision==='deal'||next.decision==='no-deal'?next.decision:'';
+    state.offer=String(next.offer??'');state.offerVisible=!!next.offerVisible;state.decision=['deal','no-deal'].includes(next.decision)?next.decision:'';
+    state.finalPhase=['choice','open-other','reveal-winner','complete'].includes(next.finalPhase)?next.finalPhase:'';
+    state.finalChoice=next.finalChoice==='swap'?'swap':next.finalChoice==='keep'?'keep':'';
+    state.finalOtherPrize=PRIZES.some(p=>p.value===next.finalOtherPrize)?next.finalOtherPrize:'';
+    state.finalPrize=PRIZES.some(p=>p.value===next.finalPrize)?next.finalPrize:'';state.gameOver=!!next.gameOver;
     renderPrizeLists(action);renderAudience();
     $('waiting-message').classList.remove('show');
     if(action){playEffect(action);runVisualFX(action)}
@@ -391,14 +495,50 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
   function sync(action=null){renderPrizeLists(action);renderConsole();renderAudience();sendState(action)}
 
   function revealPrize(value){
+    if(state.gameOver||state.finalPhase)return;
     if(state.revealed.includes(value))return;
+    if(remaining().length<=2){showToast('Final two reached. Use the Banker’s final-stage controls.');return}
+    saveHistory();
     state.revealed.push(value);state.offerVisible=false;state.decision='';
     const prize=PRIZES.find(p=>p.value===value);
-    sync({type:'reveal',prize:value,amount:prize?.amount||0,side:prize?.side||'blue'});
-    showToast(value+' removed from the board');
+    const action={type:'reveal',prize:value,amount:prize?.amount||0,side:prize?.side||'blue'};
+    sync(action);
+    if(remaining().length===2){showToast('Final two envelopes. The regular reveals are now locked.');sendState({type:'final-two'});}
+    else showToast(value+' removed from the board');
   }
-  function undo(){const value=state.revealed.pop();if(!value)return;state.offerVisible=false;state.decision='';sync({type:'undo',prize:value});showToast(value+' restored to the board')}
-  function reset(){state.revealed=[];state.offer='';state.offerVisible=false;state.decision='';sync({type:'reset'});showToast('A fresh game is ready')}
+  function undo(){
+    if(!actionHistory.length)return;
+    const current=snapshot();const previous=actionHistory.pop();
+    const restored=current.revealed.find(v=>!previous.revealed.includes(v));
+    restoreSnapshot(previous);sync({type:'undo',prize:restored});showToast('Last action undone');
+  }
+  function reset(){
+    actionHistory.length=0;state.revealed=[];state.offer='';state.offerVisible=false;state.decision='';state.finalPhase='';state.finalChoice='';state.finalOtherPrize='';state.finalPrize='';state.gameOver=false;
+    sync({type:'reset'});showToast('A fresh game is ready');
+  }
+  function startFinalChoice(skipOffer=false){
+    if(state.gameOver||remaining().length!==2||state.finalPhase)return;
+    if(!skipOffer && state.offerVisible)return;
+    saveHistory();state.offerVisible=false;state.decision='no-deal';state.finalPhase='choice';
+    sync({type:'final-choice'});showToast('Final decision: Keep or Swap');
+  }
+  function chooseFinalEnvelope(choice){
+    if(state.finalPhase!=='choice'||!['keep','swap'].includes(choice))return;
+    saveHistory();state.finalChoice=choice;state.finalPhase='open-other';
+    sync({type:choice});showToast(choice==='swap'?'Contestant has chosen to swap':'Contestant has kept their envelope');
+  }
+  function revealOtherEnvelopePrize(value){
+    if(state.finalPhase!=='open-other'||!remaining().some(p=>p.value===value))return;
+    saveHistory();const prize=PRIZES.find(p=>p.value===value);state.revealed.push(value);state.finalOtherPrize=value;state.finalPhase='reveal-winner';
+    sync({type:'final-other-reveal',prize:value,amount:prize?.amount||0,side:prize?.side||'blue'});
+    showToast('Other envelope revealed: '+value);
+  }
+  function revealFinalWinnings(){
+    if(state.finalPhase!=='reveal-winner'||remaining().length!==1)return;
+    saveHistory();state.finalPrize=remaining()[0].value;state.finalPhase='complete';state.gameOver=true;state.offerVisible=false;
+    sync({type:'final-winnings',prize:state.finalPrize,amount:PRIZES.find(p=>p.value===state.finalPrize)?.amount||0});
+    showToast('The contestant wins '+state.finalPrize+'!');
+  }
 
   if(audienceMode){
     app.classList.remove('host-view');app.classList.add('audience-view');
@@ -418,8 +558,13 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
     window.addEventListener('load',requestInitial);window.addEventListener('focus',requestInitial);
     requestInitial();
   }else{
-    $('host-blue-list').addEventListener('click',e=>{const b=e.target.closest('[data-prize]');if(b)revealPrize(b.dataset.prize)});
-    $('host-red-list').addEventListener('click',e=>{const b=e.target.closest('[data-prize]');if(b)revealPrize(b.dataset.prize)});
+    $('host-blue-list').addEventListener('click',e=>{const b=e.target.closest('[data-prize]');if(b&&!b.disabled)revealPrize(b.dataset.prize)});
+    $('host-red-list').addEventListener('click',e=>{const b=e.target.closest('[data-prize]');if(b&&!b.disabled)revealPrize(b.dataset.prize)});
+    $('final-other-options').addEventListener('click',e=>{const b=e.target.closest('[data-final-prize]');if(b)revealOtherEnvelopePrize(b.dataset.finalPrize)});
+    $('skip-final-offer').addEventListener('click',()=>startFinalChoice(true));
+    $('keep-envelope').addEventListener('click',()=>chooseFinalEnvelope('keep'));
+    $('swap-envelope').addEventListener('click',()=>chooseFinalEnvelope('swap'));
+    $('reveal-final-winnings').addEventListener('click',revealFinalWinnings);
     $('open-audience').addEventListener('click',()=>{
       const url=new URL(location.href);url.searchParams.set('view','audience');
       displayWindow=window.open(url.href,'DiwaliDealOrNoDealAudience','popup=yes,width=1440,height=900');
@@ -437,11 +582,11 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
     $('show-offer').addEventListener('click',()=>{
       const raw=$('offer-input').value.trim();
       if(raw===''||!Number.isFinite(Number(raw))||Number(raw)<0){showToast('Enter a valid banker offer first');sendState({type:'invalid'});$('offer-input').focus();return}
-      state.offer=raw;state.offerVisible=true;state.decision='';sync({type:'offer'});showToast('The banker’s offer is now on the audience screen');
+      if(state.gameOver||state.finalPhase)return;saveHistory();state.offer=raw;state.offerVisible=true;state.decision='';sync({type:'offer'});showToast('The banker’s offer is now on the audience screen');
     });
-    $('hide-offer').addEventListener('click',()=>{state.offerVisible=false;state.decision='';sync({type:'hide-offer'});showToast('The offer has been hidden')});
-    $('deal-button').addEventListener('click',()=>{if(!state.offerVisible)return;state.decision='deal';sync({type:'deal'});showToast('Deal accepted')});
-    $('no-deal-button').addEventListener('click',()=>{if(!state.offerVisible)return;state.decision='no-deal';sync({type:'no-deal'});showToast('No deal. Keep playing!')});
+    $('hide-offer').addEventListener('click',()=>{if(!state.offerVisible||state.gameOver)return;saveHistory();state.offerVisible=false;state.decision='';sync({type:'hide-offer'});showToast('The offer has been hidden')});
+    $('deal-button').addEventListener('click',()=>{if(!state.offerVisible||state.gameOver||state.decision)return;saveHistory();state.decision='deal';state.gameOver=true;sync({type:'deal'});showToast('Deal accepted · '+formatMoney(Number(state.offer)||0)+' secured')});
+    $('no-deal-button').addEventListener('click',()=>{if(!state.offerVisible||state.gameOver||state.decision)return;saveHistory();state.decision='no-deal';state.offerVisible=false;if(remaining().length===2){state.finalPhase='choice';sync({type:'no-deal'});showToast('Final decision: Keep or Swap')}else{sync({type:'no-deal'});showToast('No deal. Keep playing!')}});
     $('offer-input').addEventListener('keydown',e=>{if(e.key==='Enter')$('show-offer').click()});
     $('reset-button').addEventListener('click',()=>{ $('reset-modal').classList.add('open');sendState({type:'click'}); });
     $('cancel-reset').addEventListener('click',()=>{ $('reset-modal').classList.remove('open');sendState({type:'cancel'}); });
