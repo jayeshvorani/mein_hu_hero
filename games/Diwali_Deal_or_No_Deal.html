@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#100d27">
+<title>Deal or No Deal | Diwali Special</title>
+<style>
+:root{color-scheme:dark;--ink:#100d27;--gold:#f4c96b;--gold2:#ffe7a2;--cream:#fff6df;--blue:#82ceff;--red:#ff9299;--muted:#aaa3c4;--line:rgba(244,201,107,.25);--panel:rgba(31,25,65,.82)}
+*{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;min-height:100%;background:var(--ink);color:var(--cream);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{min-height:100vh;background:radial-gradient(ellipse at 50% 38%,rgba(110,48,108,.3),transparent 44%),radial-gradient(ellipse at 5% 5%,rgba(35,112,158,.18),transparent 32%),radial-gradient(ellipse at 95% 94%,rgba(176,52,75,.17),transparent 34%),linear-gradient(135deg,#0e0b22,#191230 52%,#100d27);overflow-x:hidden}
+body:before,body:after{content:"";position:fixed;z-index:0;width:360px;height:360px;pointer-events:none;opacity:.11;border:1px solid var(--gold);border-radius:50%;background:repeating-conic-gradient(transparent 0 12deg,rgba(244,201,107,.5) 12.3deg 12.8deg,transparent 13deg 30deg),radial-gradient(circle,transparent 0 28%,rgba(244,201,107,.4) 28.2% 28.7%,transparent 29% 48%,rgba(244,201,107,.3) 48.2% 48.7%,transparent 49% 68%,rgba(244,201,107,.25) 68.2% 68.7%,transparent 69%);mask-image:radial-gradient(circle,#000 0 68%,transparent 69%)}body:before{top:-200px;left:-210px}body:after{right:-210px;bottom:-210px}
+button,input{font:inherit}.shell{position:relative;z-index:1;width:min(1500px,100%);min-height:100vh;margin:auto;padding:26px 32px 22px;display:flex;flex-direction:column}
+.header{text-align:center;margin-bottom:20px}.eyebrow{display:flex;align-items:center;justify-content:center;gap:12px;color:var(--gold);font-size:10px;font-weight:850;letter-spacing:.25em;text-transform:uppercase}.eyebrow:before,.eyebrow:after{content:"";height:1px;width:42px;background:linear-gradient(90deg,transparent,var(--gold))}.eyebrow:after{transform:rotate(180deg)}
+h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgia,serif;letter-spacing:.045em;text-shadow:0 3px 26px #f4c96b30}h1 span{font-size:.45em;vertical-align:.27em;letter-spacing:.14em;color:#fff8e9}.subtitle{margin:10px 0 0;color:#c9c2d9;font-size:13px;letter-spacing:.035em}
+.top-actions{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin:17px auto 0}.pill{border:1px solid #f4c96b55;border-radius:999px;padding:9px 14px;color:#f5e9d1;background:#ffffff08;font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.pill.status{color:#b9f4c9;border-color:#7ad69a55}.btn{border:1px solid #f4c96b66;border-radius:999px;background:#ffffff08;color:#f4ead6;padding:11px 16px;min-height:40px;font-size:10px;font-weight:850;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:.18s}.btn:hover:not(:disabled){background:#f4c96b20;border-color:var(--gold);transform:translateY(-1px)}.btn:disabled{opacity:.35;cursor:not-allowed}.btn.gold{background:linear-gradient(135deg,#e9bd62,#c78932);border-color:#f8dc9b;color:#24162a;box-shadow:0 5px 20px #ca913530}.btn.danger{border-color:#fa929966;color:#ffb7bc}.btn:focus-visible,.prize:focus-visible,input:focus-visible{outline:3px solid var(--gold2);outline-offset:3px}
+.board{display:grid;grid-template-columns:minmax(220px,1fr) minmax(220px,.82fr) minmax(220px,1fr);gap:18px;align-items:stretch;flex:1}.prize-panel{position:relative;display:flex;flex-direction:column;padding:17px 16px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(155deg,rgba(37,32,75,.83),rgba(20,17,47,.86));box-shadow:0 18px 50px #0004,inset 0 1px #ffffff0e;overflow:hidden}.prize-panel:before{content:"";position:absolute;top:0;left:18px;right:18px;height:2px}.blue-panel:before{background:linear-gradient(90deg,transparent,var(--blue),transparent)}.red-panel:before{background:linear-gradient(90deg,transparent,var(--red),transparent)}.panel-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}.panel-kicker{display:block;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;margin-bottom:3px}.panel-title{font-size:16px;font-weight:900;letter-spacing:.1em;margin:0;text-transform:uppercase}.blue-panel .panel-title{color:var(--blue)}.red-panel .panel-title{color:var(--red)}.count{width:30px;height:30px;display:grid;place-items:center;border:1px solid currentColor;border-radius:50%;font-size:12px;font-weight:900;flex:none}.blue-panel .count{color:var(--blue);background:#419ee119}.red-panel .count{color:var(--red);background:#e1536b19}.prize-list{display:grid;grid-template-rows:repeat(5,minmax(53px,1fr));gap:8px;flex:1}.prize{position:relative;display:flex;align-items:center;justify-content:center;min-width:0;padding:7px 12px;border-radius:11px;border:1px solid #ffffff20;background:linear-gradient(100deg,#ffffff12,#ffffff06);color:#a7ddff;cursor:pointer;transition:transform .18s,border-color .18s,background .18s,opacity .2s;min-height:48px}.red-panel .prize{color:#ffb0b2}.prize .amount{font-size:clamp(21px,2.1vw,29px);font-weight:900;letter-spacing:.01em;font-variant-numeric:tabular-nums;text-shadow:0 0 20px #56b1f233}.red-panel .prize .amount{text-shadow:0 0 20px #f85f6f30}.prize:hover:not(.removed){transform:translateY(-2px);border-color:currentColor;background:#ffffff13}.prize.removed{cursor:default;border-style:dashed;border-color:#ffffff18;background:#05041230;color:#d2cce055}.prize.removed .amount{display:none}.removed-label{display:none;color:#d9d2e65c;font-size:9px;font-weight:900;letter-spacing:.2em}.prize.removed .removed-label{display:inline}.host-view .prize:not(.removed):after{content:"REMOVE";position:absolute;right:10px;color:#ffffff78;font-size:8px;font-weight:900;letter-spacing:.11em;opacity:0;transition:opacity .15s}.host-view .prize:hover:not(.removed):after{opacity:1}
+.centre{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:17px 10px;text-align:center;min-height:400px}.centre:before{content:"";position:absolute;inset:8% 0;border-left:1px solid #f4c96b25;border-right:1px solid #f4c96b25;mask-image:linear-gradient(transparent,#000 18%,#000 82%,transparent);pointer-events:none}.rosette{position:relative;z-index:1;width:clamp(135px,14vw,195px);aspect-ratio:1;display:grid;place-items:center;border-radius:50%;margin:0 0 16px;background:radial-gradient(circle,#ffe09926 0 34%,transparent 35%),repeating-conic-gradient(#f4c96bbd 0deg 1deg,transparent 1deg 15deg);box-shadow:0 0 0 1px #f4c96b66,0 0 0 9px #f4c96b0b,0 0 60px #f4ae5222;animation:breathe 4s ease-in-out infinite}.rosette:before{content:"";position:absolute;inset:11%;border:1px solid #ffe1a099;border-radius:50%;box-shadow:inset 0 0 28px #f4c96b20}.question{position:relative;display:grid;place-items:center;width:68%;aspect-ratio:1;border:1px solid #ffe1a099;border-radius:50%;background:radial-gradient(circle at 35% 25%,#443054,#17112e 70%);color:var(--gold2);font:clamp(68px,8vw,105px)/1 Georgia,serif;text-shadow:0 0 28px #ffcd6b55;box-shadow:inset 0 0 22px #ffda8c1a,0 7px 30px #0005}.diya{font-size:25px;margin:0 0 8px;filter:drop-shadow(0 0 12px #ffb44b99)}.centre-kicker{color:var(--gold);font-size:9px;font-weight:900;letter-spacing:.23em;text-transform:uppercase}.centre-title{margin:7px 0;color:#fff4d8;font:700 clamp(20px,2vw,27px)/1.15 Georgia,serif}.centre-copy{max-width:245px;margin:0;color:#aaa3c4;font-size:11px;line-height:1.6}.centre-divider{display:flex;align-items:center;gap:9px;width:72%;margin:15px 0 12px;color:var(--gold)}.centre-divider:before,.centre-divider:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,transparent,#f4c96b80)}.centre-divider:after{transform:rotate(180deg)}.remaining{font:700 30px/1 Georgia,serif;color:var(--gold2);font-variant-numeric:tabular-nums}.remaining-caption{margin-top:5px;color:#aaa3c4;font-size:9px;font-weight:850;letter-spacing:.18em;text-transform:uppercase}
+.offer-banner{display:none;position:relative;z-index:2;width:min(100%,320px);margin-top:12px;padding:12px 16px;border:1px solid #f4c96b99;border-radius:14px;background:linear-gradient(135deg,#3b2b50,#1c1637);box-shadow:0 0 32px #f4c96b24}.offer-banner.show{display:block;animation:pop .35s ease-out}.offer-label{color:var(--gold);font-size:9px;font-weight:900;letter-spacing:.2em;text-transform:uppercase}.offer-amount{margin-top:4px;color:var(--gold2);font:700 clamp(28px,4vw,42px)/1 Georgia,serif}.decision{display:none;margin-top:8px;color:var(--gold2);font-weight:950;font-size:clamp(15px,1.8vw,21px);letter-spacing:.15em;text-transform:uppercase}.decision.show{display:block}
+.host-layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.85fr);gap:18px;align-items:stretch}.host-board-wrap{min-width:0}.host-view .board{gap:14px}.host-view .prize-panel{padding:15px 13px}.host-view .prize-list{gap:7px}.host-view .prize .amount{font-size:clamp(18px,1.7vw,24px)}.host-view .centre{min-height:360px}.host-view .rosette{width:125px}.host-view .question{font-size:70px}.host-view .centre-title{font-size:20px}.host-view .centre-copy{font-size:10px}
+.console{border:1px solid var(--line);border-radius:20px;background:linear-gradient(155deg,rgba(37,32,75,.93),rgba(18,15,43,.94));padding:19px;box-shadow:0 18px 50px #0004}.console h2{margin:0 0 3px;color:var(--gold2);font:700 24px Georgia,serif}.console-intro{margin:0 0 16px;color:#bcb4cd;font-size:11px;line-height:1.5}.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:17px}.stat{border:1px solid #ffffff17;border-radius:12px;padding:11px 12px;background:#ffffff08}.stat-label{display:block;color:#aaa3c4;font-size:8px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}.stat-value{display:block;margin-top:5px;color:var(--gold2);font:700 22px Georgia,serif}.console-section{border-top:1px solid #f4c96b26;padding-top:15px;margin-top:14px}.section-title{margin:0 0 10px;color:#eee2c8;font-size:10px;font-weight:900;letter-spacing:.15em;text-transform:uppercase}.offer-row{display:flex;gap:8px}.offer-input{width:100%;min-width:0;border:1px solid #f4c96b66;border-radius:10px;padding:11px 12px;background:#100d27;color:#fff4d8;font-size:16px;font-weight:800}.offer-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.offer-actions .btn{border-radius:10px;padding:10px 8px}.decision-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.decision-actions .btn{border-radius:10px}.mini-note{margin:9px 0 0;color:#9e96b8;font-size:9px;line-height:1.5}.log{margin:0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}.log li{padding:6px 9px;border:1px solid #ffffff16;border-radius:8px;background:#ffffff08;color:#c9c2d9;font-size:10px;font-weight:800}.log .empty{color:#9189a9;border-style:dashed;font-weight:500}.console-footer{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.console-footer .btn{flex:1}
+.host-note{margin:13px 0 0;color:#aaa3c4;text-align:center;font-size:10px;line-height:1.5}.audience-message{margin:8px auto 0;color:#d8cba9;text-align:center;font-size:10px;letter-spacing:.08em;text-transform:uppercase;min-height:16px}.waiting{display:none;max-width:460px;margin:12px auto 0;padding:8px 12px;border:1px solid #f4c96b33;border-radius:10px;color:#c9c2d9;background:#100d2766;font-size:10px}.waiting.show{display:block}footer{margin-top:auto;padding-top:16px;color:#beb6d355;text-align:center;font-size:9px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}.toast{position:fixed;z-index:10;left:50%;bottom:24px;transform:translate(-50%,12px);padding:10px 16px;border:1px solid #f4c96b77;border-radius:999px;background:#1a1431f5;color:#fff1ce;font-size:11px;font-weight:800;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+.modal-backdrop{position:fixed;z-index:20;inset:0;display:none;place-items:center;padding:20px;background:#050411c9;backdrop-filter:blur(8px)}.modal-backdrop.open{display:grid}.modal{width:min(420px,100%);padding:27px 24px 22px;border:1px solid #f4c96b80;border-radius:19px;background:linear-gradient(145deg,#2a214b,#17122f);text-align:center;box-shadow:0 25px 90px #0008}.modal-icon{font-size:28px}.modal h2{margin:9px 0;color:var(--gold2);font:700 26px Georgia,serif}.modal p{color:#c3bbd4;font-size:12px;line-height:1.6}.modal-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.audience-view .shell{max-width:1600px;padding:30px 36px 20px}.audience-view .header{margin-bottom:18px}.audience-view .board{min-height:calc(100vh - 245px)}.audience-view .prize-panel{padding:20px}.audience-view .prize-list{grid-template-rows:repeat(5,minmax(58px,1fr));gap:10px}.audience-view .prize .amount{font-size:clamp(23px,2.6vw,34px)}.audience-view .centre{min-height:460px}.audience-view .rosette{width:clamp(160px,16vw,225px)}.audience-view .question{font-size:clamp(80px,9vw,120px)}.audience-view .centre-title{font-size:clamp(24px,2.2vw,32px)}.audience-view .centre-copy{font-size:13px}.audience-view .remaining{font-size:36px}.audience-view footer{padding-bottom:8px}
+@keyframes breathe{0%,100%{transform:scale(1);filter:drop-shadow(0 0 0 #f4c96b00)}50%{transform:scale(1.015);filter:drop-shadow(0 0 15px #f4c96b30)}}@keyframes pop{from{opacity:0;transform:translateY(7px) scale(.97)}to{opacity:1;transform:none}}
+@media(max-width:1050px){.host-layout{grid-template-columns:1fr}.host-view .board{grid-template-columns:1fr 1fr}.host-view .centre{grid-column:1/-1;grid-row:1;min-height:220px}.host-view .centre:before{display:none}.host-view .prize-panel{min-height:350px}.host-view .rosette{width:105px;margin-bottom:9px}.audience-view .board{grid-template-columns:1fr 1fr}.audience-view .centre{grid-column:1/-1;grid-row:1;min-height:255px}.audience-view .centre:before{display:none}.audience-view .rosette{width:130px}}
+@media(max-width:650px){.shell,.audience-view .shell{padding:21px 13px 16px}.header{margin-bottom:13px}h1{font-size:37px}h1 span{display:block;margin:6px 0 0;font-size:10px;vertical-align:baseline}.eyebrow{font-size:8px;letter-spacing:.16em}.eyebrow:before,.eyebrow:after{width:22px}.subtitle{font-size:11px;line-height:1.5}.host-layout,.host-view .board,.audience-view .board{grid-template-columns:1fr}.host-view .centre,.audience-view .centre{grid-column:auto;grid-row:auto;min-height:0;padding:18px 8px}.host-view .prize-panel,.audience-view .prize-panel{min-height:0;padding:14px}.host-view .prize-list,.audience-view .prize-list{grid-template-rows:repeat(5,56px)}.host-view .rosette,.audience-view .rosette{width:115px}.host-view .question,.audience-view .question{font-size:68px}.console{padding:15px}.top-actions{margin-top:13px}.audience-view .board{min-height:0}.audience-view .centre-title{font-size:22px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div id="app" class="host-view">
+  <div class="shell">
+    <header class="header">
+      <div class="eyebrow">A Diwali celebration special</div>
+      <h1>DEAL <span>OR</span> NO DEAL?</h1>
+      <p class="subtitle" id="subtitle">The private banker and host console</p>
+      <div class="top-actions" id="top-actions">
+        <span class="pill status" id="connection-pill">Audience screen not connected</span>
+        <button class="btn gold" id="open-audience">▣ Open audience screen</button>
+      </div>
+    </header>
+
+    <main id="host-layout" class="host-layout">
+      <div class="host-board-wrap">
+        <div class="board" aria-label="Private prize controls">
+          <section class="prize-panel blue-panel">
+            <div class="panel-head"><div><span class="panel-kicker">The modest fortunes</span><h2 class="panel-title">Blue values</h2></div><span class="count" id="host-blue-count">5</span></div>
+            <div class="prize-list" id="host-blue-list"></div>
+          </section>
+          <section class="centre">
+            <div class="rosette"><div class="question">?</div></div>
+            <div class="diya">🪔</div><div class="centre-kicker">Banker's private view</div>
+            <h2 class="centre-title">The game is in your hands</h2>
+            <p class="centre-copy">When an envelope is opened, select its amount here. The audience board updates automatically.</p>
+            <div class="centre-divider">✦</div><div class="remaining" id="host-remaining">10</div><div class="remaining-caption">Prizes still in play</div>
+          </section>
+          <section class="prize-panel red-panel">
+            <div class="panel-head"><div><span class="panel-kicker">The life-changing fortunes</span><h2 class="panel-title">Red values</h2></div><span class="count" id="host-red-count">5</span></div>
+            <div class="prize-list" id="host-red-list"></div>
+          </section>
+        </div>
+        <p class="host-note">PRIVATE BANKER SCREEN · Click an amount only after the corresponding physical envelope has been opened.</p>
+      </div>
+
+      <aside class="console" aria-label="Banker controls">
+        <h2>Banker's desk</h2><p class="console-intro">This panel is private. The audience sees only the separate game board.</p>
+        <div class="stat-grid">
+          <div class="stat"><span class="stat-label">Still in play</span><strong class="stat-value" id="stat-remaining">10</strong></div>
+          <div class="stat"><span class="stat-label">Envelopes opened</span><strong class="stat-value" id="stat-opened">0</strong></div>
+          <div class="stat"><span class="stat-label">Lowest remaining</span><strong class="stat-value" id="stat-lowest">1p</strong></div>
+          <div class="stat"><span class="stat-label">Highest remaining</span><strong class="stat-value" id="stat-highest">£100,000</strong></div>
+        </div>
+        <div class="console-section">
+          <h3 class="section-title">The banker's offer</h3>
+          <div class="offer-row"><input class="offer-input" id="offer-input" type="number" min="0" step="1" inputmode="decimal" placeholder="Enter offer in £" aria-label="Banker's offer in pounds"></div>
+          <div class="offer-actions"><button class="btn gold" id="show-offer">Reveal offer</button><button class="btn" id="hide-offer" disabled>Hide offer</button></div>
+          <p class="mini-note">Enter the offer and reveal it when the banker is ready. It will appear on the audience screen, not this private panel.</p>
+          <div class="decision-actions"><button class="btn" id="deal-button" disabled>Deal</button><button class="btn danger" id="no-deal-button" disabled>No deal</button></div>
+        </div>
+        <div class="console-section">
+          <h3 class="section-title">Opened envelopes</h3><ul class="log" id="reveal-log"><li class="empty">No envelopes opened yet</li></ul>
+        </div>
+        <div class="console-footer"><button class="btn" id="undo-button" disabled>↶ Undo reveal</button><button class="btn danger" id="reset-button">New game</button></div>
+        <p class="mini-note">Tip: use your laptop screen for this console and move the audience window to the TV/projector.</p>
+      </aside>
+    </main>
+
+    <main id="audience-layout" hidden aria-label="Public audience display">
+      <div class="board" aria-label="Audience prize board">
+        <section class="prize-panel blue-panel"><div class="panel-head"><div><span class="panel-kicker">The modest fortunes</span><h2 class="panel-title">Blue values</h2></div><span class="count" id="aud-blue-count">5</span></div><div class="prize-list" id="aud-blue-list"></div></section>
+        <section class="centre">
+          <div class="rosette"><div class="question" id="aud-question">?</div></div><div class="diya">🪔</div>
+          <div class="centre-kicker" id="aud-kicker">The mystery envelope</div><h2 class="centre-title" id="aud-title">Will you make a deal?</h2>
+          <p class="centre-copy" id="aud-copy">Ten envelopes. Ten fortunes. One very important question.</p>
+          <div class="centre-divider">✦</div><div class="remaining" id="aud-remaining">10</div><div class="remaining-caption">Prizes still in play</div>
+          <div class="offer-banner" id="offer-banner"><div class="offer-label">The banker's offer</div><div class="offer-amount" id="aud-offer-amount">£0</div></div>
+          <div class="decision" id="aud-decision"></div>
+        </section>
+        <section class="prize-panel red-panel"><div class="panel-head"><div><span class="panel-kicker">The life-changing fortunes</span><h2 class="panel-title">Red values</h2></div><span class="count" id="aud-red-count">5</span></div><div class="prize-list" id="aud-red-list"></div></section>
+      </div>
+      <div class="audience-message" id="aud-message">Good fortune · Great company · Let the games begin</div>
+      <div class="waiting" id="waiting-message">Waiting for the banker to connect this screen… Open this window using the button in the private banker console.</div>
+    </main>
+    <footer>Good fortune • Great company • Let the games begin</footer>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modal-backdrop" id="reset-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="modal"><div class="modal-icon">🪔</div><h2 id="modal-title">Start a fresh game?</h2><p>This will bring all ten prizes back onto the board and clear the current offer and reveal history.</p><div class="modal-actions"><button class="btn" id="cancel-reset">Keep playing</button><button class="btn gold" id="confirm-reset">Reset game</button></div></div></div>
+<script>
+(() => {
+  const PRIZES = [
+    {value:'1p', amount:0.01, side:'blue'}, {value:'£100',amount:100,side:'blue'},
+    {value:'£250',amount:250,side:'blue'}, {value:'£500',amount:500,side:'blue'},
+    {value:'£1,000',amount:1000,side:'blue'}, {value:'£2,000',amount:2000,side:'red'},
+    {value:'£7,500',amount:7500,side:'red'}, {value:'£50,000',amount:50000,side:'red'},
+    {value:'£75,000',amount:75000,side:'red'}, {value:'£100,000',amount:100000,side:'red'}
+  ];
+  const params = new URLSearchParams(location.search);
+  const audienceMode = params.get('view') === 'audience';
+  const app = document.getElementById('app');
+  const $ = id => document.getElementById(id);
+  const state = {revealed:[], offer:'', offerVisible:false, decision:''};
+  let displayWindow = null;
+  let toastTimer = null;
+
+  function formatMoney(n){return new Intl.NumberFormat('en-GB',{style:'currency',currency:'GBP',maximumFractionDigits:0}).format(n)}
+  function remaining(){return PRIZES.filter(p=>!state.revealed.includes(p.value))}
+  function safeText(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+  function showToast(text){$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),1900)}
+
+  function renderPrizeLists(){
+    for(const side of ['blue','red']){
+      const list = PRIZES.filter(p=>p.side===side);
+      const host = $('host-'+side+'-list');
+      const aud = $('aud-'+side+'-list');
+      if(host) host.innerHTML = list.map(p=>{
+        const removed=state.revealed.includes(p.value);
+        return `<button type="button" class="prize ${removed?'removed':''}" data-prize="${safeText(p.value)}" ${removed?'disabled':''} aria-label="${removed?'Revealed':'Remove '+safeText(p.value)+' from the board'}"><span class="amount">${p.value}</span><span class="removed-label">REVEALED</span></button>`;
+      }).join('');
+      if(aud) aud.innerHTML = list.map(p=>{
+        const removed=state.revealed.includes(p.value);
+        return `<div class="prize ${removed?'removed':''}" aria-label="${removed?'Prize revealed':safeText(p.value)}"><span class="amount">${p.value}</span><span class="removed-label">REVEALED</span></div>`;
+      }).join('');
+    }
+    const blue=PRIZES.filter(p=>p.side==='blue'&&!state.revealed.includes(p.value)).length;
+    const red=PRIZES.filter(p=>p.side==='red'&&!state.revealed.includes(p.value)).length;
+    if($('host-blue-count')) $('host-blue-count').textContent=blue;
+    if($('host-red-count')) $('host-red-count').textContent=red;
+    if($('aud-blue-count')) $('aud-blue-count').textContent=blue;
+    if($('aud-red-count')) $('aud-red-count').textContent=red;
+    if($('host-remaining')) $('host-remaining').textContent=blue+red;
+    if($('aud-remaining')) $('aud-remaining').textContent=blue+red;
+  }
+
+  function renderConsole(){
+    const left=remaining();
+    $('stat-remaining').textContent=left.length;
+    $('stat-opened').textContent=state.revealed.length;
+    $('stat-lowest').textContent=left.length?left.reduce((a,b)=>a.amount<b.amount?a:b).value:'—';
+    $('stat-highest').textContent=left.length?left.reduce((a,b)=>a.amount>b.amount?a:b).value:'—';
+    $('undo-button').disabled=state.revealed.length===0;
+    $('reveal-log').innerHTML=state.revealed.length?state.revealed.map((v,i)=>`<li>${i+1}. ${safeText(v)}</li>`).join(''):'<li class="empty">No envelopes opened yet</li>';
+    $('offer-input').value=state.offer;
+    $('hide-offer').disabled=!state.offerVisible;
+    $('deal-button').disabled=!state.offerVisible || !!state.decision;
+    $('no-deal-button').disabled=!state.offerVisible || !!state.decision;
+  }
+
+  function renderAudience(){
+    const banner=$('offer-banner'), decision=$('aud-decision');
+    if(state.offerVisible){banner.classList.add('show');$('aud-offer-amount').textContent=formatMoney(Number(state.offer)||0)}else banner.classList.remove('show');
+    decision.classList.toggle('show',!!state.decision);
+    decision.textContent=state.decision==='deal'?'DEAL ACCEPTED!':state.decision==='no-deal'?'NO DEAL! THE GAME CONTINUES':'';
+    if(state.decision==='deal'){
+      $('aud-kicker').textContent='The banker has a deal';$('aud-title').textContent='Deal accepted!';$('aud-copy').textContent="The player has accepted the banker’s offer. What a Diwali moment!";
+    } else if(state.decision==='no-deal'){
+      $('aud-kicker').textContent='The player has decided';$('aud-title').textContent='No deal!';$('aud-copy').textContent='The offer is rejected. The game goes on!';
+    } else if(state.offerVisible){
+      $('aud-kicker').textContent='The banker is calling';$('aud-title').textContent='Will you take the deal?';$('aud-copy').textContent='The banker has made an offer. Deal or no deal?';
+    } else {
+      $('aud-kicker').textContent='The mystery envelope';$('aud-title').textContent='Will you make a deal?';$('aud-copy').textContent='Ten envelopes. Ten fortunes. One very important question.';
+    }
+    if(remaining().length===0){$('aud-kicker').textContent='The game is complete';$('aud-title').textContent='All prizes revealed!';$('aud-copy').textContent='That is the end of the game. Happy Diwali!'}
+  }
+
+  function snapshot(){return {revealed:[...state.revealed],offer:state.offer,offerVisible:state.offerVisible,decision:state.decision}}
+  function sendState(){
+    if(displayWindow && !displayWindow.closed){
+      try{displayWindow.postMessage({type:'diwali-game-state',state:snapshot()},'*')}catch(e){}
+      $('connection-pill').textContent='Audience screen connected';
+    } else if($('connection-pill')) $('connection-pill').textContent='Audience screen not connected';
+  }
+  function applyAudienceState(next){
+    state.revealed=Array.isArray(next.revealed)?next.revealed.filter(v=>PRIZES.some(p=>p.value===v)):[];
+    state.offer=String(next.offer??'');state.offerVisible=!!next.offerVisible;state.decision=next.decision==='deal'||next.decision==='no-deal'?next.decision:'';
+    renderPrizeLists();renderAudience();
+    $('waiting-message').classList.remove('show');
+  }
+  function sync(){renderPrizeLists();renderConsole();renderAudience();sendState()}
+
+  function revealPrize(value){
+    if(state.revealed.includes(value))return;
+    state.revealed.push(value);state.offerVisible=false;state.decision='';
+    sync();showToast(value+' removed from the board');
+  }
+  function undo(){const value=state.revealed.pop();if(!value)return;state.offerVisible=false;state.decision='';sync();showToast(value+' restored to the board')}
+  function reset(){state.revealed=[];state.offer='';state.offerVisible=false;state.decision='';sync();showToast('A fresh game is ready')}
+
+  if(audienceMode){
+    app.classList.remove('host-view');app.classList.add('audience-view');
+    $('subtitle').textContent='LIVE AUDIENCE DISPLAY · PUBLIC SCREEN ONLY';
+    $('top-actions').hidden=true;$('top-actions').style.display='none';$('host-layout').hidden=true;$('host-layout').style.display='none';$('audience-layout').hidden=false;$('audience-layout').style.display='block';
+    $('waiting-message').classList.add('show');
+    function requestInitial(){if(window.opener&&!window.opener.closed){window.opener.postMessage({type:'diwali-audience-ready'},'*')}else{$('waiting-message').classList.add('show')}}
+    window.addEventListener('message',event=>{
+      if(event.source!==window.opener || !event.data || event.data.type!=='diwali-game-state')return;
+      applyAudienceState(event.data.state||{});
+    });
+    window.addEventListener('load',requestInitial);window.addEventListener('focus',requestInitial);
+    requestInitial();
+  }else{
+    $('host-blue-list').addEventListener('click',e=>{const b=e.target.closest('[data-prize]');if(b)revealPrize(b.dataset.prize)});
+    $('host-red-list').addEventListener('click',e=>{const b=e.target.closest('[data-prize]');if(b)revealPrize(b.dataset.prize)});
+    $('open-audience').addEventListener('click',()=>{
+      const url=new URL(location.href);url.searchParams.set('view','audience');
+      displayWindow=window.open(url.href,'DiwaliDealOrNoDealAudience','popup=yes,width=1440,height=900');
+      if(!displayWindow){showToast('Popup blocked. Allow pop-ups for this file, then try again.');return}
+      $('connection-pill').textContent='Connecting audience screen…';
+      displayWindow.focus();
+      setTimeout(sendState,350);setTimeout(sendState,1000);
+    });
+    window.addEventListener('message',event=>{
+      if(!displayWindow || event.source!==displayWindow || !event.data)return;
+      if(event.data.type==='diwali-audience-ready'){ $('connection-pill').textContent='Audience screen connected';sendState(); }
+    });
+    $('undo-button').addEventListener('click',undo);
+    $('show-offer').addEventListener('click',()=>{
+      const raw=$('offer-input').value.trim();
+      if(raw===''||!Number.isFinite(Number(raw))||Number(raw)<0){showToast('Enter a valid banker offer first');$('offer-input').focus();return}
+      state.offer=raw;state.offerVisible=true;state.decision='';sync();showToast('The banker’s offer is now on the audience screen');
+    });
+    $('hide-offer').addEventListener('click',()=>{state.offerVisible=false;state.decision='';sync();showToast('The offer has been hidden')});
+    $('deal-button').addEventListener('click',()=>{if(!state.offerVisible)return;state.decision='deal';sync();showToast('Deal accepted')});
+    $('no-deal-button').addEventListener('click',()=>{if(!state.offerVisible)return;state.decision='no-deal';sync();showToast('No deal. Keep playing!')});
+    $('offer-input').addEventListener('keydown',e=>{if(e.key==='Enter')$('show-offer').click()});
+    $('reset-button').addEventListener('click',()=> $('reset-modal').classList.add('open'));
+    $('cancel-reset').addEventListener('click',()=> $('reset-modal').classList.remove('open'));
+    $('confirm-reset').addEventListener('click',()=>{$('reset-modal').classList.remove('open');reset()});
+    $('reset-modal').addEventListener('click',e=>{if(e.target===$('reset-modal'))$('reset-modal').classList.remove('open')});
+    window.addEventListener('beforeunload',()=>{if(displayWindow&&!displayWindow.closed)displayWindow.close()});
+    sync();
+  }
+})();
+</script>
+</body>
+</html>
