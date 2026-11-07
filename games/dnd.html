@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#100d27">
-<title>Deal or No Deal | Diwali Special</title>
+<title>Deal or No Deal | Diwali Dhamaka - Show Edition</title>
 <style>
 :root{color-scheme:dark;--ink:#100d27;--gold:#f4c96b;--gold2:#ffe7a2;--cream:#fff6df;--blue:#82ceff;--red:#ff9299;--muted:#aaa3c4;--line:rgba(244,201,107,.25);--panel:rgba(31,25,65,.82)}
 *{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;min-height:100%;background:var(--ink);color:var(--cream);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -26,6 +26,53 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
 @media(max-width:1050px){.host-layout{grid-template-columns:1fr}.host-view .board{grid-template-columns:1fr 1fr}.host-view .centre{grid-column:1/-1;grid-row:1;min-height:220px}.host-view .centre:before{display:none}.host-view .prize-panel{min-height:350px}.host-view .rosette{width:105px;margin-bottom:9px}.audience-view .board{grid-template-columns:1fr 1fr}.audience-view .centre{grid-column:1/-1;grid-row:1;min-height:255px}.audience-view .centre:before{display:none}.audience-view .rosette{width:130px}}
 @media(max-width:650px){.shell,.audience-view .shell{padding:21px 13px 16px}.header{margin-bottom:13px}h1{font-size:37px}h1 span{display:block;margin:6px 0 0;font-size:10px;vertical-align:baseline}.eyebrow{font-size:8px;letter-spacing:.16em}.eyebrow:before,.eyebrow:after{width:22px}.subtitle{font-size:11px;line-height:1.5}.host-layout,.host-view .board,.audience-view .board{grid-template-columns:1fr}.host-view .centre,.audience-view .centre{grid-column:auto;grid-row:auto;min-height:0;padding:18px 8px}.host-view .prize-panel,.audience-view .prize-panel{min-height:0;padding:14px}.host-view .prize-list,.audience-view .prize-list{grid-template-rows:repeat(5,56px)}.host-view .rosette,.audience-view .rosette{width:115px}.host-view .question,.audience-view .question{font-size:68px}.console{padding:15px}.top-actions{margin-top:13px}.audience-view .board{min-height:0}.audience-view .centre-title{font-size:22px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Diwali game-show motion and original synthesised sound cues */
+
+.screen-pulse{position:absolute;inset:-15%;opacity:0;animation:pulseSweep .82s ease-out forwards;background:radial-gradient(ellipse at center,transparent 42%,var(--pulse-color) 100%)}
+.screen-pulse.gold{--pulse-color:#f4c96b35}.screen-pulse.blue{--pulse-color:#5fc8ff35}.screen-pulse.red{--pulse-color:#fa526b42}
+@keyframes pulseSweep{0%{opacity:0;transform:scale(.75)}28%{opacity:.9}100%{opacity:0;transform:scale(1.12)}}
+
+.prize.just-revealed{animation:prizeExit .92s cubic-bezier(.18,.78,.2,1) both;transform-origin:center;pointer-events:none}
+.prize.just-revealed .amount{display:inline-block!important;animation:amountVanish .92s ease-in forwards}
+.prize.just-revealed .removed-label{display:none!important}
+.prize.just-restored{animation:prizeRestore .7s cubic-bezier(.16,1,.3,1) both}
+@keyframes prizeExit{0%{opacity:1;transform:perspective(700px) rotateY(0) scale(1);filter:brightness(1)}28%{opacity:1;transform:perspective(700px) rotateY(-9deg) scale(1.06);filter:brightness(1.6)}100%{opacity:.35;transform:perspective(700px) rotateY(78deg) scale(.8);filter:brightness(.5)}}
+@keyframes amountVanish{0%,25%{opacity:1;filter:blur(0);transform:scale(1)}100%{opacity:0;filter:blur(5px);transform:scale(.72)}}
+@keyframes prizeRestore{0%{opacity:.2;transform:perspective(700px) rotateY(75deg) scale(.82);filter:brightness(1.8)}65%{opacity:1;transform:perspective(700px) rotateY(-7deg) scale(1.05)}100%{opacity:1;transform:none;filter:none}}
+.audience-sound-controls{position:fixed;z-index:25;top:18px;right:20px;display:flex;gap:8px;align-items:center}
+.sound-control{border:1px solid #f4c96b66;border-radius:999px;padding:9px 13px;background:rgba(18,13,36,.86);backdrop-filter:blur(12px);color:#ffe7a2;font-size:9px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 28px #0005;transition:transform .18s,background .18s,border-color .18s}
+.sound-control:hover{transform:translateY(-2px);border-color:var(--gold);background:#3a2b4f}
+.sound-gate{position:fixed;z-index:40;inset:0;display:grid;place-items:center;padding:24px;background:radial-gradient(ellipse at 50% 48%,rgba(77,46,90,.94),rgba(9,7,24,.97) 70%);backdrop-filter:blur(8px);transition:opacity .5s,visibility .5s}
+.sound-gate.dismissed{opacity:0;visibility:hidden;pointer-events:none}
+.sound-gate-card{width:min(430px,92vw);padding:32px 28px 28px;text-align:center;border:1px solid #f4c96b99;border-radius:24px;background:linear-gradient(150deg,#30213f,#17112e);box-shadow:0 24px 100px #0009,0 0 60px #f4c96b1c}
+.sound-gate-lamp{font-size:38px;filter:drop-shadow(0 0 18px #ffbb54);animation:lampPulse 2s ease-in-out infinite}
+.sound-gate-card h2{margin:12px 0 8px;color:var(--gold2);font:700 29px Georgia,serif}
+.sound-gate-card p{margin:0 auto 20px;max-width:330px;color:#c8bfd7;font-size:12px;line-height:1.65}
+.sound-gate-card .btn{font-size:10px;padding:13px 20px}
+@keyframes lampPulse{50%{transform:scale(1.12);filter:drop-shadow(0 0 28px #ffbb54)}}
+#fx-overlay{position:fixed;z-index:22;inset:0;pointer-events:none;overflow:hidden}
+.confetti{position:absolute;top:-24px;width:8px;height:14px;border-radius:2px;background:var(--confetti,#f4c96b);opacity:.95;animation:confettiFall var(--fall,2.8s) cubic-bezier(.15,.65,.4,1) forwards;transform:rotate(var(--spin,0deg));box-shadow:0 0 8px #ffffff30}
+@keyframes confettiFall{0%{transform:translate3d(0,-4vh,0) rotate(0);opacity:0}8%{opacity:1}100%{transform:translate3d(var(--drift,40px),110vh,0) rotate(var(--spin,540deg));opacity:.08}}
+.audience-view .audience-layout.fx-offer .rosette{animation:rosetteCharge 1.5s ease-in-out}
+.audience-view .audience-layout.fx-offer .offer-banner{animation:offerReveal .8s cubic-bezier(.15,.9,.25,1) both}
+@keyframes rosetteCharge{0%{filter:brightness(1);transform:scale(1)}25%{filter:brightness(1.65);transform:scale(1.06)}55%{filter:brightness(1.15);transform:scale(.98)}100%{filter:brightness(1);transform:scale(1)}}
+@keyframes offerReveal{0%{opacity:0;transform:translateY(25px) scale(.88);filter:blur(8px)}65%{opacity:1;transform:translateY(-3px) scale(1.04);filter:blur(0)}100%{opacity:1;transform:none}}
+.audience-view .audience-layout.fx-no-deal .centre{animation:noDealShake .62s ease-in-out}
+@keyframes noDealShake{0%,100%{transform:translateX(0)}15%,45%,75%{transform:translateX(-6px)}30%,60%,90%{transform:translateX(6px)}}
+.audience-view .audience-layout.fx-deal .decision{animation:dealGlow 1.4s ease-in-out 2}
+@keyframes dealGlow{0%,100%{text-shadow:0 0 0 #f4c96b00;transform:scale(1)}50%{text-shadow:0 0 26px #ffe7a2;transform:scale(1.12)}}
+.audience-view .audience-layout.fx-reset .rosette{animation:resetSpin 1.1s cubic-bezier(.2,.8,.2,1)}
+@keyframes resetSpin{0%{transform:rotate(0) scale(.8);filter:brightness(1.8)}100%{transform:rotate(360deg) scale(1);filter:brightness(1)}}
+.audience-view .audience-layout.fx-reveal-good .blue-panel{animation:goodPulse .75s ease-out}
+.audience-view .audience-layout.fx-reveal-bad .red-panel{animation:badPulse .85s ease-out}
+@keyframes goodPulse{0%,100%{box-shadow:0 18px 50px #0004,inset 0 1px #ffffff0e}35%{box-shadow:0 0 42px #82ceff55,inset 0 0 30px #82ceff18}}
+@keyframes badPulse{0%,100%{box-shadow:0 18px 50px #0004,inset 0 1px #ffffff0e}30%{box-shadow:0 0 48px #ff526b88,inset 0 0 35px #ff526b25}}
+.sound-ready .sound-gate-card{animation:gateIn .7s cubic-bezier(.2,.85,.25,1)}
+@keyframes gateIn{from{opacity:0;transform:translateY(18px) scale(.96)}to{opacity:1;transform:none}}
+@media(max-width:700px){.audience-sound-controls{top:8px;right:8px}.sound-control{font-size:8px;padding:8px 10px}}
+@media(prefers-reduced-motion:reduce){.prize.just-revealed,.prize.just-restored,.confetti{animation-duration:.01ms!important}.sound-gate-lamp{animation:none!important}}
+
 </style>
 </head>
 <body>
@@ -37,6 +84,7 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
       <p class="subtitle" id="subtitle">The private banker and host console</p>
       <div class="top-actions" id="top-actions">
         <span class="pill status" id="connection-pill">Audience screen not connected</span>
+        <span class="pill" id="audio-pill">Audience sound not enabled</span>
         <button class="btn gold" id="open-audience">▣ Open audience screen</button>
       </div>
     </header>
@@ -86,7 +134,20 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
       </aside>
     </main>
 
-    <main id="audience-layout" hidden aria-label="Public audience display">
+    <div class="audience-sound-controls" id="audience-sound-controls" hidden>
+  <button class="sound-control" id="aud-sound-toggle" type="button" aria-pressed="true">🔊 Sound on</button>
+  <button class="sound-control" id="aud-atmosphere-toggle" type="button" aria-pressed="false">Atmosphere off</button>
+</div>
+<div class="sound-gate" id="sound-gate" hidden>
+  <div class="sound-gate-card">
+    <div class="sound-gate-lamp">🪔</div>
+    <h2>Let the game begin</h2>
+    <p>Enable the show sounds on this screen. You only need to do this once. The banker’s actions will then trigger the effects through the TV or projector.</p>
+    <button class="btn gold" id="enable-show-sound" type="button">Enable show sound</button>
+  </div>
+</div>
+<div id="fx-overlay" aria-hidden="true"></div>
+<main id="audience-layout" class="audience-layout" hidden aria-label="Public audience display">
       <div class="board" aria-label="Audience prize board">
         <section class="prize-panel blue-panel"><div class="panel-head"><div><span class="panel-kicker">The modest fortunes</span><h2 class="panel-title">Blue values</h2></div><span class="count" id="aud-blue-count">5</span></div><div class="prize-list" id="aud-blue-list"></div></section>
         <section class="centre">
@@ -129,18 +190,146 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
   function safeText(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
   function showToast(text){$('toast').textContent=text;$('toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.remove('show'),1900)}
 
-  function renderPrizeLists(){
+
+  // All cues are generated locally with the Web Audio API. No external audio files or copied programme recordings.
+  let audioContext=null, masterGain=null, audioEnabled=false, atmosphereEnabled=false, atmosphereNodes=[];
+  const reducedMotion=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function getAudio(){
+    if(!audioContext){
+      const AudioCtx=window.AudioContext||window.webkitAudioContext;
+      if(!AudioCtx)return null;
+      audioContext=new AudioCtx();masterGain=audioContext.createGain();masterGain.gain.value=.72;
+      const compressor=audioContext.createDynamicsCompressor();compressor.threshold.value=-18;compressor.knee.value=18;compressor.ratio.value=3;compressor.attack.value=.006;compressor.release.value=.22;
+      masterGain.connect(compressor);compressor.connect(audioContext.destination);
+    }
+    if(audioContext.state==='suspended')audioContext.resume();
+    return audioContext;
+  }
+  function sendAudioStatus(){try{if(window.opener&&!window.opener.closed)window.opener.postMessage({type:'diwali-audio-status',enabled:audioEnabled},'*')}catch(e){}}
+  function setAudioEnabled(on){
+    audioEnabled=!!on;
+    if(audioEnabled)getAudio();
+    if(!audioEnabled)stopAtmosphere();
+    if($('aud-sound-toggle')){$('aud-sound-toggle').textContent=audioEnabled?'🔊 Sound on':'🔇 Sound off';$('aud-sound-toggle').setAttribute('aria-pressed',String(audioEnabled))}
+    if($('sound-gate'))$('sound-gate').classList.toggle('dismissed',audioEnabled);
+    sendAudioStatus();
+  }
+  function tone(freq,duration,opts={}){
+    const ctx=getAudio();if(!ctx||!masterGain)return;
+    const start=ctx.currentTime+(opts.delay||0),osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.type=opts.type||'sine';osc.frequency.setValueAtTime(Math.max(1,freq),start);
+    if(opts.endFreq){osc.frequency.exponentialRampToValueAtTime(Math.max(1,opts.endFreq),start+duration)}
+    if(opts.detune)osc.detune.setValueAtTime(opts.detune,start);
+    const peak=opts.volume??.12,attack=opts.attack??.012,decay=opts.decay??duration;
+    gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(Math.max(.0002,peak),start+attack);gain.gain.exponentialRampToValueAtTime(.0001,start+decay);
+    osc.connect(gain);gain.connect(masterGain);osc.start(start);osc.stop(start+duration+.025);
+  }
+  function noise(duration,opts={}){
+    const ctx=getAudio();if(!ctx||!masterGain)return;
+    const start=ctx.currentTime+(opts.delay||0),frames=Math.max(1,Math.floor(ctx.sampleRate*duration)),buffer=ctx.createBuffer(1,frames,ctx.sampleRate),data=buffer.getChannelData(0);
+    for(let i=0;i<frames;i++)data[i]=(Math.random()*2-1)*(1-i/frames);
+    const source=ctx.createBufferSource();source.buffer=buffer;
+    const filter=ctx.createBiquadFilter();filter.type=opts.filter||'bandpass';filter.frequency.setValueAtTime(opts.frequency||1200,start);filter.Q.value=opts.q||.7;
+    if(opts.endFrequency)filter.frequency.exponentialRampToValueAtTime(Math.max(50,opts.endFrequency),start+duration);
+    const gain=ctx.createGain();gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(opts.volume??.08,start+.015);gain.gain.exponentialRampToValueAtTime(.0001,start+duration);
+    source.connect(filter);filter.connect(gain);gain.connect(masterGain);source.start(start);source.stop(start+duration+.02);
+  }
+  function chord(notes,duration,opts={}){notes.forEach((n,i)=>tone(n,duration,{type:opts.type||'sine',volume:(opts.volume||.08)*(opts.weights?.[i]||1),delay:(opts.delay||0)+(opts.spacing||0),attack:opts.attack||.025,decay:duration*.88}))}
+  function playEffect(action){
+    if(!audioEnabled)return;
+    const type=action?.type, amount=Number(action?.amount)||0;
+    if(type==='intro'){
+      noise(.85,{delay:0,filter:'highpass',frequency:1800,endFrequency:5200,volume:.045});
+      tone(110,.9,{type:'sine',volume:.13,endFreq:62,decay:.86});
+      [392,523.25,659.25,783.99,1046.5].forEach((n,i)=>tone(n,.7,{type:'triangle',volume:.065,delay:.18+i*.12,decay:.58}));
+      tone(1568,.9,{type:'sine',volume:.035,delay:.8,decay:.7});
+    }else if(type==='reveal'){
+      noise(.28,{filter:'highpass',frequency:2400,endFrequency:650,volume:.055});
+      if(amount<=1000){ // a positive sparkle: a small amount leaves the board
+        tone(587.33,.55,{type:'triangle',volume:.085,delay:.12,decay:.48});tone(739.99,.65,{type:'sine',volume:.07,delay:.22,decay:.55});tone(987.77,.78,{type:'sine',volume:.05,delay:.32,decay:.68});tone(1174.66,.72,{type:'triangle',volume:.035,delay:.43,decay:.62});
+      }else{ // low brass-like sting: a large amount has gone
+        tone(82.41,.9,{type:'sawtooth',volume:.13,endFreq:48,decay:.82});tone(110,.72,{type:'triangle',volume:.11,delay:.025,endFreq:65,decay:.65});tone(164.81,.58,{type:'sawtooth',volume:.055,delay:.03,endFreq:95,decay:.52});noise(.42,{filter:'lowpass',frequency:240,endFrequency:75,volume:.12});
+      }
+    }else if(type==='undo'){
+      tone(130,.5,{type:'sine',volume:.09,endFreq:620,decay:.46});tone(392,.55,{type:'triangle',volume:.06,delay:.06,decay:.5});tone(783.99,.5,{type:'sine',volume:.045,delay:.16,decay:.45});noise(.32,{filter:'highpass',frequency:450,endFrequency:2400,volume:.035});
+    }else if(type==='offer'){
+      [0,.34,.68].forEach((d,i)=>tone(58+i*4,.55,{type:'sine',volume:.13,delay:d,decay:.48}));
+      tone(130.81,.85,{type:'sawtooth',volume:.075,delay:.85,endFreq:98,decay:.78});tone(196,.7,{type:'triangle',volume:.07,delay:1.02,decay:.62});tone(261.63,.6,{type:'sine',volume:.055,delay:1.18,decay:.52});
+      noise(.9,{delay:.55,filter:'bandpass',frequency:700,endFrequency:2100,volume:.025});
+    }else if(type==='hide-offer'){
+      tone(440,.38,{type:'triangle',volume:.07,endFreq:110,decay:.34});noise(.35,{filter:'lowpass',frequency:900,endFrequency:140,volume:.045});
+    }else if(type==='deal'){
+      [261.63,329.63,392,523.25,659.25].forEach((n,i)=>tone(n,1.15,{type:i<3?'triangle':'sine',volume:i<3?.075:.045,delay:i*.075,decay:1.02}));
+      [783.99,987.77,1174.66,1567.98].forEach((n,i)=>tone(n,.8,{type:'sine',volume:.045,delay:.42+i*.11,decay:.68}));noise(.8,{delay:.08,filter:'highpass',frequency:1900,endFrequency:5200,volume:.035});
+    }else if(type==='no-deal'){
+      tone(73.42,.82,{type:'sawtooth',volume:.15,endFreq:55,decay:.75});tone(110,.55,{type:'square',volume:.075,delay:.1,endFreq:82,decay:.48});tone(146.83,.5,{type:'sawtooth',volume:.07,delay:.42,endFreq:98,decay:.44});noise(.35,{delay:.05,filter:'lowpass',frequency:220,endFrequency:75,volume:.1});
+    }else if(type==='reset'){
+      [392,523.25,659.25,783.99,1046.5,1318.51].forEach((n,i)=>tone(n,.72,{type:'triangle',volume:.055,delay:i*.095,decay:.62}));tone(196,.9,{type:'sine',volume:.075,delay:.1,decay:.82});
+    }else if(type==='click'){
+      tone(660,.075,{type:'sine',volume:.022,decay:.06});noise(.045,{filter:'highpass',frequency:3200,volume:.012});
+    }else if(type==='cancel'){
+      tone(420,.12,{type:'sine',volume:.035,decay:.1});
+    }else if(type==='invalid'){
+      tone(185,.24,{type:'square',volume:.045,endFreq:145,decay:.2});
+    }
+  }
+  function startAtmosphere(){
+    const ctx=getAudio();if(!ctx||!audioEnabled||atmosphereNodes.length)return;
+    const pad=ctx.createGain();pad.gain.value=.0001;pad.connect(masterGain);const now=ctx.currentTime;pad.gain.setTargetAtTime(.025,now,.8);
+    const nodes=[];
+    [55,82.41,110.0].forEach((f,i)=>{const o=ctx.createOscillator();o.type=i===1?'triangle':'sine';o.frequency.value=f;o.detune.value=(i-1)*4;o.connect(pad);o.start();nodes.push(o)});
+    atmosphereNodes=[pad,...nodes];
+  }
+  function stopAtmosphere(){
+    if(!atmosphereNodes.length)return;
+    const [pad,...nodes]=atmosphereNodes;try{pad.gain.setTargetAtTime(.0001,audioContext.currentTime,.18);setTimeout(()=>nodes.forEach(n=>{try{n.stop()}catch(e){}}),850)}catch(e){}
+    atmosphereNodes=[];
+  }
+  function runVisualFX(action){
+    const layout=$('audience-layout');if(!layout||!audienceMode)return;
+    const classes=['fx-offer','fx-no-deal','fx-deal','fx-reset','fx-reveal-good','fx-reveal-bad'];layout.classList.remove(...classes);void layout.offsetWidth;
+    const type=action.type;
+    if(type==='offer')layout.classList.add('fx-offer');
+    if(type==='no-deal')layout.classList.add('fx-no-deal');
+    if(type==='deal')layout.classList.add('fx-deal');
+    if(type==='reset')layout.classList.add('fx-reset');
+    if(type==='reveal')layout.classList.add(action.amount<=1000?'fx-reveal-good':'fx-reveal-bad');
+    if(type==='deal')partyBurst();
+    if(type==='reset')partyBurst('diwali');
+    if(type==='reveal'&&action.amount>1000)screenPulse('red');
+    if(type==='reveal'&&action.amount<=1000)screenPulse('blue');
+    if(type==='offer')screenPulse('gold');
+    if(type==='no-deal')screenPulse('red');
+    setTimeout(()=>layout.classList.remove(...classes),1900);
+  }
+  function screenPulse(kind='gold'){
+    const layer=$('fx-overlay');if(!layer||reducedMotion)return;
+    const el=document.createElement('div');el.className='screen-pulse '+kind;layer.appendChild(el);setTimeout(()=>el.remove(),900);
+  }
+  function partyBurst(kind='gold'){
+    const layer=$('fx-overlay');if(!layer||reducedMotion)return;
+    const palette=kind==='diwali'?['#f4c96b','#ff934f','#ef6c83','#75c6db','#fff1c9']:['#f4c96b','#ffe7a2','#fff9e8','#dca64b'];
+    for(let i=0;i<52;i++){
+      const el=document.createElement('i');el.className='confetti';el.style.left=(Math.random()*100)+'%';el.style.setProperty('--confetti',palette[i%palette.length]);el.style.setProperty('--drift',((Math.random()-.5)*260)+'px');el.style.setProperty('--spin',(360+Math.random()*900)+'deg');el.style.setProperty('--fall',(2.2+Math.random()*1.8)+'s');el.style.animationDelay=(Math.random()*.42)+'s';layer.appendChild(el);setTimeout(()=>el.remove(),4800);
+    }
+  }
+
+  function renderPrizeLists(action=null){
     for(const side of ['blue','red']){
       const list = PRIZES.filter(p=>p.side===side);
       const host = $('host-'+side+'-list');
       const aud = $('aud-'+side+'-list');
       if(host) host.innerHTML = list.map(p=>{
         const removed=state.revealed.includes(p.value);
-        return `<button type="button" class="prize ${removed?'removed':''}" data-prize="${safeText(p.value)}" ${removed?'disabled':''} aria-label="${removed?'Revealed':'Remove '+safeText(p.value)+' from the board'}"><span class="amount">${p.value}</span><span class="removed-label">REVEALED</span></button>`;
+        const fresh=action?.type==='reveal' && action.prize===p.value;
+        const restored=action?.type==='undo' && action.prize===p.value;
+        return `<button type="button" class="prize ${removed?'removed':''} ${fresh?'just-revealed':''} ${restored?'just-restored':''}" data-prize="${safeText(p.value)}" ${removed?'disabled':''} aria-label="${removed?'Revealed':'Remove '+safeText(p.value)+' from the board'}"><span class="amount">${p.value}</span><span class="removed-label">REVEALED</span></button>`;
       }).join('');
       if(aud) aud.innerHTML = list.map(p=>{
         const removed=state.revealed.includes(p.value);
-        return `<div class="prize ${removed?'removed':''}" aria-label="${removed?'Prize revealed':safeText(p.value)}"><span class="amount">${p.value}</span><span class="removed-label">REVEALED</span></div>`;
+        const fresh=action?.type==='reveal' && action.prize===p.value;
+        const restored=action?.type==='undo' && action.prize===p.value;
+        return `<div class="prize ${removed?'removed':''} ${fresh?'just-revealed':''} ${restored?'just-restored':''}" aria-label="${removed?'Prize revealed':safeText(p.value)}"><span class="amount">${p.value}</span><span class="removed-label">REVEALED</span></div>`;
       }).join('');
     }
     const blue=PRIZES.filter(p=>p.side==='blue'&&!state.revealed.includes(p.value)).length;
@@ -151,6 +340,7 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
     if($('aud-red-count')) $('aud-red-count').textContent=red;
     if($('host-remaining')) $('host-remaining').textContent=blue+red;
     if($('aud-remaining')) $('aud-remaining').textContent=blue+red;
+    document.querySelectorAll('.just-revealed,.just-restored').forEach(el=>el.addEventListener('animationend',()=>el.classList.remove('just-revealed','just-restored'),{once:true}));
   }
 
   function renderConsole(){
@@ -185,37 +375,45 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
   }
 
   function snapshot(){return {revealed:[...state.revealed],offer:state.offer,offerVisible:state.offerVisible,decision:state.decision}}
-  function sendState(){
+  function sendState(action=null){
     if(displayWindow && !displayWindow.closed){
-      try{displayWindow.postMessage({type:'diwali-game-state',state:snapshot()},'*')}catch(e){}
+      try{displayWindow.postMessage({type:'diwali-game-state',state:snapshot(),action},'*')}catch(e){}
       $('connection-pill').textContent='Audience screen connected';
     } else if($('connection-pill')) $('connection-pill').textContent='Audience screen not connected';
   }
-  function applyAudienceState(next){
+  function applyAudienceState(next,action=null){
     state.revealed=Array.isArray(next.revealed)?next.revealed.filter(v=>PRIZES.some(p=>p.value===v)):[];
     state.offer=String(next.offer??'');state.offerVisible=!!next.offerVisible;state.decision=next.decision==='deal'||next.decision==='no-deal'?next.decision:'';
-    renderPrizeLists();renderAudience();
+    renderPrizeLists(action);renderAudience();
     $('waiting-message').classList.remove('show');
+    if(action){playEffect(action);runVisualFX(action)}
   }
-  function sync(){renderPrizeLists();renderConsole();renderAudience();sendState()}
+  function sync(action=null){renderPrizeLists(action);renderConsole();renderAudience();sendState(action)}
 
   function revealPrize(value){
     if(state.revealed.includes(value))return;
     state.revealed.push(value);state.offerVisible=false;state.decision='';
-    sync();showToast(value+' removed from the board');
+    const prize=PRIZES.find(p=>p.value===value);
+    sync({type:'reveal',prize:value,amount:prize?.amount||0,side:prize?.side||'blue'});
+    showToast(value+' removed from the board');
   }
-  function undo(){const value=state.revealed.pop();if(!value)return;state.offerVisible=false;state.decision='';sync();showToast(value+' restored to the board')}
-  function reset(){state.revealed=[];state.offer='';state.offerVisible=false;state.decision='';sync();showToast('A fresh game is ready')}
+  function undo(){const value=state.revealed.pop();if(!value)return;state.offerVisible=false;state.decision='';sync({type:'undo',prize:value});showToast(value+' restored to the board')}
+  function reset(){state.revealed=[];state.offer='';state.offerVisible=false;state.decision='';sync({type:'reset'});showToast('A fresh game is ready')}
 
   if(audienceMode){
     app.classList.remove('host-view');app.classList.add('audience-view');
     $('subtitle').textContent='LIVE AUDIENCE DISPLAY · PUBLIC SCREEN ONLY';
     $('top-actions').hidden=true;$('top-actions').style.display='none';$('host-layout').hidden=true;$('host-layout').style.display='none';$('audience-layout').hidden=false;$('audience-layout').style.display='block';
     $('waiting-message').classList.add('show');
+    $('audience-sound-controls').hidden=false;$('sound-gate').hidden=false;
+    document.body.classList.add('sound-ready');
+    $('enable-show-sound').addEventListener('click',()=>{setAudioEnabled(true);playEffect({type:'intro'});$('sound-gate').classList.add('dismissed')});
+    $('aud-sound-toggle').addEventListener('click',()=>{if(!audioEnabled){setAudioEnabled(true);playEffect({type:'intro'})}else setAudioEnabled(false)});
+    $('aud-atmosphere-toggle').addEventListener('click',()=>{if(!audioEnabled){setAudioEnabled(true);playEffect({type:'intro'})}atmosphereEnabled=!atmosphereEnabled;if(atmosphereEnabled)startAtmosphere();else stopAtmosphere();$('aud-atmosphere-toggle').textContent=atmosphereEnabled?'Atmosphere on':'Atmosphere off';$('aud-atmosphere-toggle').setAttribute('aria-pressed',String(atmosphereEnabled))});
     function requestInitial(){if(window.opener&&!window.opener.closed){window.opener.postMessage({type:'diwali-audience-ready'},'*')}else{$('waiting-message').classList.add('show')}}
     window.addEventListener('message',event=>{
       if(event.source!==window.opener || !event.data || event.data.type!=='diwali-game-state')return;
-      applyAudienceState(event.data.state||{});
+      applyAudienceState(event.data.state||{},event.data.action||null);
     });
     window.addEventListener('load',requestInitial);window.addEventListener('focus',requestInitial);
     requestInitial();
@@ -232,20 +430,21 @@ h1{margin:10px 0 5px;color:var(--gold2);font:700 clamp(35px,4.5vw,62px)/1 Georgi
     });
     window.addEventListener('message',event=>{
       if(!displayWindow || event.source!==displayWindow || !event.data)return;
-      if(event.data.type==='diwali-audience-ready'){ $('connection-pill').textContent='Audience screen connected';sendState(); }
+      if(event.data.type==='diwali-audience-ready'){ $('connection-pill').textContent='Audience screen connected';sendState({type:'intro'}); }
+      if(event.data.type==='diwali-audio-status') $('audio-pill').textContent=event.data.enabled?'Audience sound enabled':'Audience sound muted';
     });
     $('undo-button').addEventListener('click',undo);
     $('show-offer').addEventListener('click',()=>{
       const raw=$('offer-input').value.trim();
-      if(raw===''||!Number.isFinite(Number(raw))||Number(raw)<0){showToast('Enter a valid banker offer first');$('offer-input').focus();return}
-      state.offer=raw;state.offerVisible=true;state.decision='';sync();showToast('The banker’s offer is now on the audience screen');
+      if(raw===''||!Number.isFinite(Number(raw))||Number(raw)<0){showToast('Enter a valid banker offer first');sendState({type:'invalid'});$('offer-input').focus();return}
+      state.offer=raw;state.offerVisible=true;state.decision='';sync({type:'offer'});showToast('The banker’s offer is now on the audience screen');
     });
-    $('hide-offer').addEventListener('click',()=>{state.offerVisible=false;state.decision='';sync();showToast('The offer has been hidden')});
-    $('deal-button').addEventListener('click',()=>{if(!state.offerVisible)return;state.decision='deal';sync();showToast('Deal accepted')});
-    $('no-deal-button').addEventListener('click',()=>{if(!state.offerVisible)return;state.decision='no-deal';sync();showToast('No deal. Keep playing!')});
+    $('hide-offer').addEventListener('click',()=>{state.offerVisible=false;state.decision='';sync({type:'hide-offer'});showToast('The offer has been hidden')});
+    $('deal-button').addEventListener('click',()=>{if(!state.offerVisible)return;state.decision='deal';sync({type:'deal'});showToast('Deal accepted')});
+    $('no-deal-button').addEventListener('click',()=>{if(!state.offerVisible)return;state.decision='no-deal';sync({type:'no-deal'});showToast('No deal. Keep playing!')});
     $('offer-input').addEventListener('keydown',e=>{if(e.key==='Enter')$('show-offer').click()});
-    $('reset-button').addEventListener('click',()=> $('reset-modal').classList.add('open'));
-    $('cancel-reset').addEventListener('click',()=> $('reset-modal').classList.remove('open'));
+    $('reset-button').addEventListener('click',()=>{ $('reset-modal').classList.add('open');sendState({type:'click'}); });
+    $('cancel-reset').addEventListener('click',()=>{ $('reset-modal').classList.remove('open');sendState({type:'cancel'}); });
     $('confirm-reset').addEventListener('click',()=>{$('reset-modal').classList.remove('open');reset()});
     $('reset-modal').addEventListener('click',e=>{if(e.target===$('reset-modal'))$('reset-modal').classList.remove('open')});
     window.addEventListener('beforeunload',()=>{if(displayWindow&&!displayWindow.closed)displayWindow.close()});
